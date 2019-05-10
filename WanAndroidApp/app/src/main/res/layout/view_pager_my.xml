@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:orientation="vertical" >
+    <com.example.sorena.wanandroidapp.widget.MyViewPager
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/loop_viewPager">
+    </com.example.sorena.wanandroidapp.widget.MyViewPager>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/loop_relativeLayout_holder">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="#7effffff"
+            android:layout_alignParentBottom="true">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:text="loading"
+                android:id="@+id/loop_textView_showMessage"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:gravity="center_vertical"
+                android:text="据说退回桌面再点进来可以加快进度?"
+                android:id="@+id/loop_textView_showPosition"/>
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

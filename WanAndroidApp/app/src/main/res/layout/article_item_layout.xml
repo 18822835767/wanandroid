@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="20dp"
+    android:elevation="2dp"
+    app:cardCornerRadius="20dp"
+    android:background="#e6e6e6">
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="置顶"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:textColor="#1195db"
+            android:visibility="gone"
+            android:id="@+id/article_textView_showIsTopping"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/article_textView_showIsTopping"
+            android:gravity="center_horizontal"
+            android:id="@+id/article_textView_title"
+            android:textSize="17dp"
+            android:text="标题"
+            android:maxLines="2"
+            android:minLines="1"
+            android:maxEms="25"
+            android:paddingHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:ellipsize="end"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/article_textView_title"
+            android:id="@+id/article_linearLayout_showAuthor"
+            android:layout_marginTop="10px"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="作者:  "
+                android:layout_marginLeft="20sp"
+                />
+
+            <TextView
+                android:id="@+id/article_textView_author"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#db639b"
+                android:text="这是作者"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/article_linearLayout_showAuthor"
+            android:layout_marginTop="10px"
+            android:id="@+id/article_linearLayout_showChapterName"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="标签:  "
+                android:layout_marginLeft="20sp"
+                />
+
+            <TextView
+                android:id="@+id/article_textView_chapterName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#db639b"
+                android:text="这是标签"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/article_linearLayout_showChapterName"
+            android:id="@+id/article_linearLayout_showTime"
+            android:layout_marginTop="10px"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="时间:  "
+                android:layout_marginLeft="20sp"
+                />
+
+            <TextView
+                android:id="@+id/article_textView_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#db639b"
+                android:text="这是时间"/>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_collect_normal"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:layout_centerVertical="true"
+            android:id="@+id/article_imageView_collect"
+            android:layout_alignBottom="@+id/article_linearLayout_showTime"
+            />
+    </RelativeLayout>
+
+
+
+</android.support.v7.widget.CardView>
