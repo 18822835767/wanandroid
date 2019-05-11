@@ -172,6 +172,9 @@ public class HomeFragment extends LazyFragment implements
             public void onRefresh() {
                 LogUtil.d("日志:","onRefresh执行");
                 nextLoadingNormalPage = 1;
+                if (mArticleAdapter == null){
+                    return;
+                }
                 mArticleAdapter.clearData();
                 mArticleAdapter.resetToppingArticle(mToppingArticleList);
                 loadNextPageNormalData();

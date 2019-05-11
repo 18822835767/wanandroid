@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:text="哦豁,莫得数据"
+        android:textSize="20dp"
+        android:visibility="gone"
+        android:id="@+id/system_textView_noMessage"/>
+
+
+    <com.example.sorena.wanandroidapp.widget.SystemBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/mySystemBar">
+    </com.example.sorena.wanandroidapp.widget.SystemBarLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/system_SwipeRefreshLayout_refresh"
+        android:layout_below="@id/mySystemBar">
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/system_listView_showItem"
+            android:dividerHeight="10dp"
+            android:divider="#00000000"
+            android:layout_margin="10dp"
+            >
+
+        </ListView>
+
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</RelativeLayout>

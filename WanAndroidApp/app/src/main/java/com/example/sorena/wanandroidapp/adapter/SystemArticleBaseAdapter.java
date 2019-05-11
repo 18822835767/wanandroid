@@ -3,7 +3,6 @@ package com.example.sorena.wanandroidapp.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,28 +14,27 @@ import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.bean.Article;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BaseArticleAdapter extends BaseAdapter
+public class SystemArticleBaseAdapter extends BaseAdapter
 {
     private List<Article> allArticle;
+    private int resourceId;
     private Context context;
     private Set<Integer> collections;
-    private int resourceId;
-    private int toppingNum;
 
 
-    public BaseArticleAdapter(Context context, int resourceId, @NonNull List<Article> normalArticle , @NonNull List<Article> toppingArticle){
+    public SystemArticleBaseAdapter(Context context, int resourceId, @NonNull List<Article> allArticle, Set<Integer> collections){
         this.context = context;
         this.resourceId = resourceId;
-        allArticle = new ArrayList<>();
-        allArticle.addAll(toppingArticle);
-        allArticle.addAll(normalArticle);
-        toppingNum = toppingArticle.size();
-        collections = new HashSet<>();
+        this.allArticle = allArticle;
+        if (collections != null){
+            this.collections = collections;
+        }else {
+            this.collections = new HashSet<>();
+        }
     }
 
 
@@ -61,10 +59,10 @@ public class BaseArticleAdapter extends BaseAdapter
     public View getView(final int position, View convertView, ViewGroup parent) {
         Article article = (Article) getItem(position);
         View view;
-        BaseArticleAdapter.ViewHolder viewHolder;
+        SystemArticleBaseAdapter.ViewHolder viewHolder;
         if (convertView == null){
             view = LayoutInflater.from(context).inflate(resourceId,parent,false);
-            viewHolder = new BaseArticleAdapter.ViewHolder();
+            viewHolder = new SystemArticleBaseAdapter.ViewHolder();
             viewHolder.articleTextViewShowIsTopping = view.findViewById(R.id.article_textView_showIsTopping);
             viewHolder.articleTextViewTitle = view.findViewById(R.id.article_textView_title);
             viewHolder.articleTextViewAuthor = view.findViewById(R.id.article_textView_author);
@@ -74,12 +72,9 @@ public class BaseArticleAdapter extends BaseAdapter
             view.setTag(viewHolder);
         }else {
             view = convertView;
-            viewHolder = (BaseArticleAdapter.ViewHolder)view.getTag();
+            viewHolder = (SystemArticleBaseAdapter.ViewHolder)view.getTag();
         }
         viewHolder.articleTextViewTitle.setTextColor(Color.parseColor("#000000"));
-        if (toppingNum  >= position + 1){
-            viewHolder.articleTextViewTitle.setTextColor(Color.parseColor("#1296db"));
-        }
         viewHolder.articleTextViewAuthor.setText(article.getAuthor());
         viewHolder.articleTextViewChapterName.setText(article.getChapterName());
         viewHolder.articleTextViewTitle.setText(article.getTitle());
@@ -133,39 +128,24 @@ public class BaseArticleAdapter extends BaseAdapter
     }
 
 
-    public void addNormalArticleData(List<Article> articles){
+    public void addData(List<Article> articles){
         if (articles != null && this.allArticle != articles){
             this.allArticle.addAll(articles);
-
         }
         notifyDataSetChanged();
     }
 
 
     public void clearData(){
-        if (allArticle != null){
-            allArticle.clear();
-        }
-        toppingNum = 0;
+        allArticle.clear();
         notifyDataSetChanged();
     }
 
-    public void resetToppingArticle(List<Article> toppingArticle){
-        if (toppingArticle == null) return;
-        if (allArticle.size() != 0  && toppingNum != allArticle.size()){
-            List<Article> normalArticles = new ArrayList<>();
-            for (int i = toppingNum ; i < allArticle.size() ; i++){
-                normalArticles.add(allArticle.get(i));
-            }
-            allArticle.clear();
-            allArticle.addAll(toppingArticle);
-            allArticle.addAll(normalArticles);
-        }else {
-            allArticle.addAll(toppingArticle);
-        }
-        toppingNum = toppingArticle.size();
-        notifyDataSetChanged();
-    }
+
+
+
+
+
 
 
 }

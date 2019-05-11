@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
         ViewUtil.cancelActionBar(this);
         initItem();
@@ -126,8 +125,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onPageScrollStateChanged(int i) {
-
-    }
+    public void onPageScrollStateChanged(int i) {}
 
 }
