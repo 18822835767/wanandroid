@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity
         myBarTextViewMessage.setOnClickListener(this);
         mMainViewPagerRoot.addOnPageChangeListener(this);
         mMainRadioGroupBottomMenu.check(R.id.bottomMenu_radioButton_home);
+        mMainViewPagerRoot.setOffscreenPageLimit(3);
     }
 
     //设置ViewPager和TabLayout相关的内容

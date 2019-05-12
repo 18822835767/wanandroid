@@ -51,8 +51,9 @@ public class MainActivityViewPagerAdapter extends FragmentPagerAdapter
 
     //禁止销毁视图
     @Override
-    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-    }
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {}
+
+
 
     //
 }

@@ -16,6 +16,7 @@ import com.example.sorena.wanandroidapp.bean.FlowItem;
 import com.example.sorena.wanandroidapp.util.BaseFragment;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.LazyFragment;
+import com.example.sorena.wanandroidapp.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,12 +47,13 @@ public class SystemFragment extends LazyFragment {
 
         mSystemListViewShowItem = getActivity().findViewById(R.id.system_listView_showCharacterItem);
         mSystemListViewShowItem.setVisibility(View.GONE);
-
+        getListData();
     }
 
     @Override
     protected void lazyLoad() {
-        getListData();
+
+        LogUtil.d("日志:" ,"SystemFragment加载数据");
     }
 
     private void getListData(){
@@ -100,8 +102,8 @@ public class SystemFragment extends LazyFragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                SystemItemBaseAdapter adapter = new SystemItemBaseAdapter(getActivity(),R.layout.system_item,characters);
-                mSystemListViewShowItem.setAdapter(adapter);
+                mAdapter = new SystemItemBaseAdapter(getActivity(),R.layout.system_item,characters);
+                mSystemListViewShowItem.setAdapter(mAdapter);
                 mSystemListViewShowItem.setVisibility(View.VISIBLE);
             }
         });
