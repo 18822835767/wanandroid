@@ -74,16 +74,42 @@
        </RelativeLayout>
    </FrameLayout>
 
-   <FrameLayout
+   <RelativeLayout
        android:layout_width="match_parent"
        android:layout_height="match_parent"
-       android:layout_gravity = "start">
-       <ImageView
+       android:layout_gravity = "start"
+       android:clickable="true">
+
+       <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_height="250dp"
+           android:id="@+id/mainActivity_RelativeLayout_TopLayout"
+           android:background="#17abe3">
+
+
+           <ImageView
+               android:layout_width="100dp"
+               android:layout_height="100dp"
+               android:src="@drawable/ic_android_write"
+               android:layout_centerInParent="true"
+               android:id="@+id/mainActivity_imageView_account"
+               />
+
+       </RelativeLayout>
+
+       <RelativeLayout
            android:layout_width="match_parent"
            android:layout_height="match_parent"
-           android:src="@drawable/ic_bg"
-           android:scaleType="centerCrop"/>
-   </FrameLayout>
+           android:layout_below="@+id/mainActivity_RelativeLayout_TopLayout"
+           android:background="#ffffff">
+
+       </RelativeLayout>
+
+
+
+
+
+   </RelativeLayout>
 
 </android.support.v4.widget.DrawerLayout>
 

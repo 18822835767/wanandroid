@@ -1,5 +1,6 @@
 package com.example.sorena.wanandroidapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -14,6 +15,7 @@ import com.example.sorena.wanandroidapp.adapter.MainActivityViewPagerAdapter;
 import com.example.sorena.wanandroidapp.db.SearchHistoryDataBaseHelper;
 import com.example.sorena.wanandroidapp.db.SearchHistoryDataBaseOperator;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
+import com.example.sorena.wanandroidapp.view.AccountActivity;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, RadioGroup.OnCheckedChangeListener, ViewPager.OnPageChangeListener
@@ -24,6 +26,10 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout mDrawerLayoutRoot;
     private ViewPager mMainViewPagerRoot;
     private RadioGroup mMainRadioGroupBottomMenu;
+    private ImageView mMainActivityImageViewAccount;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,8 @@ public class MainActivity extends AppCompatActivity
         mMainViewPagerRoot.addOnPageChangeListener(this);
         mMainRadioGroupBottomMenu.check(R.id.bottomMenu_radioButton_home);
         mMainViewPagerRoot.setOffscreenPageLimit(3);
+        mMainActivityImageViewAccount = findViewById(R.id.mainActivity_imageView_account);
+        mMainActivityImageViewAccount.setOnClickListener(this);
     }
 
     void initDataBase(){
@@ -73,7 +81,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.myBar_imageView_menu:
                 mDrawerLayoutRoot.openDrawer(GravityCompat.START);
                 break;
-
+            case R.id.mainActivity_imageView_account:
+                Intent intent = new Intent(this,AccountActivity.class);
+                startActivity(intent);
+                break;
             default:
                 break;
         }
