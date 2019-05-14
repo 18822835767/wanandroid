@@ -23,7 +23,7 @@ public abstract class NetImageLoad
     public abstract void loadImage(ImageView imageView,Bitmap bitmap);
 
     public void downloadImage(ImageView imageView,final String imgUrl){
-        this.imageView  =imageView;
+        this.imageView  = imageView;
         new Thread(){
             public void run() {
                 try {
@@ -36,23 +36,18 @@ public abstract class NetImageLoad
                     InputStream is = connection.getInputStream();
                     Bitmap bitmap = BitmapFactory.decodeStream(is);
                     if (bitmap == null){
-                        bitmap = PictureUtil.getBitmaps(imgUrl);
-                        LogUtil.v("日志:",imgUrl + "有可能无法加载");
+                        LogUtil.v("日志:",imgUrl + "加载失败");
+                    }else {
+                        LogUtil.v("日志:",imgUrl + "加载成功");
                     }
                     Message message = new Message();
                     message.obj = bitmap;
                     handler.sendMessage(message);
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             };
         }.start();
     }
-
-
-
-
-
 
 }

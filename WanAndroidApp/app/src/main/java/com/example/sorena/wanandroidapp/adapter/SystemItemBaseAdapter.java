@@ -54,12 +54,12 @@ public class SystemItemBaseAdapter extends BaseAdapter implements View.OnClickLi
 
         View view;
         ViewHolder viewHolder;
-        List<FlowItem> flowItems = characters.get(position).getFlowItems();
+        List<FlowItem> flowItemList = characters.get(position).getFlowItems();
         List<String> flowName = new ArrayList<>();
-        for (int i = 0; i < flowItems.size(); i++) {
-            flowName.add(flowItems.get(i).getName());
+        for (int i = 0; i < flowItemList.size(); i++) {
+            flowName.add(flowItemList.get(i).getName());
         }
-        //return FlowLayoutFactory.getSystemItem(context, flowName, characters.get(position).getChapterName(), flowItems, null);
+        //return FlowLayoutFactory.getSystemItem(context, flowName, characters.get(position).getChapterName(), flowItemList, null);
         if (convertView != null){
             view = convertView;
             viewHolder = (ViewHolder)view.getTag();
@@ -71,7 +71,12 @@ public class SystemItemBaseAdapter extends BaseAdapter implements View.OnClickLi
             view.setTag(viewHolder);
         }
         viewHolder.textView.setText(characters.get(position).getChapterName());
-        FlowLayoutFactory.setFlowLayout(viewHolder.flowLayout, context, flowName, flowItems, this);
+        FlowItem[] flowItems = new FlowItem[flowItemList.size()];
+        int size = flowItemList.size();
+        for (int i = 0 ; i < size ; i++){
+            flowItems[i] = flowItemList.get(i);
+        }
+        FlowLayoutFactory.setFlowLayout(viewHolder.flowLayout,  context,R.layout.system_flowlayout_tv, flowName, flowItems, this,true);
         return view;
     }
 

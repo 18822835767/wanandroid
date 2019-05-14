@@ -20,24 +20,24 @@ public class PictureUtil
             URL url = new URL(path);
             //获取连接
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            LogUtil.d("日志:connection",connection + "   链接:" + path);
+            LogUtil.v("日志:connection",connection + "   链接:" + path);
             //使用GET方法访问网络
             connection.setRequestMethod("GET");
             //超时时间为3秒
             connection.setConnectTimeout(3000);
             //获取输入流
             InputStream inputStream = connection.getInputStream();
-            LogUtil.d("日志:inputStream",inputStream + "   链接:" + path);
+            LogUtil.v("日志:inputStream",inputStream + "   链接:" + path);
             //使用工厂把网络的输入流生产Bitmap
             bitmap = BitmapFactory.decodeStream(inputStream);
-            LogUtil.d("日志:图片大小(try)",bitmap + "   链接:" + path);
+            LogUtil.v("日志:图片大小(try)",bitmap + "   链接:" + path);
             //inputStream.close();
 
         }catch (Exception e){
             e.printStackTrace();
             LogUtil.e("日志:PictureUtil:exception",e.getMessage());
         }
-        LogUtil.d("日志:图片大小",bitmap + "   链接:" + path);
+        LogUtil.v("日志:图片大小",bitmap + "   链接:" + path);
         return bitmap;
     }
 

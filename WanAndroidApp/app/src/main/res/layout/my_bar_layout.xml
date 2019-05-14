@@ -32,6 +32,7 @@
         android:src="@drawable/ic_search"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="13dp"/>
+        android:layout_marginRight="13dp"
+        android:id="@+id/myBar_imageView_search"/>
 
 </RelativeLayout>

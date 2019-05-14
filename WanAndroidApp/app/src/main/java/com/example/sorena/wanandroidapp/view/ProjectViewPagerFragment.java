@@ -1,6 +1,5 @@
 package com.example.sorena.wanandroidapp.view;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -19,11 +17,11 @@ import com.example.sorena.wanandroidapp.bean.ProjectChapter;
 import com.example.sorena.wanandroidapp.bean.ProjectListItem;
 import com.example.sorena.wanandroidapp.util.BaseFragment;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
-import com.example.sorena.wanandroidapp.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getMapInArray;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getValue;
 
@@ -74,14 +72,12 @@ public class ProjectViewPagerFragment extends BaseFragment
                 if (firstVisibleItem == 0) {
                     View firstVisibleItemView = mProjectFragmentListViewShowProjectItem.getChildAt(0);
                     if (firstVisibleItemView != null && firstVisibleItemView.getTop() == 0) {
-                        LogUtil.d("日志", "##### 滚动到顶部 #####");
                     }
                 }
                 //到底部时,自动加载下一页
                 else if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
                     View lastVisibleItemView = mProjectFragmentListViewShowProjectItem.getChildAt(mProjectFragmentListViewShowProjectItem.getChildCount() - 1);
                     if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mProjectFragmentListViewShowProjectItem.getHeight()) {
-                        LogUtil.d("日志", "##### 滚动到底部 准备加载下一页######");
                         loadData();
                     }
                 }

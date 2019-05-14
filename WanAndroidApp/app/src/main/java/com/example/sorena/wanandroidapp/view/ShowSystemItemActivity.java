@@ -72,15 +72,13 @@ public class ShowSystemItemActivity extends AppCompatActivity {
                 if (firstVisibleItem == 0) {
                     View firstVisibleItemView = mSystemListViewShowItem.getChildAt(0);
                     if (firstVisibleItemView != null && firstVisibleItemView.getTop() == 0) {
-                        LogUtil.d("日志", "##### 滚动到顶部 #####");
+
                     }
                 }
                 //到底部时,自动加载下一页
                 else if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
                     View lastVisibleItemView = mSystemListViewShowItem.getChildAt(mSystemListViewShowItem.getChildCount() - 1);
-                    if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mSystemListViewShowItem.getHeight()) {
-                        LogUtil.d("日志", "##### 滚动到底部 准备加载下一页######");
-                        loadNextPageData();
+                    if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mSystemListViewShowItem.getHeight()) {                   loadNextPageData();
                     }
                 }
 

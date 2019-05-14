@@ -10,7 +10,7 @@ public abstract class LazyFragment extends BaseFragment
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        LogUtil.d("日志",this + ":isVisibleToUser:" + false);
+//        LogUtil.d("日志",this + ":isVisibleToUser:" + false);
         if(getUserVisibleHint()) {
             isVisible = true;
             onVisible();

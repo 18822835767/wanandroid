@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.SearchActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_bg"
+        android:scaleType="centerCrop"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:id="@+id/searchActivity_linearLayout_topBar"
+        android:background="#afffffff"
+        android:padding="5dp"
+
+       >
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_back_gray"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="5dp"
+            android:id="@+id/searchActivity_imageView_back"
+            />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:shadowColor="#1296db"
+            android:id="@+id/searchActivity_editText_inputText"
+            android:hint="输入要搜索的内容"
+            android:textCursorDrawable="@null"
+            android:textColor="#232323"
+            android:theme="@style/MyEditText"
+            android:imeOptions="actionSearch"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/activity_linearLayout_showHot"
+        android:layout_below="@+id/searchActivity_linearLayout_topBar"
+        android:orientation="vertical"
+        android:layout_marginVertical="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="热搜"
+            android:layout_marginLeft="10dp"
+            />
+
+        <com.example.sorena.wanandroidapp.widget.FlowLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/searchActivity_flowLayout_showHot">
+        </com.example.sorena.wanandroidapp.widget.FlowLayout>
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/activity_linearLayout_showHot"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="历史记录"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="5dp"
+                />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/search_textView_clear"
+                android:text="清空"
+                android:layout_marginRight="2dp"
+                android:layout_toLeftOf="@+id/search_imageView_clear"
+                />
+            
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_clear_all"
+                android:id="@+id/search_imageView_clear"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="2dp"
+                />
+            
+        </RelativeLayout>
+        
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/searchActivity_listView_showHistorySearch"
+            android:dividerHeight="3dp"
+            android:divider="#00000000">
+        </ListView>
+
+
+
+    </LinearLayout>
+
+
+
+
+
+</RelativeLayout>

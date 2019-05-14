@@ -1,22 +1,19 @@
 package com.example.sorena.wanandroidapp;
 
+import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.example.sorena.wanandroidapp.adapter.MainActivityTabLayoutDataAdapter;
 import com.example.sorena.wanandroidapp.adapter.MainActivityViewPagerAdapter;
-import com.example.sorena.wanandroidapp.util.LogUtil;
-import com.example.sorena.wanandroidapp.util.MyApplication;
+import com.example.sorena.wanandroidapp.db.SearchHistoryDataBaseHelper;
+import com.example.sorena.wanandroidapp.db.SearchHistoryDataBaseOperator;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, RadioGroup.OnCheckedChangeListener, ViewPager.OnPageChangeListener
@@ -35,6 +32,7 @@ public class MainActivity extends AppCompatActivity
         ViewUtil.cancelActionBar(this);
         initItem();
         setView();
+        initDataBase();
     }
 
     //初始化activity中的控件
@@ -50,6 +48,14 @@ public class MainActivity extends AppCompatActivity
         mMainViewPagerRoot.addOnPageChangeListener(this);
         mMainRadioGroupBottomMenu.check(R.id.bottomMenu_radioButton_home);
         mMainViewPagerRoot.setOffscreenPageLimit(3);
+    }
+
+    void initDataBase(){
+        SearchHistoryDataBaseHelper helper = new SearchHistoryDataBaseHelper(this,"History.db",null,1);
+        helper.getWritableDatabase();
+
+        SearchHistoryDataBaseOperator operator = SearchHistoryDataBaseOperator.getInstance();
+
     }
 
     //设置ViewPager和TabLayout相关的内容
@@ -127,5 +133,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onPageScrollStateChanged(int i) {}
+
+
+
+
 
 }
