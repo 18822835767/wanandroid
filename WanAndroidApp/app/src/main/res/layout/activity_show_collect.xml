@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.ShowCollectActivity"
+    >
+
+    <com.example.sorena.wanandroidapp.widget.SystemBarLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/showCollectActivity_SystemBarLayout_bar"
+        android:layout_marginBottom="10dp">
+    </com.example.sorena.wanandroidapp.widget.SystemBarLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/showCollectActivity_SwipeRefreshLayout_refresh"
+        android:layout_below="@id/showCollectActivity_SystemBarLayout_bar">
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/showCollectActivity_ListView_showCollects"
+            android:dividerHeight="10dp"
+            android:divider="#00000000"
+            android:layout_margin="10dp">
+        </ListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</RelativeLayout>

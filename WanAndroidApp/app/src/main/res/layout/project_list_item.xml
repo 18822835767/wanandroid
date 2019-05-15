@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:padding="10dp">
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="match_parent"
+        android:id="@+id/project_imageView_showProjectPicture"
+        android:src="@drawable/pic_project_default"
+        android:scaleType="centerCrop"/>
+
+
+    <RelativeLayout
+
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/project_imageView_showProjectPicture"
+        android:layout_marginLeft="20dp">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:id="@+id/project_textView_showTitle"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
+            android:textSize="17sp"
+            android:text="这是标题"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/project_textView_showTitle"
+            android:layout_marginTop="10dp"
+            android:maxLines="5"
+            android:id="@+id/project_textView_showDescription"
+            android:text="这是描述"
+            android:minLines="5"
+            android:layout_marginBottom="10dp"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/project_textView_showDescription"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_collect_normal"
+                android:id="@+id/project_imageView_showCollect"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/project_imageView_showCollect"
+                android:layout_centerVertical="true"
+                android:text="这是时间"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/project_textView_showTime"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/project_textView_showAuthor"
+                android:text="这是作者"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"/>
+
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

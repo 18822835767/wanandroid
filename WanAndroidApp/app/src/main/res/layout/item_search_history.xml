@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="40dp">
+
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_history"
+        android:id="@+id/historyList_imageView_showPic"
+        android:layout_marginLeft="3dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/historyList_textView_showWord"
+        android:text="这是文字"
+        android:textColor="#515151"
+        android:layout_centerVertical="true"
+        android:textSize="18dp"
+        android:layout_toRightOf="@+id/historyList_imageView_showPic"
+        android:layout_marginLeft="10dp"
+        android:layout_toLeftOf="@+id/historyList_imageView_delWord"
+        android:maxLines="1"/>
+
+    <ImageView
+        android:focusable="false"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/historyList_imageView_delWord"
+        android:src="@drawable/ic_del_history"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+
+        />
+
+
+</RelativeLayout>
