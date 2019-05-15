@@ -44,7 +44,7 @@
             android:background="#17abe3"
             android:layout_marginHorizontal="50dp"
             android:layout_below="@id/loginFragment_editText_userPasswordInput"
-            android:id="@+id/loginFragment_button_register"
+            android:id="@+id/loginFragment_button_login"
             android:text="登录"
             android:textColor="#ffffff"
             />
@@ -53,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="没有账号?前去注册"
-            android:layout_below="@id/loginFragment_button_register"
+            android:layout_below="@id/loginFragment_button_login"
             android:textSize="17dp"
             android:gravity="center"
             android:layout_marginVertical="20dp"

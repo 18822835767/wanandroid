@@ -202,8 +202,6 @@ public class ProjectViewPagerFragment extends BaseFragment
                     authors.get(i),Integer.parseInt(ids.get(i))));
         }
         return list;
-
     }
-
 
 }

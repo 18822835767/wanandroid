@@ -21,7 +21,7 @@ public class AccountActivity extends AppCompatActivity implements LoginFragment.
         textView = findViewById(R.id.mySystemBar_textView_message);
         textView.setText("登录");
         switcher = new ViewSwitcher(this,R.id.accountActivity_frameLayout_forReplace);
-        switcher.replace(new RegisterFragment());
+        switcher.replace(new LoginFragment());
     }
 
 

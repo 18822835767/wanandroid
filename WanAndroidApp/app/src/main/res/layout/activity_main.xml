@@ -87,13 +87,30 @@
            android:background="#17abe3">
 
 
-           <ImageView
-               android:layout_width="100dp"
-               android:layout_height="100dp"
-               android:src="@drawable/ic_android_write"
+           <LinearLayout
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
                android:layout_centerInParent="true"
-               android:id="@+id/mainActivity_imageView_account"
-               />
+               android:orientation="vertical">
+               <ImageView
+                   android:layout_width="80dp"
+                   android:layout_height="80dp"
+                   android:src="@drawable/ic_android_write"
+                   android:id="@+id/mainActivity_imageView_account"
+                   android:layout_gravity="center_horizontal"
+                   />
+
+               <TextView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:singleLine="true"
+                   android:id="@+id/mainActivity_textView_showUserName"
+                   android:textColor="#ffffff"
+                   android:layout_marginTop="15dp"
+                   android:textSize="20dp"
+                   android:layout_gravity="center_horizontal"
+                   android:visibility="gone"/>
+           </LinearLayout>
 
        </RelativeLayout>
 
@@ -101,13 +118,81 @@
            android:layout_width="match_parent"
            android:layout_height="match_parent"
            android:layout_below="@+id/mainActivity_RelativeLayout_TopLayout"
-           android:background="#ffffff">
+           android:background="#ffffff"
+           >
+
+           <LinearLayout
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:id="@+id/mainActivity_LinearLayout_chtholly"
+               android:orientation="horizontal"
+               android:layout_marginVertical="15dp">
+
+               <ImageView
+                   android:layout_width="30dp"
+                   android:layout_height="30dp"
+                   android:src="@drawable/ic_kdl"
+                   android:layout_marginHorizontal="15dp"/>
+
+               <TextView
+                   android:layout_width="match_parent"
+                   android:layout_height="30dp"
+                   android:text="中国珂学院"
+                   android:textSize="20dp"
+                   android:id="@+id/mainActivity_textView_forChtholly"/>
+
+           </LinearLayout>
+
+           <LinearLayout
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:id="@+id/mainActivity_LinearLayout_collect"
+               android:layout_below="@+id/mainActivity_LinearLayout_chtholly"
+               android:orientation="horizontal"
+               android:layout_marginVertical="15dp">
+
+               <ImageView
+                   android:layout_width="30dp"
+                   android:layout_height="30dp"
+                   android:src="@drawable/ic_collect_heart"
+                   android:layout_marginHorizontal="15dp"
+                   />
+
+               <TextView
+                   android:layout_width="match_parent"
+                   android:layout_height="30dp"
+                   android:text="我的收藏"
+                   android:textSize="20dp"
+                   android:id="@+id/mainActivity_textView_showCollection"/>
+
+           </LinearLayout>
+
+
+           <LinearLayout
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:id="@+id/mainActivity_LinearLayout_exit"
+               android:layout_below="@+id/mainActivity_LinearLayout_collect"
+               android:orientation="horizontal"
+               android:layout_marginVertical="15dp">
+
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_exit"
+                    android:layout_marginHorizontal="15dp"/>
+
+               <TextView
+                   android:layout_width="match_parent"
+                   android:layout_height="30dp"
+                   android:text="退出登录"
+                   android:textSize="20dp"
+                   android:id="@+id/mainActivity_textView_exitLogin"/>
+           </LinearLayout>
+
 
        </RelativeLayout>
-
-
-
-
 
    </RelativeLayout>
 

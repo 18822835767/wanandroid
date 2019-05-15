@@ -4,23 +4,27 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sorena.wanandroidapp.R;
+import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
 import com.example.sorena.wanandroidapp.util.BaseFragment;
+import com.example.sorena.wanandroidapp.util.HttpUtil;
+import com.example.sorena.wanandroidapp.util.JSONUtil;
+import com.example.sorena.wanandroidapp.util.JudgeUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 
 public class LoginFragment extends BaseFragment implements View.OnClickListener
 {
 
-    private EditText loginFragmentEditTextUserNameInput;
-    private EditText loginFragmentEditTextUserPasswordInput;
+    private EditText mEditTextUserNameInput;
+    private EditText mEditTextUserPasswordInput;
     private Button loginFragmentButtonRegister;
     private TextView loginFragmentTextViewGoRegister;
     private Context context;
@@ -53,11 +57,12 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener
     }
 
     private void initView(){
-        loginFragmentEditTextUserNameInput = getActivity().findViewById(R.id.loginFragment_editText_userNameInput);
-        loginFragmentEditTextUserPasswordInput = getActivity().findViewById(R.id.loginFragment_editText_userPasswordInput);
-        loginFragmentButtonRegister = getActivity().findViewById(R.id.loginFragment_button_register);
+        mEditTextUserNameInput = getActivity().findViewById(R.id.loginFragment_editText_userNameInput);
+        mEditTextUserPasswordInput = getActivity().findViewById(R.id.loginFragment_editText_userPasswordInput);
+        loginFragmentButtonRegister = getActivity().findViewById(R.id.loginFragment_button_login);
         loginFragmentTextViewGoRegister = getActivity().findViewById(R.id.loginFragment_textView_goRegister);
         loginFragmentTextViewGoRegister.setOnClickListener(this);
+        loginFragmentButtonRegister.setOnClickListener(this);
     }
 
     private SwitchToRegisterAble switcher;
@@ -75,12 +80,40 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener
                     switcher.switchToRegister();
                 }
                 break;
+            case R.id.loginFragment_button_login:
+                if (JudgeUtil.editTextContainsEmpty(mEditTextUserNameInput, mEditTextUserPasswordInput)){
+                    return;
+                }
+                String name = mEditTextUserNameInput.getText().toString();
+                String password = mEditTextUserPasswordInput.getText().toString();
+                HttpUtil.sendPostRequest("https://www.wanandroid.com/user/login", new String[]{"username", "password"},
+                        new String[]{name,password},
+                        new HttpUtil.HttpCallBackListener() {
+                            @Override
+                            public void onFinish(String response) {
+                                String data = JSONUtil.getValue("errorMsg",response,new String[]{});
+                                if (data == null){
+                                    return;
+                                }else if (data.equals("")){
+                                    SharedPreferencesHelper.remenberUser(name,password);
+                                    getActivity().runOnUiThread(()->{
+                                        Toast.makeText(getContext(),"登录成功",Toast.LENGTH_SHORT).show();
+                                        getActivity().finish();
+                                    });
+                                }else {
+                                    getActivity().runOnUiThread(()->Toast.makeText(getContext(),data,Toast.LENGTH_SHORT).show());
+                                }
 
-            default:
+                            }
+
+                            @Override
+                            public void onError(Exception e) {}
+                        });
                 break;
 
 
-
+            default:
+                break;
         }
     }
 }

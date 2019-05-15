@@ -8,6 +8,7 @@ public class Article
     private String niceDate;
     private String chapterName;
     private Integer id;
+    private boolean collect;
 
     public Article(String author, String link, String title, String niceDate, String chapterName , int id) {
         this.author = author;
@@ -64,6 +65,14 @@ public class Article
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public boolean isCollect() {
+        return collect;
+    }
+
+    public void setCollect(boolean collect) {
+        this.collect = collect;
     }
 
     @Override

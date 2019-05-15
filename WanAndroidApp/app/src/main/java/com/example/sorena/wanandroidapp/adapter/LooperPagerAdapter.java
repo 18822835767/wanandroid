@@ -50,7 +50,7 @@ public class LooperPagerAdapter extends PagerAdapter
         int realPosition = position % URLs.size();
         imageView = new ImageView(container.getContext());
         if (pictureMap.get(URLs.get(realPosition)) == null){
-            imageView.setImageResource(R.drawable.pic_loop_default);
+//            imageView.setImageResource(R.drawable.pic_loop_default);
         }else {
             //这里会抛异常2019/5/8
             //好了现在不会了2019/5/9

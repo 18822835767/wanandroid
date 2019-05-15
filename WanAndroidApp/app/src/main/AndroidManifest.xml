@@ -23,7 +23,8 @@
         <activity android:name=".view.ShowSystemItemActivity" />
         <activity android:name=".view.SearchActivity" />
         <activity android:name=".view.ShowResultActivity" />
-        <activity android:name=".view.AccountActivity"></activity>
+        <activity android:name=".view.AccountActivity" />
+        <activity android:name=".view.ShowCollectActivity"></activity>
     </application>
 
 </manifest>

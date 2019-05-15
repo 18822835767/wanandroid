@@ -110,6 +110,11 @@ public class JSONUtil
         return null;
     }
 
+    /**
+     * @param keys:key值
+     * @param values:value值
+     * @return
+     */
 
     public static String getPramsString(String[] keys, String[] values){
 
@@ -126,6 +131,11 @@ public class JSONUtil
     }
 
 
+    /**
+     *
+     * @param htmlStr:要删除html文本的字符串
+     * @return:删除完毕的字符串
+     */
     public static String delHTMLTag(String htmlStr){
         String regEx_script="<script[^>]*?>[\\s\\S]*?<\\/script>"; //定义script的正则表达式
         String regEx_style="<style[^>]*?>[\\s\\S]*?<\\/style>"; //定义style的正则表达式
@@ -144,6 +154,22 @@ public class JSONUtil
         htmlStr=m_html.replaceAll(""); //过滤html标签
 
         return htmlStr.trim(); //返回文本字符串
+    }
+
+    /**
+     *
+     * @param keys:等号左边那个东西
+     * @param values:等号右边那个东西
+     * @return:生成的字符串
+     */
+    public static String getCookieString(String[] keys , String[] values){
+
+        StringBuilder stringBuilder = new StringBuilder();
+        int minSize = Math.min(keys.length,values.length);
+        for (int i = 0; i < minSize; i++){
+            stringBuilder.append(keys[i]).append("=").append(values[i]).append(";");
+        }
+        return stringBuilder.toString();
     }
 
 

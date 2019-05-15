@@ -10,6 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 用于交换碎片的封装
+ */
+
+
 public class ViewSwitcher
 {
     private Map<String,Fragment> fragmentMap;
