@@ -1,8 +1,18 @@
 package com.example.sorena.wanandroidapp.manager;
 
+import android.app.Activity;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.example.sorena.wanandroidapp.R;
+import com.example.sorena.wanandroidapp.bean.User;
+import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
+import com.example.sorena.wanandroidapp.util.HttpUtil;
+import com.example.sorena.wanandroidapp.util.JSONUtil;
+import com.example.sorena.wanandroidapp.util.JudgeUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
+import com.example.sorena.wanandroidapp.util.MyApplication;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,7 +40,7 @@ public class CollectManager
         adapters = new ArrayList<>();
     }
 
-    public CollectManager getInstance(){
+    public static CollectManager getInstance(){
         return collectManager;
     }
 
@@ -39,13 +49,12 @@ public class CollectManager
         adapters.add(adapter);
     }
 
-
-    public boolean isCollect(int id){
-        return collectSet.contains(id);
+    public void unResisterAdapter(BaseAdapter adapter){
+        adapters.remove(adapter);
     }
 
-    public void addCollect(int id){
-        collectSet.add(id);
+    public void addCollect(int id, ImageView imageView, Activity activity){
+        sendCollectData(id,imageView,activity);
         noticeDataChange();
     }
 
@@ -65,6 +74,42 @@ public class CollectManager
             LogUtil.e("日志:CollectManager",e.getMessage());
         }
     }
+
+    private void sendCollectData(int id, ImageView imageView, Activity activity){
+
+        String address = "https://www.wanandroid.com/lg/collect/" + id + "/json";
+        User user = SharedPreferencesHelper.getUserData();
+        if (user.dataIsNull()){
+            return;
+        }
+        HttpUtil.sendHttpPostRequestWithCookie(address, new String[]{"loginUserName", "loginUserPassword"},
+                new String[]{user.getUserName(), user.getUserPassword()}, null, null, new HttpUtil.HttpCallBackListener() {
+                    @Override
+                    public void onFinish(String response) {
+                        String errorMessage = JSONUtil.getValue("errorMsg",response,new String[]{});
+                        if (errorMessage == null) {
+                            LogUtil.d("日志:转化错误", errorMessage);
+                        }
+                        activity.runOnUiThread(()->{
+                            if (errorMessage.equals("")){
+                                collectSet.add(id);
+                                if (imageView != null){
+                                    imageView.setImageResource(R.drawable.ic_collect_selected);
+                                    imageView.setTag(R.drawable.ic_collect_selected);
+                                }
+                            }
+                            else {
+                                Toast.makeText(activity,"因为不可描述的原因,收藏失败啦",Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                    @Override
+                    public void onError(Exception e) {}
+                });
+    }
+
+
+
 
 
 

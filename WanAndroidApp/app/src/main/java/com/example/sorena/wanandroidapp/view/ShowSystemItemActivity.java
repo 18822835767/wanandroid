@@ -60,9 +60,9 @@ public class ShowSystemItemActivity extends AppCompatActivity {
     private void initView(){
 
         mMySystemBar = findViewById(R.id.mySystemBar);
-        mSystemSwipeRefreshLayoutRefresh = findViewById(R.id.system_SwipeRefreshLayout_refresh);
-        mSystemListViewShowItem = findViewById(R.id.system_listView_showItem);
-        mSystemTextViewNoMessage = findViewById(R.id.system_textView_noMessage);
+        mSystemSwipeRefreshLayoutRefresh = findViewById(R.id.collect_SwipeRefreshLayout_refresh);
+        mSystemListViewShowItem = findViewById(R.id.collect_listView_showItem);
+        mSystemTextViewNoMessage = findViewById(R.id.collect_textView_noMessage);
         mMySystemBarTextViewMessage = findViewById(R.id.mySystemBar_textView_message);
         mMySystemBarTextViewMessage.setText(mFlowItem.getName());
         mSystemListViewShowItem.setOnScrollListener(new AbsListView.OnScrollListener() {

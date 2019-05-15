@@ -1,5 +1,6 @@
 package com.example.sorena.wanandroidapp.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.bean.Article;
+import com.example.sorena.wanandroidapp.manager.CollectManager;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 
 import java.util.ArrayList;
@@ -99,9 +101,8 @@ public class BaseArticleAdapter extends BaseAdapter
                         try {
                             ImageView imageView = (ImageView)v;
                             if (imageView.getTag().equals(R.drawable.ic_collect_normal)){
-                                imageView.setImageResource(R.drawable.ic_collect_selected);
-                                imageView.setTag(R.drawable.ic_collect_selected);
                                 collections.add(((Article) getItem(position)).getId());
+                                CollectManager.getInstance().addCollect(((Article) getItem(position)).getId(),viewHolder.articleImageViewCollect,(Activity)context);
                             }else {
                                 imageView.setImageResource(R.drawable.ic_collect_normal);
                                 imageView.setTag(R.drawable.ic_collect_normal);
