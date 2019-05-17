@@ -80,12 +80,12 @@ public class ShowCollectActivity extends AppCompatActivity {
                     View lastVisibleItemView = mShowCollectActivityListViewShowCollects.getChildAt(mShowCollectActivityListViewShowCollects.getChildCount() - 1);
                     if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mShowCollectActivityListViewShowCollects.getHeight()) {
                         loadNextPageData();
+                        LogUtil.d("日志:ShowCollectActivity","加载下一页");
                     }
                 }
                 //其他时候设置不可刷新
                 else {
                     mShowCollectActivitySwipeRefreshLayoutRefresh.setEnabled(false);
-                    LogUtil.d("日志:滚动中:","设置为不能上拉");
                 }
             }
 
@@ -127,6 +127,7 @@ public class ShowCollectActivity extends AppCompatActivity {
 
     private void loadNextPageData(){
         if (nextPage > maxPage){
+            LogUtil.d("日志:ShowCollectActivity","nextPage:" + nextPage + "   maxPage:" + maxPage);
             return;
         }
         HttpUtil.sendHttpGetRequestWithCookie("https://www.wanandroid.com/lg/collect/list/"+nextPage+"/json",
@@ -136,6 +137,7 @@ public class ShowCollectActivity extends AppCompatActivity {
                     @Override
                     public void onFinish(String response) {
                         nextPage++;
+                        LogUtil.d("日志:response",response);
                         mArticle = parseData(response);
                         runOnUiThread(()->{
                             mArticleAdapter.addData(mArticle);
@@ -156,18 +158,25 @@ public class ShowCollectActivity extends AppCompatActivity {
 
     private List<Article> parseData(String jsonString){
         String data = JSONUtil.getValue("datas",jsonString,new String[]{"data"});
-        Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,new String[]{"author","link","title","niceDate","chapterName","id"});
+        String max = JSONUtil.getValue("pageCount",jsonString,new String[]{"data"});
+        maxPage = Integer.parseInt(max) - 1;
+        Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,new String[]{"author","link","title","niceDate","chapterName","originId"});
         List<String> authors = stringListMap.get("author");
         List<String> links = stringListMap.get("link");
         List<String> titles = stringListMap.get("title");
         List<String> niceDates = stringListMap.get("niceDate");
         List<String> chapterNames = stringListMap.get("chapterName");
-        List<String> ids = stringListMap.get("id");
+        List<String> ids = stringListMap.get("originId");
         ArrayList<Article> articles = new ArrayList<>();
         if (authors == null) return null;
         for (int i = 0; i < authors.size() ; i++) {
-            articles.add(new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i))));
+            articles.add(new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i)),true));
         }
         return articles;
     }
+
+
+
+
+
 }

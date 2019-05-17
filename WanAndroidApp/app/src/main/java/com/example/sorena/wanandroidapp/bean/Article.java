@@ -10,13 +10,14 @@ public class Article
     private Integer id;
     private boolean collect;
 
-    public Article(String author, String link, String title, String niceDate, String chapterName , int id) {
+    public Article(String author, String link, String title, String niceDate, String chapterName , int id, boolean collect) {
         this.author = author;
         this.link = link;
         this.title = title;
         this.niceDate = niceDate;
         this.chapterName = chapterName;
         this.id = id;
+        this.collect = collect;
     }
 
     public String getAuthor() {
@@ -84,6 +85,7 @@ public class Article
                 ", niceDate='" + niceDate + '\'' +
                 ", chapterName='" + chapterName + '\'' +
                 ", id=" + id +
+                ", collect=" + collect +
                 '}';
     }
 }

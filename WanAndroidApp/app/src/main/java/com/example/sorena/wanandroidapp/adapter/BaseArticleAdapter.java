@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import android.widget.TextView;
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.bean.Article;
 import com.example.sorena.wanandroidapp.manager.CollectManager;
+import com.example.sorena.wanandroidapp.manager.OldCollectManager;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 
 import java.util.ArrayList;
@@ -26,7 +26,6 @@ public class BaseArticleAdapter extends BaseAdapter
 {
     private List<Article> allArticle;
     private Context context;
-    private Set<Integer> collections;
     private int resourceId;
     private int toppingNum;
 
@@ -38,9 +37,19 @@ public class BaseArticleAdapter extends BaseAdapter
         allArticle.addAll(toppingArticle);
         allArticle.addAll(normalArticle);
         toppingNum = toppingArticle.size();
-        collections = new HashSet<>();
+        addToCollectManagerSet(allArticle);
     }
 
+    private void addToCollectManagerSet(List<Article> articleList){
+        if (articleList == null){
+            return;
+        }
+        for (Article article: articleList) {
+            if (article.isCollect()){
+                CollectManager.getInstance().addToCollectSet(article.getId());
+            }
+        }
+    }
 
 
 
@@ -86,7 +95,7 @@ public class BaseArticleAdapter extends BaseAdapter
         viewHolder.articleTextViewChapterName.setText(article.getChapterName());
         viewHolder.articleTextViewTitle.setText(article.getTitle());
         viewHolder.articleTextViewTime.setText(article.getNiceDate());
-        if (collections.contains(article.getId())){
+        if (CollectManager.getInstance().isCollect(article.getId())){
             viewHolder.articleImageViewCollect.setImageResource(R.drawable.ic_collect_selected);
             viewHolder.articleImageViewCollect.setTag(R.drawable.ic_collect_selected);
         }else {
@@ -101,12 +110,9 @@ public class BaseArticleAdapter extends BaseAdapter
                         try {
                             ImageView imageView = (ImageView)v;
                             if (imageView.getTag().equals(R.drawable.ic_collect_normal)){
-                                collections.add(((Article) getItem(position)).getId());
                                 CollectManager.getInstance().addCollect(((Article) getItem(position)).getId(),viewHolder.articleImageViewCollect,(Activity)context);
                             }else {
-                                imageView.setImageResource(R.drawable.ic_collect_normal);
-                                imageView.setTag(R.drawable.ic_collect_normal);
-                                collections.remove(((Article) getItem(position)).getId());
+                                CollectManager.getInstance().cancelCollect(((Article) getItem(position)).getId(),viewHolder.articleImageViewCollect,(Activity)context);
                             }
                         }catch (ClassCastException e){
                             e.printStackTrace();
@@ -137,7 +143,7 @@ public class BaseArticleAdapter extends BaseAdapter
     public void addNormalArticleData(List<Article> articles){
         if (articles != null && this.allArticle != articles){
             this.allArticle.addAll(articles);
-
+            addToCollectManagerSet(articles);
         }
         notifyDataSetChanged();
     }
@@ -165,6 +171,7 @@ public class BaseArticleAdapter extends BaseAdapter
             allArticle.addAll(toppingArticle);
         }
         toppingNum = toppingArticle.size();
+        addToCollectManagerSet(toppingArticle);
         notifyDataSetChanged();
     }
 

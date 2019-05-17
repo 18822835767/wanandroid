@@ -17,6 +17,8 @@ import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SearchHistoryDataBaseHelper;
 import com.example.sorena.wanandroidapp.db.SearchHistoryDataBaseOperator;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
+import com.example.sorena.wanandroidapp.manager.CollectManager;
+import com.example.sorena.wanandroidapp.manager.OldCollectManager;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
 import com.example.sorena.wanandroidapp.view.AccountActivity;
 import com.example.sorena.wanandroidapp.view.ShowCollectActivity;
@@ -117,6 +119,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.mainActivity_LinearLayout_exit:
                 SharedPreferencesHelper.delData();
+                CollectManager.getInstance().clearCollectSet();
                 mTextViewShowUserName.setVisibility(View.GONE);
                 break;
             case R.id.mainActivity_LinearLayout_collect:
