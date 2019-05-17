@@ -1,5 +1,6 @@
 package com.example.sorena.wanandroidapp.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.bean.Article;
+import com.example.sorena.wanandroidapp.manager.CollectManager;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 
 import java.util.HashSet;
@@ -23,18 +25,14 @@ public class SystemArticleBaseAdapter extends BaseAdapter
     private List<Article> allArticle;
     private int resourceId;
     private Context context;
-    private Set<Integer> collections;
+
 
 
     public SystemArticleBaseAdapter(Context context, int resourceId, @NonNull List<Article> allArticle, Set<Integer> collections){
         this.context = context;
         this.resourceId = resourceId;
         this.allArticle = allArticle;
-        if (collections != null){
-            this.collections = collections;
-        }else {
-            this.collections = new HashSet<>();
-        }
+        CollectManager.getInstance().addToCollectSet(allArticle);
     }
 
 
@@ -79,7 +77,7 @@ public class SystemArticleBaseAdapter extends BaseAdapter
         viewHolder.articleTextViewChapterName.setText(article.getChapterName());
         viewHolder.articleTextViewTitle.setText(article.getTitle());
         viewHolder.articleTextViewTime.setText(article.getNiceDate());
-        if (collections.contains(article.getId())){
+        if (CollectManager.getInstance().isCollect(article.getId())){
             viewHolder.articleImageViewCollect.setImageResource(R.drawable.ic_collect_selected);
             viewHolder.articleImageViewCollect.setTag(R.drawable.ic_collect_selected);
         }else {
@@ -94,17 +92,13 @@ public class SystemArticleBaseAdapter extends BaseAdapter
                         try {
                             ImageView imageView = (ImageView)v;
                             if (imageView.getTag().equals(R.drawable.ic_collect_normal)){
-                                imageView.setImageResource(R.drawable.ic_collect_selected);
-                                imageView.setTag(R.drawable.ic_collect_selected);
-                                collections.add(((Article) getItem(position)).getId());
+                                CollectManager.getInstance().addCollect(article.getId(),imageView,(Activity)context);
                             }else {
-                                imageView.setImageResource(R.drawable.ic_collect_normal);
-                                imageView.setTag(R.drawable.ic_collect_normal);
-                                collections.remove(((Article) getItem(position)).getId());
+                                CollectManager.getInstance().cancelCollect(article.getId(),imageView,(Activity)context);
                             }
                         }catch (ClassCastException e){
                             e.printStackTrace();
-                            LogUtil.d("日志:警告","不能强制转化");
+                            LogUtil.e("日志:警告","不能强制转化");
                         }
                 }
             }
@@ -131,6 +125,7 @@ public class SystemArticleBaseAdapter extends BaseAdapter
     public void addData(List<Article> articles){
         if (articles != null && this.allArticle != articles){
             this.allArticle.addAll(articles);
+            CollectManager.getInstance().addToCollectSet(articles);
         }
         notifyDataSetChanged();
     }

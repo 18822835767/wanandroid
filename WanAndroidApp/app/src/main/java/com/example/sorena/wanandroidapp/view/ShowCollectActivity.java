@@ -12,19 +12,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sorena.wanandroidapp.R;
-import com.example.sorena.wanandroidapp.adapter.BaseArticleAdapter;
 import com.example.sorena.wanandroidapp.adapter.CollectionAdapter;
+import com.example.sorena.wanandroidapp.adapter.SystemArticleBaseAdapter;
 import com.example.sorena.wanandroidapp.bean.Article;
 import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JSONUtil;
-import com.example.sorena.wanandroidapp.util.JudgeUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
 import com.example.sorena.wanandroidapp.widget.SystemBarLayout;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -33,12 +33,13 @@ public class ShowCollectActivity extends AppCompatActivity {
     private ListView mShowCollectActivityListViewShowCollects;
     private SwipeRefreshLayout mShowCollectActivitySwipeRefreshLayoutRefresh;
     private SystemBarLayout mShowCollectActivitySystemBarLayoutBar;
-    private CollectionAdapter mArticleAdapter;
     private TextView nMessageTextView;
+    private SystemArticleBaseAdapter mArticleAdapter;
     private List<Article> mArticle;
     private User user;
     private int nextPage = 0;
     private int maxPage = 0;
+
 
 
     @Override
@@ -48,18 +49,20 @@ public class ShowCollectActivity extends AppCompatActivity {
         ViewUtil.cancelActionBar(this);
         init();
         loadNextPageData();
+
     }
 
     private void init(){
-        user = SharedPreferencesHelper.getUserData();
-        mShowCollectActivityListViewShowCollects = findViewById(R.id.showCollectActivity_ListView_showCollects);
-        mShowCollectActivitySwipeRefreshLayoutRefresh = findViewById(R.id.showCollectActivity_SwipeRefreshLayout_refresh);
-        mArticleAdapter = new CollectionAdapter(this,R.layout.article_item_layout,new ArrayList<>());
-        mShowCollectActivityListViewShowCollects.setAdapter(mArticleAdapter);
         nMessageTextView = findViewById(R.id.mySystemBar_textView_message);
-        mShowCollectActivitySystemBarLayoutBar = findViewById(R.id.showCollectActivity_SystemBarLayout_bar);
+        mShowCollectActivitySwipeRefreshLayoutRefresh = findViewById(R.id.collect_SwipeRefreshLayout_refresh);
+        mShowCollectActivitySystemBarLayoutBar = findViewById(R.id.mySystemBar);
         nMessageTextView.setText("收藏");
-        mShowCollectActivityListViewShowCollects.setVisibility(View.VISIBLE);
+        user = SharedPreferencesHelper.getUserData();
+        mShowCollectActivityListViewShowCollects = findViewById(R.id.collect_listView_showItem);
+        mArticleAdapter = new SystemArticleBaseAdapter(this,R.layout.article_item_layout,new ArrayList<>(),new HashSet<>());
+        mShowCollectActivityListViewShowCollects.setAdapter(mArticleAdapter);
+
+
         mShowCollectActivityListViewShowCollects.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -67,9 +70,9 @@ public class ShowCollectActivity extends AppCompatActivity {
                 if (firstVisibleItem == 0) {
                     View firstVisibleItemView = mShowCollectActivityListViewShowCollects.getChildAt(0);
                     if (firstVisibleItemView != null && firstVisibleItemView.getTop() == 0) {
-                        mShowCollectActivityListViewShowCollects.setEnabled(true);
+                        mShowCollectActivitySwipeRefreshLayoutRefresh.setEnabled(true);
                     } else {
-                        mShowCollectActivityListViewShowCollects.setEnabled(false);
+                        mShowCollectActivitySwipeRefreshLayoutRefresh.setEnabled(false);
                     }
                 }
                 //到底部时,自动加载下一页
@@ -77,7 +80,12 @@ public class ShowCollectActivity extends AppCompatActivity {
                     View lastVisibleItemView = mShowCollectActivityListViewShowCollects.getChildAt(mShowCollectActivityListViewShowCollects.getChildCount() - 1);
                     if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mShowCollectActivityListViewShowCollects.getHeight()) {
                         loadNextPageData();
+                        LogUtil.d("日志:ShowCollectActivity","加载下一页");
                     }
+                }
+                //其他时候设置不可刷新
+                else {
+                    mShowCollectActivitySwipeRefreshLayoutRefresh.setEnabled(false);
                 }
             }
 
@@ -93,6 +101,7 @@ public class ShowCollectActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         mShowCollectActivitySwipeRefreshLayoutRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -117,20 +126,22 @@ public class ShowCollectActivity extends AppCompatActivity {
 
 
     private void loadNextPageData(){
-
         if (nextPage > maxPage){
+            LogUtil.d("日志:ShowCollectActivity","nextPage:" + nextPage + "   maxPage:" + maxPage);
             return;
         }
-        HttpUtil.sendHttpRequestWithCookie("https://www.wanandroid.com/lg/collect/list/"+nextPage+"/json",
+        HttpUtil.sendHttpGetRequestWithCookie("https://www.wanandroid.com/lg/collect/list/"+nextPage+"/json",
                 new String[]{"loginUserName", "loginUserPassword"},
                 new String[]{user.getUserName(), user.getUserPassword()},
                 new HttpUtil.HttpCallBackListener() {
                     @Override
                     public void onFinish(String response) {
                         nextPage++;
+                        LogUtil.d("日志:response",response);
                         mArticle = parseData(response);
                         runOnUiThread(()->{
                             mArticleAdapter.addData(mArticle);
+                            mArticleAdapter.notifyDataSetChanged();
                             if (mShowCollectActivitySwipeRefreshLayoutRefresh.isRefreshing()){
                                 mShowCollectActivitySwipeRefreshLayoutRefresh.setRefreshing(false);
                             }
@@ -147,18 +158,25 @@ public class ShowCollectActivity extends AppCompatActivity {
 
     private List<Article> parseData(String jsonString){
         String data = JSONUtil.getValue("datas",jsonString,new String[]{"data"});
-        Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,new String[]{"author","link","title","niceDate","chapterName","id"});
+        String max = JSONUtil.getValue("pageCount",jsonString,new String[]{"data"});
+        maxPage = Integer.parseInt(max) - 1;
+        Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,new String[]{"author","link","title","niceDate","chapterName","originId"});
         List<String> authors = stringListMap.get("author");
         List<String> links = stringListMap.get("link");
         List<String> titles = stringListMap.get("title");
         List<String> niceDates = stringListMap.get("niceDate");
         List<String> chapterNames = stringListMap.get("chapterName");
-        List<String> ids = stringListMap.get("id");
+        List<String> ids = stringListMap.get("originId");
         ArrayList<Article> articles = new ArrayList<>();
         if (authors == null) return null;
         for (int i = 0; i < authors.size() ; i++) {
-            articles.add(new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i))));
+            articles.add(new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i)),true));
         }
         return articles;
     }
+
+
+
+
+
 }

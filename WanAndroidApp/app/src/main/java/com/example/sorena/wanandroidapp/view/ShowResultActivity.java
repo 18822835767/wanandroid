@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.adapter.SearchResultListAdapter;
 import com.example.sorena.wanandroidapp.bean.SearchResult;
+import com.example.sorena.wanandroidapp.bean.User;
+import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JudgeUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
@@ -39,8 +42,6 @@ public class ShowResultActivity extends AppCompatActivity {
     private String data;
     private int nextPage = 0;
     private int maxPage = 10;
-
-
 
 
     @Override
@@ -128,7 +129,9 @@ public class ShowResultActivity extends AppCompatActivity {
 
     private void initData(){
 
-        HttpUtil.sendPostRequest("https://www.wanandroid.com/article/query/0/json", new String[]{"k"}, new String[]{data}, new HttpUtil.HttpCallBackListener() {
+        User user = SharedPreferencesHelper.getUserData();
+        HttpUtil.sendHttpPostRequestWithCookie("https://www.wanandroid.com/article/query/0/json",  new String[]{"loginUserName", "loginUserPassword"},
+                new String[]{user.getUserName(), user.getUserPassword()},new String[]{"k"}, new String[]{data}, new HttpUtil.HttpCallBackListener() {
             @Override
             public void onFinish(String response) {
 
@@ -155,7 +158,9 @@ public class ShowResultActivity extends AppCompatActivity {
         if (nextPage > maxPage){
             return;
         }
-        HttpUtil.sendPostRequest("https://www.wanandroid.com/article/query/"+nextPage+"/json", new String[]{"k"}, new String[]{data}, new HttpUtil.HttpCallBackListener() {
+        User user = SharedPreferencesHelper.getUserData();
+        HttpUtil.sendHttpPostRequestWithCookie("https://www.wanandroid.com/article/query/"+nextPage+"/json", new String[]{"loginUserName", "loginUserPassword"},
+                new String[]{user.getUserName(), user.getUserPassword()}, new String[]{"k"}, new String[]{data}, new HttpUtil.HttpCallBackListener() {
             @Override
             public void onFinish(String response) {
                 LogUtil.d("日志","response:" + response);
@@ -191,11 +196,13 @@ public class ShowResultActivity extends AppCompatActivity {
         List<String> dates = dataMap.get("niceDate");
         List<String> collects = dataMap.get("collect");
         List<SearchResult> results = new LinkedList<>();
+        LogUtil.d("日志:collect:",collects.toString());
+        LogUtil.d("日志:response",response);
         if (JudgeUtil.dataContainsNull(authors,chapterNames,links,superChapters,titles,ids,dates,collects)){
             return results;
         }
         for (int i = 0; i < authors.size() ; i++){
-            results.add(new SearchResult(authors.get(i),chapterNames.get(i),superChapters.get(i),delHTMLTag(titles.get(i)),Integer.parseInt(ids.get(i)),links.get(i),Boolean.parseBoolean(links.get(i)),dates.get(i)));
+            results.add(new SearchResult(authors.get(i),chapterNames.get(i),superChapters.get(i),delHTMLTag(titles.get(i)),Integer.parseInt(ids.get(i)),links.get(i),Boolean.parseBoolean(collects.get(i)),dates.get(i)));
         }
         return results;
     }

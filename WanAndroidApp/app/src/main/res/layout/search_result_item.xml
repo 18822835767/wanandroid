@@ -111,7 +111,7 @@
     <ImageView
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:id="@+id/searchResult_textView_showCollect"
+        android:id="@+id/searchResult_imageView_showCollect"
         android:src="@drawable/ic_collect_normal"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"

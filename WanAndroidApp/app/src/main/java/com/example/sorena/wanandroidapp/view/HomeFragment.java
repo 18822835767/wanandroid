@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.ListViewAutoScrollHelper;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,8 @@ import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.adapter.BaseArticleAdapter;
 import com.example.sorena.wanandroidapp.adapter.LooperPagerAdapter;
 import com.example.sorena.wanandroidapp.bean.Article;
+import com.example.sorena.wanandroidapp.bean.User;
+import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
 import com.example.sorena.wanandroidapp.util.BaseFragment;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JSONUtil;
@@ -30,7 +33,8 @@ import java.util.List;
 import java.util.Map;
 
 public class HomeFragment extends BaseFragment implements
-        MyViewPager.OnViewPagerTouchListener, MyViewPager.OnPageChangeListener , View.OnClickListener , MyViewPager.OpenWeb{
+        MyViewPager.OnViewPagerTouchListener, MyViewPager.OnPageChangeListener, View.OnClickListener,
+        MyViewPager.OpenWeb{
 
     //轮播图viewPager
     private MyViewPager mLoopViewPager;
@@ -50,7 +54,6 @@ public class HomeFragment extends BaseFragment implements
     private TextView mLoopTextViewShowMessage;
     //轮播图右下角的信息
     private TextView mLoopTextViewShowPosition;
-
     //普通文章数据列表
     private List<Article> mNormalArticleList = null;
     //置顶文章数据列表
@@ -169,7 +172,7 @@ public class HomeFragment extends BaseFragment implements
                     return;
                 }
                 mArticleAdapter.clearData();
-                mArticleAdapter.resetToppingArticle(mToppingArticleList);
+                refreshToppingData();
                 loadNextPageNormalData();
             }
         });
@@ -215,17 +218,20 @@ public class HomeFragment extends BaseFragment implements
                 mArticleAdapter = new BaseArticleAdapter(getActivity(),R.layout.article_item_layout, mNormalArticleList,mToppingArticleList);
                 mHomeListViewShowArticle.setAdapter(mArticleAdapter);
                 mHomeListViewShowArticle.setVisibility(View.VISIBLE);
-
             }
         });
     }
 
     private void loadNextPageNormalData(){
-
         new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpUtil.sendHttpRequest("https://www.wanandroid.com/article/list/" + nextLoadingNormalPage + "/json", new HttpUtil.HttpCallBackListener() {
+                User user = SharedPreferencesHelper.getUserData();
+                HttpUtil.sendHttpGetRequestWithCookie("https://www.wanandroid.com/article/list/"
+                                + nextLoadingNormalPage + "/json",
+                        new String[]{"loginUserName","loginUserPassword"},
+                        new String[]{user.getUserName(),user.getUserPassword()},
+                        new HttpUtil.HttpCallBackListener() {
                     @Override
                     public void onFinish(String response) {
 
@@ -256,59 +262,101 @@ public class HomeFragment extends BaseFragment implements
     private List<Article> parseData(String jsonString){
 
         String data = JSONUtil.getValue("datas",jsonString,new String[]{"data"});
-        Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,new String[]{"author","link","title","niceDate","chapterName","id"});
+        Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,new String[]{"author","link","title","niceDate","chapterName","id","collect"});
         List<String> authors = stringListMap.get("author");
         List<String> links = stringListMap.get("link");
         List<String> titles = stringListMap.get("title");
         List<String> niceDates = stringListMap.get("niceDate");
         List<String> chapterNames = stringListMap.get("chapterName");
         List<String> ids = stringListMap.get("id");
+        List<String> collects = stringListMap.get("collect");
         ArrayList<Article> articles = new ArrayList<>();
         if (authors == null) return null;
         for (int i = 0; i < authors.size() ; i++) {
-            articles.add(new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i))));
+            articles.add(new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i)),Boolean.parseBoolean(collects.get(i))));
         }
         return articles;
     }
 
-
     private void getData(){
-
         loadNextPageNormalData();
+        loadToppingData();
+    }
 
+    private void loadToppingData(){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpUtil.sendHttpRequest("https://www.wanandroid.com/article/top/json", new HttpUtil.HttpCallBackListener() {
-                    @Override
-                    public void onFinish(String response) {
-                        String data = JSONUtil.getValue("data",response,new String[]{});
-                        System.out.println(data);
-                        Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,new String[]{"author","link","title","niceDate","chapterName","id"});List<String> authors = stringListMap.get("author");
-                        List<String> links = stringListMap.get("link");
-                        List<String> titles = stringListMap.get("title");
-                        List<String> niceDates = stringListMap.get("niceDate");
-                        List<String> chapterNames = stringListMap.get("chapterName");
-                        List<String> ids = stringListMap.get("id");
-                        mToppingArticleList = new ArrayList<>();
-                        if (authors == null) return;
-                        for (int i = 0; i < authors.size() ; i++) {
-                            mToppingArticleList.add(new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i))));
-                        }
-                        mToppingIsLoadingFinish = true;
-                        noticeDataLoadingStatusChange();
-                    }
+                User user = SharedPreferencesHelper.getUserData();
+                HttpUtil.sendHttpGetRequestWithCookie("https://www.wanandroid.com/article/top/json",
+                        new String[]{"loginUserName","loginUserPassword"},
+                        new String[]{user.getUserName(),user.getUserPassword()},
+                        new HttpUtil.HttpCallBackListener() {
+                            @Override
+                            public void onFinish(String response) {
+                                String data = JSONUtil.getValue("data",response,new String[]{});
+                                Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,new String[]{"author","link","title","niceDate","chapterName","id","collect"});
+                                List<String> authors = stringListMap.get("author");
+                                List<String> links = stringListMap.get("link");
+                                List<String> titles = stringListMap.get("title");
+                                List<String> niceDates = stringListMap.get("niceDate");
+                                List<String> chapterNames = stringListMap.get("chapterName");
+                                List<String> ids = stringListMap.get("id");
+                                List<String> collects = stringListMap.get("collect");
+                                mToppingArticleList = new ArrayList<>();
+                                if (authors == null) return;
+                                for (int i = 0; i < authors.size() ; i++) {
+                                    mToppingArticleList.add(new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i)),Boolean.parseBoolean(collects.get(i))));
+                                }
+                                mToppingIsLoadingFinish = true;
+                                noticeDataLoadingStatusChange();
+                            }
 
-                    @Override
-                    public void onError(Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-
+                            @Override
+                            public void onError(Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
             }
         }).start();
+    }
+
+    private void refreshToppingData(){
+        new Thread(()->{
+            User user = SharedPreferencesHelper.getUserData();
+            HttpUtil.sendHttpGetRequestWithCookie("https://www.wanandroid.com/article/top/json",
+                    new String[]{"loginUserName","loginUserPassword"},
+                    new String[]{user.getUserName(),user.getUserPassword()},
+                    new HttpUtil.HttpCallBackListener() {
+                        @Override
+                        public void onFinish(String response) {
+                            String data = JSONUtil.getValue("data",response,new String[]{});
+                            Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,new String[]{"author","link","title","niceDate","chapterName","id","collect"});
+                            List<String> authors = stringListMap.get("author");
+                            List<String> links = stringListMap.get("link");
+                            List<String> titles = stringListMap.get("title");
+                            List<String> niceDates = stringListMap.get("niceDate");
+                            List<String> chapterNames = stringListMap.get("chapterName");
+                            List<String> ids = stringListMap.get("id");
+                            List<String> collects = stringListMap.get("collect");
+                            List<Article> articles = new ArrayList<>();
+                            if (authors == null) return;
+                            for (int i = 0; i < authors.size() ; i++) {
+                                articles.add(new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i)),Boolean.parseBoolean(collects.get(i))));
+                            }
+                            getActivity().runOnUiThread(()-> mArticleAdapter.resetToppingArticle(articles));
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+        }).start();
+
 
     }
+
 
 
     @Override
@@ -360,7 +408,6 @@ public class HomeFragment extends BaseFragment implements
     public void onPageScrollStateChanged(int i) {
 
     }
-
 
     //View.OnClickListener相关方法
     @Override

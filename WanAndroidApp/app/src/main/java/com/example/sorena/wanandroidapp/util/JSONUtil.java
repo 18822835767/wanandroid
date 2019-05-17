@@ -122,7 +122,8 @@ public class JSONUtil
             return "";
         }
         StringBuilder sb = new StringBuilder();
-        for (int i = 0 ; i < keys.length ; i++){
+        int size  = Math.min(keys.length,values.length);
+        for (int i = 0 ; i < size ; i++){
             sb.append(keys[i]).append("=").append(values[i]).append("&");
         }
         sb.replace(sb.length() - 1,sb.length(),"");

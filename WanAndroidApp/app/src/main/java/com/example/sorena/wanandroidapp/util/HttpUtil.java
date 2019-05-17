@@ -103,8 +103,8 @@ public class HttpUtil
         }}).start();
     }
 
-    public static void sendHttpRequestWithCookie(String address,String[] cookieKeys,
-                                                 String[] cookiesValues,HttpCallBackListener listener){
+    public static void sendHttpGetRequestWithCookie(String address, String[] cookieKeys,
+                                                    String[] cookiesValues, HttpCallBackListener listener){
 
         String cookie = JSONUtil.getCookieString(cookieKeys,cookiesValues);
         new Thread(new Runnable() {
@@ -143,6 +143,54 @@ public class HttpUtil
             }
         }).start();
     }
+
+    public static void sendHttpPostRequestWithCookie(String address, String[] cookieKeys,
+                                                    String[] cookiesValues, String[] keys,String[] values,
+                                                     HttpCallBackListener listener){
+
+        String cookie = JSONUtil.getCookieString(cookieKeys,cookiesValues);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection connection = null;
+                try {
+                    URL url = new URL(address);
+                    connection = (HttpURLConnection)url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setConnectTimeout(8000);
+                    connection.setReadTimeout(8000);
+                    connection.setDoInput(true);
+                    connection.setDoOutput(true);
+                    connection.addRequestProperty("Cookie",cookie);
+                    DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
+                    outputStream.write(JSONUtil.getPramsString(keys,values).getBytes());
+                    InputStream in = connection.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null){
+                        response.append(line);
+                    }
+                    if (listener != null) {
+                        listener.onFinish(response.toString());
+                    }
+                }catch (Exception e){
+                    Log.d("日志:HttpUtilException",e.getMessage());
+                    if (listener != null) {
+                        listener.onError(e);
+                    }
+                }finally {
+                    if( connection != null){
+                        connection.disconnect();
+                    }
+                }
+
+            }
+        }).start();
+    }
+
+
+
 
 
 

@@ -1,8 +1,10 @@
 package com.example.sorena.wanandroidapp.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.bean.ProjectListItem;
+import com.example.sorena.wanandroidapp.manager.CollectManager;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.util.NetImageLoad;
 import com.example.sorena.wanandroidapp.view.WebActivity;
@@ -33,16 +36,7 @@ public class ProjectListItemAdapter extends BaseAdapter
         this.resourceId = resourceId;
         this.bitmapMap = new HashMap<>();
         this.context = context;
-        LogUtil.i("日志","创建适配器");
-        //在这里加载也莫得用处......
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                for (int i = 0; i < projectListItems.size(); i++) {
-//                    bitmapMap.put(projectListItems.get(i).getPictureLink(),PictureUtil.getBitmaps(projectListItems.get(i).getPictureLink()));
-//                }
-//            }
-//        }).start();
+        CollectManager.getInstance().addToCollectSetByProjectItem(projectListItems);
     }
 
     @Override
@@ -69,6 +63,7 @@ public class ProjectListItemAdapter extends BaseAdapter
 
         View view;
         ViewHolder viewHolder;
+        ProjectListItem item = projectListItems.get(position);
         if (convertView == null){
 
             view = LayoutInflater.from(context).inflate(R.layout.project_list_item,parent,false);
@@ -86,13 +81,36 @@ public class ProjectListItemAdapter extends BaseAdapter
             view = convertView;
             viewHolder = (ViewHolder)(view.getTag());
         }
-
         viewHolder.projectTextViewShowAuthor.setText(projectListItems.get(position).getAuthor());
         viewHolder.projectTextViewShowDescription.setText(projectListItems.get(position).getDescription());
         viewHolder.projectTextViewShowTime.setText(projectListItems.get(position).getDate());
         viewHolder.projectTextViewShowTitle.setText(projectListItems.get(position).getTitle());
-
-        ProjectListItem item = projectListItems.get(position);
+        if (CollectManager.getInstance().isCollect(item.getId())){
+            viewHolder.projectImageViewShowCollect.setImageResource(R.drawable.ic_collect_selected);
+            viewHolder.projectImageViewShowCollect.setTag(R.drawable.ic_collect_selected);
+        }else {
+            viewHolder.projectImageViewShowCollect.setImageResource(R.drawable.ic_collect_normal);
+            viewHolder.projectImageViewShowCollect.setTag(R.drawable.ic_collect_normal);
+        }
+        viewHolder.projectImageViewShowCollect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()){
+                    case R.id.project_imageView_showCollect:
+                        try {
+                            ImageView imageView = (ImageView)v;
+                            if (imageView.getTag().equals(R.drawable.ic_collect_normal)){
+                                CollectManager.getInstance().addCollect(item.getId(),imageView,(Activity)context);
+                            }else {
+                                CollectManager.getInstance().cancelCollect(item.getId(),imageView,(Activity)context);
+                            }
+                        }catch (ClassCastException e){
+                            e.printStackTrace();
+                            LogUtil.e("日志:SearchResultListAdapter:警告","不能强制转化");
+                        }
+                }
+            }
+        });
         final String downLoadURL = item.getPictureLink();
         viewHolder.projectImageViewShowProjectPicture.setTag(downLoadURL);
         if (bitmapMap.get(downLoadURL) == null){
@@ -135,6 +153,7 @@ public class ProjectListItemAdapter extends BaseAdapter
 
     public void addData(List<ProjectListItem> items){
         projectListItems.addAll(items);
+        CollectManager.getInstance().addToCollectSetByProjectItem(projectListItems);
         notifyDataSetChanged();
     }
 

@@ -23,7 +23,15 @@
         android:id="@+id/mySystemBar_textView_message"
         android:layout_centerInParent="true"/>
 
-
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_share"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="13dp"
+        android:id="@+id/mySystemBar_imageView_share"
+        android:visibility="gone"/>
 
 
 </RelativeLayout>

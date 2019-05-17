@@ -16,6 +16,8 @@ import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.adapter.SystemArticleBaseAdapter;
 import com.example.sorena.wanandroidapp.bean.Article;
 import com.example.sorena.wanandroidapp.bean.FlowItem;
+import com.example.sorena.wanandroidapp.bean.User;
+import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
@@ -60,9 +62,9 @@ public class ShowSystemItemActivity extends AppCompatActivity {
     private void initView(){
 
         mMySystemBar = findViewById(R.id.mySystemBar);
-        mSystemSwipeRefreshLayoutRefresh = findViewById(R.id.system_SwipeRefreshLayout_refresh);
-        mSystemListViewShowItem = findViewById(R.id.system_listView_showItem);
-        mSystemTextViewNoMessage = findViewById(R.id.system_textView_noMessage);
+        mSystemSwipeRefreshLayoutRefresh = findViewById(R.id.collect_SwipeRefreshLayout_refresh);
+        mSystemListViewShowItem = findViewById(R.id.collect_listView_showItem);
+        mSystemTextViewNoMessage = findViewById(R.id.collect_textView_noMessage);
         mMySystemBarTextViewMessage = findViewById(R.id.mySystemBar_textView_message);
         mMySystemBarTextViewMessage.setText(mFlowItem.getName());
         mSystemListViewShowItem.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -142,7 +144,11 @@ public class ShowSystemItemActivity extends AppCompatActivity {
 
         String url = "https://www.wanandroid.com/article/list/"+mNextPage+"/json?cid=" +mFlowItem.getId();
         LogUtil.d("日志:发送http",url);
-        HttpUtil.sendHttpRequest(url, new HttpUtil.HttpCallBackListener() {
+        User user = SharedPreferencesHelper.getUserData();
+        HttpUtil.sendHttpGetRequestWithCookie(url,
+                new String[]{"loginUserName", "loginUserPassword"},
+                new String[]{user.getUserName(), user.getUserPassword()},
+                new HttpUtil.HttpCallBackListener() {
             @Override
             public void onFinish(String response) {
                 //LogUtil.d("日志:返回response" , response);
@@ -160,19 +166,21 @@ public class ShowSystemItemActivity extends AppCompatActivity {
                     return;
                 }
                 String datas = getValue("datas",data,new String[]{});
-                Map<String,List<String>> stringListMap = getMapInArray(datas,new String[]{"author","id","link","niceDate","title","chapterName"});
+                Map<String,List<String>> stringListMap = getMapInArray(datas,new String[]{"author","id","link","niceDate","title","chapterName","collect"});
                 List<String> authors = stringListMap.get("author");
                 List<String> ids = stringListMap.get("id");
                 List<String> links = stringListMap.get("link");
                 List<String> niceDates = stringListMap.get("niceDate");
                 List<String> titles = stringListMap.get("title");
                 List<String> chapterNames = stringListMap.get("chapterName");
+                List<String> collects = stringListMap.get("collect");
                 final List<Article> articles = new ArrayList<>();
-                if (authors == null || ids == null || links == null || niceDates == null || titles == null || chapterNames == null){
+                if (authors == null || ids == null || links == null || niceDates == null || titles == null || chapterNames == null || collects == null){
+                    LogUtil.d("日志:","某个数据为空");
                     return;
                 }
                 for (int i = 0; i < authors.size(); i++) {
-                    Article article = new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i)));
+                    Article article = new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i)),Boolean.parseBoolean(collects.get(i)));
                     articles.add(article);
                 }
                 runOnUiThread(new Runnable() {
