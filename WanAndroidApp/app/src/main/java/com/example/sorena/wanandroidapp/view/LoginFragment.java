@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
-import com.example.sorena.wanandroidapp.util.BaseFragment;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JSONUtil;
 import com.example.sorena.wanandroidapp.util.JudgeUtil;

@@ -17,7 +17,6 @@ import com.example.sorena.wanandroidapp.bean.ProjectChapter;
 import com.example.sorena.wanandroidapp.bean.ProjectListItem;
 import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
-import com.example.sorena.wanandroidapp.util.BaseFragment;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 
 import java.util.ArrayList;

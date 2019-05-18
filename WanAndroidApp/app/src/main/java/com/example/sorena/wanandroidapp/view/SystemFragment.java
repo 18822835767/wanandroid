@@ -8,15 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.example.sorena.wanandroidapp.MainActivity;
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.adapter.SystemItemBaseAdapter;
 import com.example.sorena.wanandroidapp.bean.Character;
 import com.example.sorena.wanandroidapp.bean.FlowItem;
-import com.example.sorena.wanandroidapp.util.BaseFragment;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
-import com.example.sorena.wanandroidapp.util.LazyFragment;
-import com.example.sorena.wanandroidapp.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +21,7 @@ import java.util.Map;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getMapInArray;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getValue;
 
-public class SystemFragment extends LazyFragment {
+public class SystemFragment extends BaseFragment {
 
     private ListView mSystemListViewShowItem;
     private SystemItemBaseAdapter mAdapter;
@@ -48,12 +44,6 @@ public class SystemFragment extends LazyFragment {
         mSystemListViewShowItem = getActivity().findViewById(R.id.system_listView_showCharacterItem);
         mSystemListViewShowItem.setVisibility(View.GONE);
         getListData();
-    }
-
-    @Override
-    protected void lazyLoad() {
-
-        LogUtil.d("日志:" ,"SystemFragment加载数据");
     }
 
     private void getListData(){

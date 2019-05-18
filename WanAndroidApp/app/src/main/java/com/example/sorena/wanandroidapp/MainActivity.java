@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sorena.wanandroidapp.adapter.MainActivityViewPagerAdapter;
 import com.example.sorena.wanandroidapp.bean.User;
@@ -125,6 +126,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.mainActivity_LinearLayout_collect:
                 User user = SharedPreferencesHelper.getUserData();
                 if (user.dataIsNull()){
+                    Toast.makeText(this,R.string.request_login,Toast.LENGTH_SHORT).show();
                     return;
                 }
                 intent = new Intent(this,ShowCollectActivity.class);

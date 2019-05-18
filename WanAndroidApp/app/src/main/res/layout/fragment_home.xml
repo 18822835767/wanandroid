@@ -23,6 +23,13 @@
             >
         </ListView>
 
+
+
+        <com.example.sorena.wanandroidapp.widget.RefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </com.example.sorena.wanandroidapp.widget.RefreshLayout>
+
     </RelativeLayout>
 
 

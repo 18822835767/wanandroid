@@ -12,6 +12,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author sorena
+ * JSON解析工具类
+ */
 public class JSONUtil
 {
     private static final String TAG = "日志:JSONUtil";

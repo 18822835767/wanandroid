@@ -123,4 +123,34 @@ public class FlowLayoutFactory
     }
 
 
+    public static void setFlowLayout(FlowLayout flowLayout, final Context context, int resourceId, List<String> stringList, @Nullable List<Object> tags, @Nullable View.OnClickListener listener , boolean randomTextColor){
+
+        flowLayout.removeAllViews();
+        LayoutInflater inflater = LayoutInflater.from(context);
+        for (int i = 0; i < stringList.size(); i++)
+        {
+            final TextView tv = (TextView) inflater.inflate(resourceId ,flowLayout, false);
+            tv.setText(stringList.get(i));
+            if (tags != null && tags.size() > i){
+                tv.setTag(tags.get(i));
+            }
+            if (randomTextColor) {
+                Random random = new Random();
+                tv.setTextColor(Color.rgb(random.nextInt(256),random.nextInt(256),random.nextInt(256)));
+            }
+            if (listener != null){
+                tv.setOnClickListener(listener);
+            }else {
+                tv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(context,tv.getText(),Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
+            flowLayout.addView(tv);
+        }
+    }
+
 }

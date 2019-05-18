@@ -28,7 +28,6 @@
                android:layout_height="match_parent"
                android:layout_below="@+id/myBar"
                android:layout_above="@+id/main_radioGroup_bottomMenu">
-
            </android.support.v4.view.ViewPager>
 
            <RadioGroup

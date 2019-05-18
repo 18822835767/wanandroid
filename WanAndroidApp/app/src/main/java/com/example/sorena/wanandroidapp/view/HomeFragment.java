@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.ListViewAutoScrollHelper;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,10 +20,8 @@ import com.example.sorena.wanandroidapp.adapter.LooperPagerAdapter;
 import com.example.sorena.wanandroidapp.bean.Article;
 import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
-import com.example.sorena.wanandroidapp.util.BaseFragment;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JSONUtil;
-import com.example.sorena.wanandroidapp.util.LazyFragment;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.widget.MyViewPager;
 

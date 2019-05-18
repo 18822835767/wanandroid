@@ -56,6 +56,9 @@ public class CollectManager
         String address = "https://www.wanandroid.com/lg/collect/" + id + "/json";
         User user = SharedPreferencesHelper.getUserData();
         if (user.dataIsNull()){
+            activity.runOnUiThread(()->{
+                Toast.makeText(activity,R.string.request_login,Toast.LENGTH_SHORT).show();
+            });
             return;
         }
         HttpUtil.sendHttpPostRequestWithCookie(address, new String[]{"loginUserName", "loginUserPassword"},
@@ -97,11 +100,16 @@ public class CollectManager
         sendCancelCollectionData(id,imageView,activity);
     }
 
-
     private void sendCancelCollectionData(int id, ImageView imageView, Activity activity){
 
         String address = "https://www.wanandroid.com/lg/uncollect_originId/" + id +"/json";
         User user = SharedPreferencesHelper.getUserData();
+        if (user.dataIsNull()){
+            activity.runOnUiThread(()->{
+                Toast.makeText(activity,R.string.request_login,Toast.LENGTH_SHORT).show();
+            });
+            return;
+        }
         HttpUtil.sendHttpPostRequestWithCookie(address, new String[]{"loginUserName", "loginUserPassword"},
                 new String[]{user.getUserName(), user.getUserPassword()}, null, null,
                 new HttpUtil.HttpCallBackListener() {
