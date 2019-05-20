@@ -9,10 +9,11 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.sorena.wanandroidapp.R;
-import com.example.sorena.wanandroidapp.bean.Character;
+import com.example.sorena.wanandroidapp.bean.Chapter;
 import com.example.sorena.wanandroidapp.bean.FlowItem;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.view.ShowSystemItemActivity;
+import com.example.sorena.wanandroidapp.view.SystemActivity;
 import com.example.sorena.wanandroidapp.widget.FlowLayout;
 import com.example.sorena.wanandroidapp.widget.FlowLayoutFactory;
 
@@ -22,26 +23,26 @@ import java.util.List;
 public class SystemItemBaseAdapter extends BaseAdapter implements View.OnClickListener
 {
 
-    private List<Character> characters;
+    private List<Chapter> chapters;
     private int resourceId;
     private Context context;
 
-    public SystemItemBaseAdapter(Context context, int resourceId, List<Character> characters) {
+    public SystemItemBaseAdapter(Context context, int resourceId, List<Chapter> chapters) {
         super();
 
-        this.characters = characters;
+        this.chapters = chapters;
         this.resourceId = resourceId;
         this.context = context;
     }
 
     @Override
     public int getCount() {
-        return characters.size();
+        return chapters.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return characters.get(position);
+        return chapters.get(position);
     }
 
     @Override
@@ -54,11 +55,12 @@ public class SystemItemBaseAdapter extends BaseAdapter implements View.OnClickLi
 
         View view;
         ViewHolder viewHolder;
-        List<FlowItem> flowItemList = characters.get(position).getFlowItems();
+        List<FlowItem> flowItemList = chapters.get(position).getFlowItems();
         List<String> flowName = new ArrayList<>();
         for (int i = 0; i < flowItemList.size(); i++) {
             flowName.add(flowItemList.get(i).getName());
         }
+        //return FlowLayoutFactory.getSystemItem(context, flowName, chapters.get(position).getChapterName(), flowItemList, null);
         if (convertView != null){
             view = convertView;
             viewHolder = (ViewHolder)view.getTag();
@@ -69,20 +71,37 @@ public class SystemItemBaseAdapter extends BaseAdapter implements View.OnClickLi
             viewHolder.flowLayout = view.findViewById(R.id.systemItem_flowLayout_item);
             view.setTag(viewHolder);
         }
-        viewHolder.textView.setText(characters.get(position).getChapterName());
+        viewHolder.textView.setText(chapters.get(position).getChapterName());
         FlowItem[] flowItems = new FlowItem[flowItemList.size()];
         int size = flowItemList.size();
         for (int i = 0 ; i < size ; i++){
             flowItems[i] = flowItemList.get(i);
         }
-        FlowLayoutFactory.setFlowLayout(viewHolder.flowLayout,context,R.layout.system_flowlayout_tv, flowName, flowItems, this,true);
+        Integer[] integers = new Integer[size];
+        for (int i = 0; i < size; i++) {
+            integers[i] = i;
+        }
+        FlowLayoutFactory.setFlowLayout(viewHolder.flowLayout, context,
+                R.layout.system_flowlayout_tv, flowName, integers,
+                (v)->
+                {
+                    Chapter chapter = chapters.get(position);
+                    Intent intent = new Intent(context,SystemActivity.class);
+                    intent.putExtra("chapterData",chapter);
+                    String string = v.getTag().toString();
+                    intent.putExtra("position",string);
+                    context.startActivity(intent);
+
+                },true);
         return view;
     }
 
 
     class ViewHolder{
+
         TextView textView;
         FlowLayout flowLayout;
+
     }
 
 

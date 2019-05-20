@@ -33,6 +33,9 @@
 
 
 
+    <style name="MyTab" parent="TextAppearance.AppCompat.Button">
+        <item name="textAllCaps">false</item>
+    </style>
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="match_parent"-->
     <!--android:paddingTop="8dp"-->

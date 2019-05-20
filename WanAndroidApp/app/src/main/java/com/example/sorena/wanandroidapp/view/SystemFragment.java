@@ -10,7 +10,7 @@ import android.widget.ListView;
 
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.adapter.SystemItemBaseAdapter;
-import com.example.sorena.wanandroidapp.bean.Character;
+import com.example.sorena.wanandroidapp.bean.Chapter;
 import com.example.sorena.wanandroidapp.bean.FlowItem;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 
@@ -56,13 +56,13 @@ public class SystemFragment extends BaseFragment {
                 List<String> childrenFirst =  childMap.get("children");
                 List<String> name = childMap.get("name");
                 Map<String,List<String>> dataMap;
-                List<Character> characters = new ArrayList<>();
+                List<Chapter> chapters = new ArrayList<>();
                 for (int i = 0; i < name.size(); i++) {
                     dataMap = getMapInArray(childrenFirst.get(i),new String[]{"id","name"});
                     List<String> idList = dataMap.get("id");
                     List<String> nameList = dataMap.get("name");
-                    Character character = new Character();
-                    character.setChapterName(name.get(i));
+                    Chapter chapter = new Chapter();
+                    chapter.setChapterName(name.get(i));
                     List<FlowItem> itemList = new ArrayList<>();
                     for (int j = 0; j < idList.size(); j++){
                         FlowItem flowItem = new FlowItem();
@@ -71,10 +71,10 @@ public class SystemFragment extends BaseFragment {
                         flowItem.setParentsName(name.get(i));
                         itemList.add(flowItem);
                     }
-                    character.setFlowItems(itemList);
-                    characters.add(character);
+                    chapter.setFlowItems(itemList);
+                    chapters.add(chapter);
                 }
-                initListViewData(characters);
+                initListViewData(chapters);
 
             }
 
@@ -87,12 +87,12 @@ public class SystemFragment extends BaseFragment {
     }
 
 
-    private void initListViewData(final List<Character> characters)
+    private void initListViewData(final List<Chapter> chapters)
     {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mAdapter = new SystemItemBaseAdapter(getActivity(),R.layout.system_item,characters);
+                mAdapter = new SystemItemBaseAdapter(getActivity(),R.layout.system_item, chapters);
                 mSystemListViewShowItem.setAdapter(mAdapter);
                 mSystemListViewShowItem.setVisibility(View.VISIBLE);
             }

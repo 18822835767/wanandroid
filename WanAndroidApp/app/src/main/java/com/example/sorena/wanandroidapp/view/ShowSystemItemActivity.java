@@ -198,7 +198,6 @@ public class ShowSystemItemActivity extends AppCompatActivity {
                 mNextPage++;
 
             }
-
             @Override
             public void onError(Exception e) {
 
