@@ -21,6 +21,11 @@ import com.example.sorena.wanandroidapp.view.SystemFragment;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author sorena
+ * 用于给mainActivity的viewPager提供碎片
+ * 只提供首页,体系
+ */
 public class MainActivityViewPagerAdapter extends FragmentPagerAdapter
 {
     private List<Fragment> childFragmentList;

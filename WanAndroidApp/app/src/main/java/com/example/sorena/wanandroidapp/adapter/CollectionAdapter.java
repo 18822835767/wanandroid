@@ -11,35 +11,35 @@ import android.widget.TextView;
 
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.bean.Article;
-import com.example.sorena.wanandroidapp.util.LogUtil;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
+/**
+ * 收藏列表适配器
+ */
 public class CollectionAdapter extends BaseAdapter
 {
 
-    private List<Article> articleList;
-    private Context context;
-    private int resourceId;
+    private List<Article> mArticleList;
+    private Context mContext;
+    private int mResourceId;
 
 
     public CollectionAdapter(Context context, int resourceId,List<Article> articleList){
-        this.context = context;
-        this.resourceId = resourceId;
-        this.articleList = articleList;
+        this.mContext = context;
+        this.mResourceId = resourceId;
+        this.mArticleList = articleList;
     }
 
 
     @Override
     public int getCount() {
-        return articleList.size();
+        return mArticleList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return articleList.get(position);
+        return mArticleList.get(position);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CollectionAdapter extends BaseAdapter
         View view;
         ViewHolder viewHolder;
         if (convertView == null){
-            view = LayoutInflater.from(context).inflate(resourceId,parent,false);
+            view = LayoutInflater.from(mContext).inflate(mResourceId,parent,false);
             viewHolder = new ViewHolder();
             viewHolder.articleTextViewShowIsTopping = view.findViewById(R.id.article_textView_showIsTopping);
             viewHolder.articleTextViewTitle = view.findViewById(R.id.article_textView_title);
@@ -91,23 +91,23 @@ public class CollectionAdapter extends BaseAdapter
 
 
     public void addData(List<Article> articles){
-        if (articles != null && this.articleList != articles){
-            this.articleList.addAll(articles);
+        if (articles != null && this.mArticleList != articles){
+            this.mArticleList.addAll(articles);
         }
         notifyDataSetChanged();
     }
 
 
     public void clearData(){
-        if (articleList != null){
-            articleList.clear();
+        if (mArticleList != null){
+            mArticleList.clear();
         }
         notifyDataSetChanged();
     }
 
 
-    public List<Article> getArticleList(){
-        return articleList;
+    public List<Article> getmArticleList(){
+        return mArticleList;
     }
 
 

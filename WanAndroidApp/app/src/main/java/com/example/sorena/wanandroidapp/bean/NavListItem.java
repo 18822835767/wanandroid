@@ -23,14 +23,6 @@ public class NavListItem implements Serializable
         this.name = name;
     }
 
-    public boolean isSelect() {
-        return select;
-    }
-
-    public void setSelect(boolean select) {
-        this.select = select;
-    }
-
     @Override
     public String toString() {
         return "NavListItem{" +

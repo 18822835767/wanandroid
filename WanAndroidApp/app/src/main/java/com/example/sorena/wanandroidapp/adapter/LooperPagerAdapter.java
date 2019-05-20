@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.util.PictureUtil;
 
@@ -24,9 +23,7 @@ public class LooperPagerAdapter extends PagerAdapter
 {
 
     private List<String> URLs = null;
-//    private List<String> messages = null;
-//    private Vector<Bitmap> bitmaps = null;
-    private Map<String,Bitmap> pictureMap = new HashMap<>();
+    private Map<String,Bitmap> mPictureMap = new HashMap<>();
 
     public LooperPagerAdapter(NotifyDataLoadingFinish notifyDataLoadingFinish) {
         super();
@@ -49,7 +46,7 @@ public class LooperPagerAdapter extends PagerAdapter
         ImageView imageView;
         int realPosition = position % URLs.size();
         imageView = new ImageView(container.getContext());
-        if (pictureMap.get(URLs.get(realPosition)) == null){
+        if (mPictureMap.get(URLs.get(realPosition)) == null){
 //            imageView.setImageResource(R.drawable.pic_loop_default);
         }else {
             //这里会抛异常2019/5/8
@@ -81,7 +78,7 @@ public class LooperPagerAdapter extends PagerAdapter
 //            if (realPosition < bitmaps.size()){
 //                imageView.setImageBitmap(bitmaps.get(realPosition));
 //            }
-            imageView.setImageBitmap(pictureMap.get(URLs.get(realPosition)));
+            imageView.setImageBitmap(mPictureMap.get(URLs.get(realPosition)));
         }
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         container.addView(imageView);
@@ -108,12 +105,12 @@ public class LooperPagerAdapter extends PagerAdapter
             {
                 for (String s : LooperPagerAdapter.this.URLs)
                 {
-                    pictureMap.put(s,PictureUtil.getBitmaps(s));
+                    mPictureMap.put(s,PictureUtil.getBitmaps(s));
                 }
                 //实际上没有加载完成....等我过几天再回来优化
                 //这里是判断第一张图片有没有加载完成
                 while (true){
-                    if ((pictureMap.get(URLs.get(0)) != null)){
+                    if ((mPictureMap.get(URLs.get(0)) != null)){
                         notifyDataLoadingFinish.doOnFinish();
                     }
                     try {

@@ -14,15 +14,18 @@ import com.example.sorena.wanandroidapp.db.SearchHistoryDataBaseOperator;
 
 import java.util.List;
 
+/**
+ * 搜索历史适配器
+ */
 public class HistoryAdapt extends ArrayAdapter<History>
 {
-    private int resourceId;
-    private List<History> historyList;
+    private int mResourceId;
+    private List<History> mHistoryList;
 
     public HistoryAdapt(Context context, int resource,List<History> objects) {
         super(context, resource, objects);
-        resourceId = resource;
-        this.historyList = objects;
+        mResourceId = resource;
+        this.mHistoryList = objects;
     }
 
 
@@ -33,7 +36,7 @@ public class HistoryAdapt extends ArrayAdapter<History>
         History history = getItem(position);
         View view;
         if (convertView == null){
-            view = LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
+            view = LayoutInflater.from(getContext()).inflate(mResourceId,parent,false);
         }else {
             view = convertView;
         }
@@ -50,7 +53,7 @@ public class HistoryAdapt extends ArrayAdapter<History>
     }
 
     public void clearData() {
-        if (historyList != null){
+        if (mHistoryList != null){
             clear();
         }
     }
@@ -65,13 +68,13 @@ public class HistoryAdapt extends ArrayAdapter<History>
 
     public void addData(String word){
         History history  = new History(0,word);
-        if (historyList.contains(history)){
-            int index = historyList.indexOf(history);
-            history = historyList.get(index);
-            historyList.remove(index);
-            historyList.add(0,history);
+        if (mHistoryList.contains(history)){
+            int index = mHistoryList.indexOf(history);
+            history = mHistoryList.get(index);
+            mHistoryList.remove(index);
+            mHistoryList.add(0,history);
         }else {
-            historyList.add(0,history);
+            mHistoryList.add(0,history);
             SearchHistoryDataBaseOperator.getInstance().addData(history.getWord());
         }
         notifyDataSetChanged();
@@ -87,7 +90,7 @@ public class HistoryAdapt extends ArrayAdapter<History>
         this.listener = listener;
     }
 
-    public List<History> getHistoryList(){
-        return historyList;
+    public List<History> getmHistoryList(){
+        return mHistoryList;
     }
 }

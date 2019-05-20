@@ -31,8 +31,6 @@ public class NavigationFragment extends BaseFragment {
     private NavListItemAdapter mNavListItemAdapter;
     private NavArticleListAdapter mNavArticleListAdapter;
     private List<NavListItem> mNavListItems;
-    private int mPrevPoition;
-    private boolean isSelecting = false;
 
     @Nullable
     @Override

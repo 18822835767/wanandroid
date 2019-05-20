@@ -65,7 +65,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         searchActivityListViewShowHistorySearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startResultActivity(historyAdapt.getHistoryList().get(position).getWord());
+                startResultActivity(historyAdapt.getmHistoryList().get(position).getWord());
             }
         });
         searchActivityImageViewBack.setOnClickListener(this);
@@ -105,8 +105,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         historyAdapt.setListener(new HistoryAdapt.OnItemDeleteListener() {
             @Override
             public void onDeleteClick(int i) {
-                History history = historyAdapt.getHistoryList().get(i);
-                historyAdapt.getHistoryList().remove(i);
+                History history = historyAdapt.getmHistoryList().get(i);
+                historyAdapt.getmHistoryList().remove(i);
                 historyAdapt.notifyDataSetChanged();
                 SearchHistoryDataBaseOperator.getInstance().delData(history.getWord());
             }

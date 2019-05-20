@@ -59,7 +59,6 @@ public class SystemItemBaseAdapter extends BaseAdapter implements View.OnClickLi
         for (int i = 0; i < flowItemList.size(); i++) {
             flowName.add(flowItemList.get(i).getName());
         }
-        //return FlowLayoutFactory.getSystemItem(context, flowName, characters.get(position).getChapterName(), flowItemList, null);
         if (convertView != null){
             view = convertView;
             viewHolder = (ViewHolder)view.getTag();
@@ -76,16 +75,14 @@ public class SystemItemBaseAdapter extends BaseAdapter implements View.OnClickLi
         for (int i = 0 ; i < size ; i++){
             flowItems[i] = flowItemList.get(i);
         }
-        FlowLayoutFactory.setFlowLayout(viewHolder.flowLayout,  context,R.layout.system_flowlayout_tv, flowName, flowItems, this,true);
+        FlowLayoutFactory.setFlowLayout(viewHolder.flowLayout,context,R.layout.system_flowlayout_tv, flowName, flowItems, this,true);
         return view;
     }
 
 
     class ViewHolder{
-
         TextView textView;
         FlowLayout flowLayout;
-
     }
 
 

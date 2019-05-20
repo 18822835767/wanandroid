@@ -24,6 +24,7 @@ import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JSONUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.widget.MyViewPager;
+import com.example.sorena.wanandroidapp.widget.RefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ import java.util.Map;
 
 public class HomeFragment extends BaseFragment implements
         MyViewPager.OnViewPagerTouchListener, MyViewPager.OnPageChangeListener, View.OnClickListener,
-        MyViewPager.OpenWeb{
+        MyViewPager.OpenWeb, RefreshLayout.refreshAble{
 
     //轮播图viewPager
     private MyViewPager mLoopViewPager;
@@ -67,6 +68,9 @@ public class HomeFragment extends BaseFragment implements
     //最外层包着的用于下拉刷新的布局
     private SwipeRefreshLayout mHomeSwipeRefreshLayoutRefreshData;
     private View mLoopView;
+    private RefreshLayout mainActivityRefresh;
+
+
 
     @Nullable
     @Override
@@ -109,6 +113,8 @@ public class HomeFragment extends BaseFragment implements
 
         mHomeListViewShowArticle = getActivity().findViewById(R.id.home_listView_showArticle);
         mHomeSwipeRefreshLayoutRefreshData = getActivity().findViewById(R.id.home_swipeRefreshLayout_refreshData);
+        mainActivityRefresh =  getActivity().findViewById(R.id.mainActivity_refresh);
+        mainActivityRefresh.setRefreshAble(this);
         mHomeListViewShowArticle.setVisibility(View.GONE);
         mHomeListViewShowArticle.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -196,7 +202,6 @@ public class HomeFragment extends BaseFragment implements
         });
     }
 
-
     private void noticeDataLoadingStatusChange(){
         if (mNormalIsLoadingFinish && mToppingIsLoadingFinish){
             setArticleListData();
@@ -244,11 +249,20 @@ public class HomeFragment extends BaseFragment implements
                         noticeDataLoadingStatusChange();
                         nextLoadingNormalPage++;
                         mHomeSwipeRefreshLayoutRefreshData.setRefreshing(false);
+                        getActivity().runOnUiThread(()->{
+                            mainActivityRefresh.setVisibility(View.GONE);
+                        });
                     }
 
                     @Override
                     public void onError(Exception e) {
                         e.printStackTrace();
+                        if (mNormalIsLoadingFinish){
+                            return;
+                        }
+                        getActivity().runOnUiThread(()->{
+                            mainActivityRefresh.setVisibility(View.VISIBLE);
+                        });
                     }
                 });
 
@@ -312,6 +326,7 @@ public class HomeFragment extends BaseFragment implements
                             @Override
                             public void onError(Exception e) {
                                 e.printStackTrace();
+
                             }
                         });
             }
@@ -341,7 +356,13 @@ public class HomeFragment extends BaseFragment implements
                             for (int i = 0; i < authors.size() ; i++) {
                                 articles.add(new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i)),Boolean.parseBoolean(collects.get(i))));
                             }
-                            getActivity().runOnUiThread(()-> mArticleAdapter.resetToppingArticle(articles));
+                            getActivity().runOnUiThread(()-> {
+                                if (mArticleAdapter == null){
+                                    LogUtil.d("日志mArticleAdapter:","null");
+                                    return;
+                                }
+                                mArticleAdapter.resetToppingArticle(articles);
+                            });
                         }
 
                         @Override
@@ -426,6 +447,14 @@ public class HomeFragment extends BaseFragment implements
         }
         intent.putExtra("url",mWebURLs.get(mLoopViewPager.getCurrentItem() % mWebURLs.size()));
         startActivity(intent);
+    }
+
+    @Override
+    public void refresh() {
+        nextLoadingNormalPage = 1;
+        setLoopData();
+        loadNextPageNormalData();
+        loadToppingData();
     }
 
 }

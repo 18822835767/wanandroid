@@ -14,30 +14,30 @@ import android.widget.TextView;
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.bean.Article;
 import com.example.sorena.wanandroidapp.manager.CollectManager;
-import com.example.sorena.wanandroidapp.manager.OldCollectManager;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+/**
+ * 首页文章适配器
+ */
 public class BaseArticleAdapter extends BaseAdapter
 {
-    private List<Article> allArticle;
-    private Context context;
-    private int resourceId;
-    private int toppingNum;
+    private List<Article> mAllArticle;
+    private Context mContext;
+    private int mResourceId;
+    private int mToppingNum;
 
 
     public BaseArticleAdapter(Context context, int resourceId, @NonNull List<Article> normalArticle , @NonNull List<Article> toppingArticle){
-        this.context = context;
-        this.resourceId = resourceId;
-        allArticle = new ArrayList<>();
-        allArticle.addAll(toppingArticle);
-        allArticle.addAll(normalArticle);
-        toppingNum = toppingArticle.size();
-        addToCollectManagerSet(allArticle);
+        this.mContext = context;
+        this.mResourceId = resourceId;
+        mAllArticle = new ArrayList<>();
+        mAllArticle.addAll(toppingArticle);
+        mAllArticle.addAll(normalArticle);
+        mToppingNum = toppingArticle.size();
+        addToCollectManagerSet(mAllArticle);
     }
 
     private void addToCollectManagerSet(List<Article> articleList){
@@ -55,12 +55,12 @@ public class BaseArticleAdapter extends BaseAdapter
 
     @Override
     public int getCount() {
-        return allArticle.size();
+        return mAllArticle.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return allArticle.get(position);
+        return mAllArticle.get(position);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class BaseArticleAdapter extends BaseAdapter
         View view;
         BaseArticleAdapter.ViewHolder viewHolder;
         if (convertView == null){
-            view = LayoutInflater.from(context).inflate(resourceId,parent,false);
+            view = LayoutInflater.from(mContext).inflate(mResourceId,parent,false);
             viewHolder = new BaseArticleAdapter.ViewHolder();
             viewHolder.articleTextViewShowIsTopping = view.findViewById(R.id.article_textView_showIsTopping);
             viewHolder.articleTextViewTitle = view.findViewById(R.id.article_textView_title);
@@ -88,7 +88,7 @@ public class BaseArticleAdapter extends BaseAdapter
             viewHolder = (BaseArticleAdapter.ViewHolder)view.getTag();
         }
         viewHolder.articleTextViewTitle.setTextColor(Color.parseColor("#000000"));
-        if (toppingNum  >= position + 1){
+        if (mToppingNum >= position + 1){
             viewHolder.articleTextViewTitle.setTextColor(Color.parseColor("#1296db"));
         }
         viewHolder.articleTextViewAuthor.setText(article.getAuthor());
@@ -110,9 +110,9 @@ public class BaseArticleAdapter extends BaseAdapter
                         try {
                             ImageView imageView = (ImageView)v;
                             if (imageView.getTag().equals(R.drawable.ic_collect_normal)){
-                                CollectManager.getInstance().addCollect(((Article) getItem(position)).getId(),viewHolder.articleImageViewCollect,(Activity)context);
+                                CollectManager.getInstance().addCollect(((Article) getItem(position)).getId(),viewHolder.articleImageViewCollect,(Activity) mContext);
                             }else {
-                                CollectManager.getInstance().cancelCollect(((Article) getItem(position)).getId(),viewHolder.articleImageViewCollect,(Activity)context);
+                                CollectManager.getInstance().cancelCollect(((Article) getItem(position)).getId(),viewHolder.articleImageViewCollect,(Activity) mContext);
                             }
                         }catch (ClassCastException e){
                             e.printStackTrace();
@@ -141,8 +141,8 @@ public class BaseArticleAdapter extends BaseAdapter
 
 
     public void addNormalArticleData(List<Article> articles){
-        if (articles != null && this.allArticle != articles){
-            this.allArticle.addAll(articles);
+        if (articles != null && this.mAllArticle != articles){
+            this.mAllArticle.addAll(articles);
             addToCollectManagerSet(articles);
         }
         notifyDataSetChanged();
@@ -150,27 +150,27 @@ public class BaseArticleAdapter extends BaseAdapter
 
 
     public void clearData(){
-        if (allArticle != null){
-            allArticle.clear();
+        if (mAllArticle != null){
+            mAllArticle.clear();
         }
-        toppingNum = 0;
+        mToppingNum = 0;
         notifyDataSetChanged();
     }
 
     public void resetToppingArticle(List<Article> toppingArticle){
         if (toppingArticle == null) return;
-        if (allArticle.size() != 0  && toppingNum != allArticle.size()){
+        if (mAllArticle.size() != 0  && mToppingNum != mAllArticle.size()){
             List<Article> normalArticles = new ArrayList<>();
-            for (int i = toppingNum ; i < allArticle.size() ; i++){
-                normalArticles.add(allArticle.get(i));
+            for (int i = mToppingNum; i < mAllArticle.size() ; i++){
+                normalArticles.add(mAllArticle.get(i));
             }
-            allArticle.clear();
-            allArticle.addAll(toppingArticle);
-            allArticle.addAll(normalArticles);
+            mAllArticle.clear();
+            mAllArticle.addAll(toppingArticle);
+            mAllArticle.addAll(normalArticles);
         }else {
-            allArticle.addAll(toppingArticle);
+            mAllArticle.addAll(toppingArticle);
         }
-        toppingNum = toppingArticle.size();
+        mToppingNum = toppingArticle.size();
         addToCollectManagerSet(toppingArticle);
         notifyDataSetChanged();
     }
