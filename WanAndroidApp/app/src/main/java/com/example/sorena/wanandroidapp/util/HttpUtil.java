@@ -188,48 +188,6 @@ public class HttpUtil
             }
         }).start();
     }
-
-
-
-
-
-
-    private static void test() throws Exception{
-
-        String address = "https://www.wanandroid.com/lg/collect/list/0/json";
-        String cookie = "loginUserName=sorena;loginUserPassword=123456;";
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpURLConnection connection = null;
-                try {
-                    URL url = new URL(address);
-                    connection = (HttpURLConnection)url.openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.setConnectTimeout(8000);
-                    connection.setReadTimeout(8000);
-                    connection.setDoInput(true);
-                    connection.addRequestProperty("Cookie",cookie);
-                    InputStream in = connection.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null){
-                        response.append(line);
-                    }
-                    LogUtil.d("日志:测试",response.toString());
-                }catch (Exception e){
-                    Log.d("日志:HttpUtilException",e.getMessage());
-                }finally {
-                    if( connection != null){
-                        connection.disconnect();
-                    }
-                }
-
-            }
-        }).start();
-    }
-
 }
 
 //                String cookie = connection.getHeaderField("Set-Cookie");

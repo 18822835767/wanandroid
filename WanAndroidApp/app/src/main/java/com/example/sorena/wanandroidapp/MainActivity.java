@@ -2,6 +2,7 @@ package com.example.sorena.wanandroidapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -20,6 +21,8 @@ import com.example.sorena.wanandroidapp.db.SearchHistoryDataBaseOperator;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
 import com.example.sorena.wanandroidapp.manager.CollectManager;
 import com.example.sorena.wanandroidapp.manager.OldCollectManager;
+import com.example.sorena.wanandroidapp.util.LogUtil;
+import com.example.sorena.wanandroidapp.util.PermissionUtils;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
 import com.example.sorena.wanandroidapp.view.AccountActivity;
 import com.example.sorena.wanandroidapp.view.ShowCollectActivity;
@@ -39,22 +42,62 @@ public class MainActivity extends AppCompatActivity
     private LinearLayout mMainActivityLinearLayoutChtholly;
     private LinearLayout mMainActivityLinearLayoutCollect;
     private LinearLayout mMainActivityLinearLayoutExit;
-
+    private String[] mPermission;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ViewUtil.cancelActionBar(this);
-        initItem();
-        setView();
-        initDataBase();
+
+        mPermission = new String[]
+                {PermissionUtils.PERMISSION_READ_EXTERNAL_STORAGE,PermissionUtils.PERMISSION_WRITE_EXTERNAL_STORAGE};
+
+        /*好像莫得什么用*/
+        //申请权限
+        Thread loadUIThread = new Thread(()->{
+            Thread permissionThread = new Thread(()->{
+                if (!PermissionUtils.permissionAllow(this,mPermission)){
+                    PermissionUtils.requestPermission(this,1,mPermission);
+                }
+            });
+            permissionThread.start();
+            try {
+                permissionThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            runOnUiThread(()->{
+                initItem();
+                setView();
+                initDataBase();
+            });
+        });
+        loadUIThread.start();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case 1:
+                if (grantResults.length == 2){
+                    LogUtil.d("日志","权限申请成功");
+                }
+                else {
+                    runOnUiThread(()->Toast.makeText(this,"拒绝权限可能导致无法正常使用",Toast.LENGTH_SHORT).show());
+                }
+                break;
+            default:
+                break;
+        }
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
         User user = SharedPreferencesHelper.getUserData();
+        if (mTextViewShowUserName == null){
+            return;
+        }
         if (!user.dataIsNull()){
             mTextViewShowUserName.setText("欢迎     " + user.getUserName());
             mTextViewShowUserName.setVisibility(View.VISIBLE);

@@ -72,7 +72,6 @@ public class JSONUtil
         return null;
     }
 
-
     /**
      *
      * @param jsonString ： 一个可以按JSON解析的字符串
@@ -115,8 +114,8 @@ public class JSONUtil
     }
 
     /**
-     * @param keys:key值
-     * @param values:value值
+     * @param keys:key值数组
+     * @param values:value值数组
      * @return
      */
 

@@ -27,10 +27,8 @@ public class PictureUtil
             connection.setConnectTimeout(3000);
             //获取输入流
             InputStream inputStream = connection.getInputStream();
-            LogUtil.v("日志:inputStream",inputStream + "   链接:" + path);
             //使用工厂把网络的输入流生产Bitmap
             bitmap = BitmapFactory.decodeStream(inputStream);
-            LogUtil.v("日志:图片大小(try)",bitmap + "   链接:" + path);
             //inputStream.close();
 
         }catch (Exception e){
