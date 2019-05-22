@@ -11,19 +11,16 @@ import android.widget.ListView;
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.adapter.SystemItemBaseAdapter;
 import com.example.sorena.wanandroidapp.bean.Chapter;
-import com.example.sorena.wanandroidapp.bean.FlowItem;
-import com.example.sorena.wanandroidapp.util.HttpUtil;
+import com.example.sorena.wanandroidapp.dao.SystemDao;
+import com.example.sorena.wanandroidapp.widget.RefreshLayout;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import static com.example.sorena.wanandroidapp.util.JSONUtil.getMapInArray;
-import static com.example.sorena.wanandroidapp.util.JSONUtil.getValue;
 
 public class SystemFragment extends BaseFragment {
 
     private ListView mSystemListViewShowItem;
+    private RefreshLayout mRefreshLayoutRefresh;
+
     private SystemItemBaseAdapter mAdapter;
 
     @Nullable
@@ -40,47 +37,36 @@ public class SystemFragment extends BaseFragment {
     }
 
     private void initView(){
-
-        mSystemListViewShowItem = getActivity().findViewById(R.id.system_listView_showCharacterItem);
+        if (getView() == null){
+            return;
+        }
+        mSystemListViewShowItem = getView().findViewById(R.id.system_listView_showCharacterItem);
+        mRefreshLayoutRefresh = getView().findViewById(R.id.systemFragment_refreshLayout_refresh);
         mSystemListViewShowItem.setVisibility(View.GONE);
+        mRefreshLayoutRefresh.setRefreshListener(()->{
+            getListData();
+        });
         getListData();
     }
 
     private void getListData(){
-
-        HttpUtil.sendHttpRequest("https://www.wanandroid.com/tree/json", new HttpUtil.HttpCallBackListener() {
+        SystemDao.getSystemData(getActivity(), new SystemDao.SystemDataLoadingListener() {
             @Override
-            public void onFinish(String response) {
-                String data = getValue("data",response,new String[]{});
-                Map<String,List<String>> childMap = getMapInArray(data,new String[]{"name","children"});
-                List<String> childrenFirst =  childMap.get("children");
-                List<String> name = childMap.get("name");
-                Map<String,List<String>> dataMap;
-                List<Chapter> chapters = new ArrayList<>();
-                for (int i = 0; i < name.size(); i++) {
-                    dataMap = getMapInArray(childrenFirst.get(i),new String[]{"id","name"});
-                    List<String> idList = dataMap.get("id");
-                    List<String> nameList = dataMap.get("name");
-                    Chapter chapter = new Chapter();
-                    chapter.setChapterName(name.get(i));
-                    List<FlowItem> itemList = new ArrayList<>();
-                    for (int j = 0; j < idList.size(); j++){
-                        FlowItem flowItem = new FlowItem();
-                        flowItem.setId(Integer.parseInt(idList.get(j)));
-                        flowItem.setName(nameList.get(j));
-                        flowItem.setParentsName(name.get(i));
-                        itemList.add(flowItem);
-                    }
-                    chapter.setFlowItems(itemList);
-                    chapters.add(chapter);
-                }
+            public void onFinish(List<Chapter> chapters) {
                 initListViewData(chapters);
-
+                if (getActivity() != null){
+                    getActivity().runOnUiThread(()->{
+                        mRefreshLayoutRefresh.setVisibility(View.GONE);
+                    });
+                }
             }
-
             @Override
             public void onError(Exception e) {
-
+                if (getActivity() != null){
+                    getActivity().runOnUiThread(()->{
+                        mRefreshLayoutRefresh.setVisibility(View.VISIBLE);
+                    });
+                }
             }
         });
 
@@ -89,6 +75,9 @@ public class SystemFragment extends BaseFragment {
 
     private void initListViewData(final List<Chapter> chapters)
     {
+        if (getActivity() == null){
+            return;
+        }
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -101,3 +90,39 @@ public class SystemFragment extends BaseFragment {
 
 }
 
+
+//        HttpUtil.sendHttpRequest("https://www.wanandroid.com/tree/json", new HttpUtil.HttpCallBackListener() {
+//            @Override
+//            public void onFinish(String response) {
+//                String data = getValue("data",response,new String[]{});
+//                Map<String,List<String>> childMap = getMapInArray(data,new String[]{"name","children"});
+//                List<String> childrenFirst =  childMap.get("children");
+//                List<String> name = childMap.get("name");
+//                Map<String,List<String>> dataMap;
+//                List<Chapter> chapters = new ArrayList<>();
+//                for (int i = 0; i < name.size(); i++) {
+//                    dataMap = getMapInArray(childrenFirst.get(i),new String[]{"id","name"});
+//                    List<String> idList = dataMap.get("id");
+//                    List<String> nameList = dataMap.get("name");
+//                    Chapter chapter = new Chapter();
+//                    chapter.setChapterName(name.get(i));
+//                    List<FlowItem> itemList = new ArrayList<>();
+//                    for (int j = 0; j < idList.size(); j++){
+//                        FlowItem flowItem = new FlowItem();
+//                        flowItem.setId(Integer.parseInt(idList.get(j)));
+//                        flowItem.setName(nameList.get(j));
+//                        flowItem.setParentsName(name.get(i));
+//                        itemList.add(flowItem);
+//                    }
+//                    chapter.setFlowItems(itemList);
+//                    chapters.add(chapter);
+//                }
+//                initListViewData(chapters);
+//
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//
+//            }
+//        });

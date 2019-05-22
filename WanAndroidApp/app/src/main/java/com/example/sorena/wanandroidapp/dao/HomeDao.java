@@ -172,7 +172,9 @@ public class HomeDao
                         @Override
                         public void onFinish(String response) {
                             List<Article> articles = parseNormalArticleData(response);
-                            saveNormalDataFile(activity,response);
+                            if (loadPage == 1){
+                                saveNormalDataFile(activity,response);
+                            }
                             if (listener != null){
                                 listener.onFinish(articles);
                             }

@@ -42,4 +42,6 @@ public class SystemViewPagerAdapter extends FragmentPagerAdapter
     public CharSequence getPageTitle(int position) {
         return mChapter.getFlowItems().get(position).getName();
     }
+
+
 }

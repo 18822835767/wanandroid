@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author sorena
  * 用于给mainActivity的viewPager提供碎片
- * 只提供首页,体系
+ *
  */
 public class MainActivityViewPagerAdapter extends FragmentPagerAdapter
 {
@@ -33,13 +33,11 @@ public class MainActivityViewPagerAdapter extends FragmentPagerAdapter
 
     public MainActivityViewPagerAdapter(FragmentManager fm) {
         super(fm);
-
         childFragmentList = new ArrayList<>();
         childFragmentList.add(new HomeFragment());
         childFragmentList.add(new SystemFragment());
         childFragmentList.add(new NavigationFragment());
         childFragmentList.add(new ProjectFragment());
-
     }
 
 
@@ -58,7 +56,4 @@ public class MainActivityViewPagerAdapter extends FragmentPagerAdapter
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {}
 
-
-
-    //
 }

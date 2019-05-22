@@ -21,8 +21,8 @@ public class RefreshLayout extends RelativeLayout
         refreshLayoutButtonRefresh.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (refreshAble != null){
-                    refreshAble.refresh();
+                if (refreshListener != null){
+                    refreshListener.refresh();
                 }
             }
         });
@@ -30,11 +30,11 @@ public class RefreshLayout extends RelativeLayout
     }
 
 
-    private refreshAble refreshAble;
-    public interface refreshAble{
+    private refreshListener refreshListener;
+    public interface refreshListener {
         void refresh();
     }
-    public void setRefreshAble(RefreshLayout.refreshAble refreshAble) {
-        this.refreshAble = refreshAble;
+    public void setRefreshListener(refreshListener refreshListener) {
+        this.refreshListener = refreshListener;
     }
 }

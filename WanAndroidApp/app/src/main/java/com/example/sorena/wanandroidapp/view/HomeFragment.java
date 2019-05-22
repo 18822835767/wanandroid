@@ -18,22 +18,17 @@ import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.adapter.BaseArticleAdapter;
 import com.example.sorena.wanandroidapp.adapter.LooperPagerAdapter;
 import com.example.sorena.wanandroidapp.bean.Article;
-import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.dao.HomeDao;
-import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
-import com.example.sorena.wanandroidapp.util.HttpUtil;
-import com.example.sorena.wanandroidapp.util.JSONUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.widget.MyViewPager;
 import com.example.sorena.wanandroidapp.widget.RefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class HomeFragment extends BaseFragment implements
         MyViewPager.OnViewPagerTouchListener, MyViewPager.OnPageChangeListener, View.OnClickListener,
-        MyViewPager.OpenWeb, RefreshLayout.refreshAble{
+        MyViewPager.OpenWeb, RefreshLayout.refreshListener {
 
     //轮播图viewPager
     private MyViewPager mLoopViewPager;
@@ -114,7 +109,7 @@ public class HomeFragment extends BaseFragment implements
         mHomeListViewShowArticle = getActivity().findViewById(R.id.home_listView_showArticle);
         mHomeSwipeRefreshLayoutRefreshData = getActivity().findViewById(R.id.home_swipeRefreshLayout_refreshData);
         mainActivityRefresh =  getActivity().findViewById(R.id.mainActivity_refresh);
-        mainActivityRefresh.setRefreshAble(this);
+        mainActivityRefresh.setRefreshListener(this);
         mHomeListViewShowArticle.setVisibility(View.GONE);
         mHomeListViewShowArticle.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
