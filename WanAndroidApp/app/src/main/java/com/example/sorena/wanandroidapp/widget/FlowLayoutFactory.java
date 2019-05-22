@@ -17,7 +17,7 @@ import java.util.Random;
 public class FlowLayoutFactory
 {
     /**
-     * 一个加载FlowLayout的Factory
+     * 一个加载体系列表的item的view的Factory
      */
 
     /**
@@ -34,7 +34,7 @@ public class FlowLayoutFactory
         FlowLayout flowLayout = new FlowLayout(context);
         for (int i = 0; i < stringList.size(); i++)
         {
-            final TextView tv = (TextView) inflater.inflate(R.layout.system_flowlayout_tv,flowLayout, false);
+            final TextView tv = (TextView) inflater.inflate(R.layout.tv ,flowLayout, false);
             tv.setText(stringList.get(i));
             if (tags != null && tags.size() > i){
                 tv.setTag(tags.get(i));
@@ -59,29 +59,26 @@ public class FlowLayoutFactory
 
     /**
      *
-     * @param flowLayout 要设置的flowLayout
+     * @param flowLayout 要设置flowLayout
      * @param context 上下文
      * @param stringList 每个textView的文字
-     * @param tags 每个textView要存储的tag
+     * @param tags 每个txtView要存储的tag
      * @param listener 监听器
-     * @param randomTextColor 是否随机生成颜色
-     * @param resourceId 加载的资源id,只能是textView
      */
-    public static void setFlowLayout(FlowLayout flowLayout, final Context context, int resourceId, List<String> stringList, @Nullable Object[] tags, @Nullable View.OnClickListener listener , boolean randomTextColor){
+
+    public static void setFlowLayout(FlowLayout flowLayout, final Context context, List<String> stringList, @Nullable List<FlowItem> tags, @Nullable View.OnClickListener listener){
 
         flowLayout.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(context);
         for (int i = 0; i < stringList.size(); i++)
         {
-            final TextView tv = (TextView) inflater.inflate(resourceId ,flowLayout, false);
+            final TextView tv = (TextView) inflater.inflate(R.layout.tv ,flowLayout, false);
             tv.setText(stringList.get(i));
-            if (tags != null && tags.length > i){
-                tv.setTag(tags[i]);
+            if (tags != null && tags.size() > i){
+                tv.setTag(tags.get(i));
             }
-            if (randomTextColor) {
-                Random random = new Random();
-                tv.setTextColor(Color.rgb(random.nextInt(256),random.nextInt(256),random.nextInt(256)));
-            }
+            Random random = new Random();
+            tv.setTextColor(Color.rgb(random.nextInt(256),random.nextInt(256),random.nextInt(256)));
             if (listener != null){
                 tv.setOnClickListener(listener);
             }else {
@@ -90,14 +87,12 @@ public class FlowLayoutFactory
                     public void onClick(View v) {
                         Toast.makeText(context,tv.getText(),Toast.LENGTH_SHORT).show();
                     }
-                    });
-
+                });
             }
             flowLayout.addView(tv);
         }
+
     }
-
-
 
 
     /**
@@ -110,7 +105,6 @@ public class FlowLayoutFactory
      */
 
 
-    @Deprecated
     public static View getSystemItem(final Context context, List<String> stringList,String character, @Nullable List<FlowItem> tags,@Nullable View.OnClickListener listener){
 
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -118,7 +112,7 @@ public class FlowLayoutFactory
         TextView textView = view.findViewById(R.id.systemItem_textView_character);
         textView.setText(character);
         FlowLayout flowLayout = view.findViewById(R.id.systemItem_flowLayout_item);
-        //setFlowLayout(flowLayout,context,stringList,null,null);
+        setFlowLayout(flowLayout,context,stringList,null,null);
         return view;
     }
 

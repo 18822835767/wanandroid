@@ -109,7 +109,7 @@ public class BaseArticleAdapter extends BaseAdapter
                             }
                         }catch (ClassCastException e){
                             e.printStackTrace();
-                            LogUtil.e("日志:警告","不能强制转化");
+                            LogUtil.d("日志:警告","不能强制转化");
                         }
                 }
             }

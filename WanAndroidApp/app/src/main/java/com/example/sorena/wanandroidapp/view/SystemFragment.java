@@ -102,8 +102,8 @@ public class SystemFragment extends LazyFragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mAdapter = new SystemItemBaseAdapter(getActivity(),R.layout.system_item,characters);
-                mSystemListViewShowItem.setAdapter(mAdapter);
+                SystemItemBaseAdapter adapter = new SystemItemBaseAdapter(getActivity(),R.layout.system_item,characters);
+                mSystemListViewShowItem.setAdapter(adapter);
                 mSystemListViewShowItem.setVisibility(View.VISIBLE);
             }
         });

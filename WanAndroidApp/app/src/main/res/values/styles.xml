@@ -20,19 +20,6 @@
 
     </style>
 
-
-    <style name="SearchEditText" parent="Theme.AppCompat.Light">
-        <item name="colorControlNormal">@android:color/darker_gray</item>
-        <item name="colorControlActivated">@android:color/darker_gray</item>
-    </style>
-
-    <style name="MyEditText" parent="Theme.AppCompat.Light">
-        <item name="colorControlNormal">@android:color/darker_gray</item>
-        <item name="colorControlActivated">@android:color/holo_blue_dark</item>
-    </style>
-
-
-
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="match_parent"-->
     <!--android:paddingTop="8dp"-->

@@ -1,19 +1,24 @@
 package com.example.sorena.wanandroidapp.view;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.sorena.wanandroidapp.MainActivity;
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.adapter.BaseArticleAdapter;
 import com.example.sorena.wanandroidapp.adapter.LooperPagerAdapter;
@@ -29,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class HomeFragment extends BaseFragment implements
+public class HomeFragment extends LazyFragment implements
         MyViewPager.OnViewPagerTouchListener, MyViewPager.OnPageChangeListener , View.OnClickListener , MyViewPager.OpenWeb{
 
     //轮播图viewPager
@@ -68,6 +73,15 @@ public class HomeFragment extends BaseFragment implements
     private SwipeRefreshLayout mHomeSwipeRefreshLayoutRefreshData;
     private View mLoopView;
 
+
+
+
+    @Override
+    protected void lazyLoad() {
+        setLoopData();
+        getData();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,8 +94,6 @@ public class HomeFragment extends BaseFragment implements
         super.onViewCreated(view, savedInstanceState);
         initLoopView();
         initListView();
-        setLoopData();
-        getData();
     }
 
     private void initLoopView(){
@@ -108,37 +120,29 @@ public class HomeFragment extends BaseFragment implements
     private void initListView(){
 
         mHomeListViewShowArticle = getActivity().findViewById(R.id.home_listView_showArticle);
-        mHomeSwipeRefreshLayoutRefreshData = getActivity().findViewById(R.id.home_swipeRefreshLayout_refreshData);
         mHomeListViewShowArticle.setVisibility(View.GONE);
         mHomeListViewShowArticle.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 //到顶部时，设置可以刷新
-//                LogUtil.d("日志:firstVisibleItem", ""+ firstVisibleItem);
                 if (firstVisibleItem == 0) {
-                    //得到能显示的第一个项
                     View firstVisibleItemView = mHomeListViewShowArticle.getChildAt(0);
-                    if (firstVisibleItemView != null && firstVisibleItemView.getTop() == 0)
-                    {
+                    if (firstVisibleItemView != null && firstVisibleItemView.getTop() == 0) {
                         mHomeSwipeRefreshLayoutRefreshData.setEnabled(true);
-//                        LogUtil.d("日志","设置为可以上拉");
-                    }
-                    else {
-                        mHomeSwipeRefreshLayoutRefreshData.setEnabled(false);
-//                        LogUtil.d("日志","设置为不能上拉");
+                        LogUtil.d("日志", "##### 滚动到顶部 #####");
                     }
                 }
                 //到底部时,自动加载下一页
                 else if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
                     View lastVisibleItemView = mHomeListViewShowArticle.getChildAt(mHomeListViewShowArticle.getChildCount() - 1);
                     if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mHomeListViewShowArticle.getHeight()) {
+                        LogUtil.d("日志", "##### 滚动到底部 准备加载下一页######");
                         loadNextPageNormalData();
                     }
                 }
-                //其他时候设置不可刷新
+                        //其他时候设置不可刷新
                 else {
                     mHomeSwipeRefreshLayoutRefreshData.setEnabled(false);
-//                    LogUtil.d("日志","设置为不能上拉");
                 }
             }
 
@@ -159,7 +163,10 @@ public class HomeFragment extends BaseFragment implements
             }
         });
 
+
+
         mHomeListViewShowArticle.addHeaderView(mLoopView);
+        mHomeSwipeRefreshLayoutRefreshData = getActivity().findViewById(R.id.home_swipeRefreshLayout_refreshData);
         mHomeSwipeRefreshLayoutRefreshData.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -173,9 +180,14 @@ public class HomeFragment extends BaseFragment implements
                 loadNextPageNormalData();
             }
         });
+
+
     }
 
+
+
     private void setLoopData(){
+
         HttpUtil.sendHttpRequest("https://www.wanandroid.com/banner/json", new HttpUtil.HttpCallBackListener() {
             @Override
             public void onFinish(String response) {
@@ -251,6 +263,7 @@ public class HomeFragment extends BaseFragment implements
 
             }
         }).start();
+
     }
 
     private List<Article> parseData(String jsonString){
@@ -332,7 +345,8 @@ public class HomeFragment extends BaseFragment implements
                     if (currentItem <= 50){
                         currentItem = mURLs.size() * 100 -1 + currentItem;
                     }
-                    mLoopViewPager.setCurrentItem(++currentItem , false);
+                    mLoopViewPager.setCurrentItem(++currentItem , true);
+                    LogUtil.d("日志", ""  +  currentItem);
                 }
             }
             mHandler.postDelayed(this,4000);
@@ -352,6 +366,7 @@ public class HomeFragment extends BaseFragment implements
 
     @Override
     public void onPageSelected(int i) {
+        LogUtil.d("日志","信息:" + mMessage.get(i % mMessage.size()) + "  位置:" + i);
         mLoopTextViewShowMessage.setText(mMessage.get(i % mMessage.size()));
         mLoopTextViewShowPosition.setText( (i % mMessage.size()+1) + "/" + mMessage.size());
     }
@@ -362,7 +377,10 @@ public class HomeFragment extends BaseFragment implements
     }
 
 
+
+
     //View.OnClickListener相关方法
+
     @Override
     public void onClick(View v) {
         Intent intent;
@@ -374,6 +392,8 @@ public class HomeFragment extends BaseFragment implements
     }
 
     //MyViewPager.OpenWeb
+
+
     @Override
     public void openWeb() {
         Intent intent = new Intent(getActivity(),WebActivity.class);
