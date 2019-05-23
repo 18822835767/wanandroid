@@ -5,11 +5,12 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.sorena.wanandroidapp.util.LogUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 流式布局封装
+ */
 public class FlowLayout extends ViewGroup
 {
 
@@ -39,7 +40,7 @@ public class FlowLayout extends ViewGroup
         int modeWidth = MeasureSpec.getMode(widthMeasureSpec);
         int sizeHeight = MeasureSpec.getSize(heightMeasureSpec);
         int modeHeight = MeasureSpec.getMode(heightMeasureSpec);
-        LogUtil.d("日志:测量值","sizeWidth:" + sizeWidth + "  widthMode:" + modeWidth  + " sizeHeight:" + sizeHeight + "  heightMode:" + modeHeight);
+        //LogUtil.d("日志:测量值","sizeWidth:" + sizeWidth + "  widthMode:" + modeWidth  + " sizeHeight:" + sizeHeight + "  heightMode:" + modeHeight);
 
 
         //定义两个数值用于存储wrap_content时的宽高
@@ -99,9 +100,6 @@ public class FlowLayout extends ViewGroup
                 height += lineHeight;
             }
         }
-
-        LogUtil.e("TAG", "sizeWidth = " + sizeWidth);
-        LogUtil.e("TAG", "sizeHeight = " + sizeHeight);
 
         //通过判断测量模式设置最终行高,这里放到最前面感觉可以做优化
         setMeasuredDimension(

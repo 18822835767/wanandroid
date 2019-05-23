@@ -1,8 +1,12 @@
 package com.example.sorena.wanandroidapp.bean;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Character
+/**
+ * 体系章节实体类
+ */
+public class Chapter implements Serializable
 {
     private List<FlowItem> flowItems;
     private String chapterName;
@@ -26,7 +30,7 @@ public class Character
 
     @Override
     public String toString() {
-        return "Character{" +
+        return "Chapter{" +
                 "flowItems=" + flowItems +
                 ", chapterName='" + chapterName + '\'' +
                 '}' + '\n';

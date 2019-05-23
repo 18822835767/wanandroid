@@ -10,6 +10,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * 用于加载网络图片
+ */
 public abstract class NetImageLoad
 {
     private ImageView imageView;

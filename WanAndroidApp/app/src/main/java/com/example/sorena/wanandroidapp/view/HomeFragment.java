@@ -1,41 +1,37 @@
 package com.example.sorena.wanandroidapp.view;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.sorena.wanandroidapp.MainActivity;
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.adapter.BaseArticleAdapter;
 import com.example.sorena.wanandroidapp.adapter.LooperPagerAdapter;
 import com.example.sorena.wanandroidapp.bean.Article;
-import com.example.sorena.wanandroidapp.util.BaseFragment;
-import com.example.sorena.wanandroidapp.util.HttpUtil;
-import com.example.sorena.wanandroidapp.util.JSONUtil;
-import com.example.sorena.wanandroidapp.util.LazyFragment;
+import com.example.sorena.wanandroidapp.dao.HomeDao;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.widget.MyViewPager;
+import com.example.sorena.wanandroidapp.widget.RefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class HomeFragment extends LazyFragment implements
-        MyViewPager.OnViewPagerTouchListener, MyViewPager.OnPageChangeListener , View.OnClickListener , MyViewPager.OpenWeb{
+/**
+ * 首页碎片
+ */
+public class HomeFragment extends BaseFragment implements
+        MyViewPager.OnViewPagerTouchListener, MyViewPager.OnPageChangeListener, View.OnClickListener,
+        MyViewPager.OpenWeb, RefreshLayout.refreshListener {
 
     //轮播图viewPager
     private MyViewPager mLoopViewPager;
@@ -55,7 +51,6 @@ public class HomeFragment extends LazyFragment implements
     private TextView mLoopTextViewShowMessage;
     //轮播图右下角的信息
     private TextView mLoopTextViewShowPosition;
-
     //普通文章数据列表
     private List<Article> mNormalArticleList = null;
     //置顶文章数据列表
@@ -72,21 +67,13 @@ public class HomeFragment extends LazyFragment implements
     //最外层包着的用于下拉刷新的布局
     private SwipeRefreshLayout mHomeSwipeRefreshLayoutRefreshData;
     private View mLoopView;
+    private RefreshLayout mMainActivityRefresh;
 
-
-
-
-    @Override
-    protected void lazyLoad() {
-        setLoopData();
-        getData();
-    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home,container,false);
-        return view;
+        return inflater.inflate(R.layout.fragment_home,container,false);
     }
 
     @Override
@@ -94,6 +81,8 @@ public class HomeFragment extends LazyFragment implements
         super.onViewCreated(view, savedInstanceState);
         initLoopView();
         initListView();
+        setLoopData();
+        getData();
     }
 
     private void initLoopView(){
@@ -101,6 +90,7 @@ public class HomeFragment extends LazyFragment implements
         mLoopView = LayoutInflater.from(getActivity()).inflate(R.layout.view_pager_my,null);
         mLoopViewPager = mLoopView.findViewById(R.id.loop_viewPager);
         adapter = new LooperPagerAdapter(()->{
+            if (getActivity() == null){return;}
             getActivity().runOnUiThread(() ->{
                     mDataLoadingFinish = true;
                     mLoopViewPager.setVisibility(View.VISIBLE);
@@ -120,27 +110,34 @@ public class HomeFragment extends LazyFragment implements
     private void initListView(){
 
         mHomeListViewShowArticle = getActivity().findViewById(R.id.home_listView_showArticle);
+        mHomeSwipeRefreshLayoutRefreshData = getActivity().findViewById(R.id.home_swipeRefreshLayout_refreshData);
+        mMainActivityRefresh =  getActivity().findViewById(R.id.mainActivity_refresh);
+        mMainActivityRefresh.setRefreshListener(this);
         mHomeListViewShowArticle.setVisibility(View.GONE);
         mHomeListViewShowArticle.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 //到顶部时，设置可以刷新
+//                LogUtil.d("日志:firstVisibleItem", ""+ firstVisibleItem);
                 if (firstVisibleItem == 0) {
+                    //得到能显示的第一个项
                     View firstVisibleItemView = mHomeListViewShowArticle.getChildAt(0);
-                    if (firstVisibleItemView != null && firstVisibleItemView.getTop() == 0) {
+                    if (firstVisibleItemView != null && firstVisibleItemView.getTop() == 0)
+                    {
                         mHomeSwipeRefreshLayoutRefreshData.setEnabled(true);
-                        LogUtil.d("日志", "##### 滚动到顶部 #####");
+                    }
+                    else {
+                        mHomeSwipeRefreshLayoutRefreshData.setEnabled(false);
                     }
                 }
                 //到底部时,自动加载下一页
                 else if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
                     View lastVisibleItemView = mHomeListViewShowArticle.getChildAt(mHomeListViewShowArticle.getChildCount() - 1);
                     if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mHomeListViewShowArticle.getHeight()) {
-                        LogUtil.d("日志", "##### 滚动到底部 准备加载下一页######");
                         loadNextPageNormalData();
                     }
                 }
-                        //其他时候设置不可刷新
+                //其他时候设置不可刷新
                 else {
                     mHomeSwipeRefreshLayoutRefreshData.setEnabled(false);
                 }
@@ -163,10 +160,7 @@ public class HomeFragment extends LazyFragment implements
             }
         });
 
-
-
         mHomeListViewShowArticle.addHeaderView(mLoopView);
-        mHomeSwipeRefreshLayoutRefreshData = getActivity().findViewById(R.id.home_swipeRefreshLayout_refreshData);
         mHomeSwipeRefreshLayoutRefreshData.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -176,38 +170,32 @@ public class HomeFragment extends LazyFragment implements
                     return;
                 }
                 mArticleAdapter.clearData();
-                mArticleAdapter.resetToppingArticle(mToppingArticleList);
+                refreshToppingData();
                 loadNextPageNormalData();
             }
         });
-
-
     }
-
-
 
     private void setLoopData(){
 
-        HttpUtil.sendHttpRequest("https://www.wanandroid.com/banner/json", new HttpUtil.HttpCallBackListener() {
+        HomeDao.getLoopingData(getActivity(), new HomeDao.LoopingDataLoadingListener() {
             @Override
-            public void onFinish(String response) {
-                String data = JSONUtil.getValue("data",response,new String[]{});
-                String[] keys = {"desc","imagePath","title","url"};
-                Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,keys);
-                mURLs = stringListMap.get("imagePath");
-                mMessage = stringListMap.get("title");
-                mWebURLs = stringListMap.get("url");
-                adapter.setURLs(mURLs);
+            public void onFinish(List<String> urls, List<String> messages, List<String> webUrls) {
+                mURLs = urls;
+                mMessage = messages;
+                mWebURLs = webUrls;
+                adapter.setmURLs(mURLs);
                 adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onError(Exception e) {
-                e.printStackTrace();
+                LogUtil.d("日志:LoopingDataLoadingListener",e.getMessage());
             }
         });
-    }
 
+
+    }
 
     private void noticeDataLoadingStatusChange(){
         if (mNormalIsLoadingFinish && mToppingIsLoadingFinish){
@@ -217,6 +205,9 @@ public class HomeFragment extends LazyFragment implements
 
     private void setArticleListData(){
 
+        if (getActivity() == null){
+            return;
+        }
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -227,101 +218,91 @@ public class HomeFragment extends LazyFragment implements
                 mArticleAdapter = new BaseArticleAdapter(getActivity(),R.layout.article_item_layout, mNormalArticleList,mToppingArticleList);
                 mHomeListViewShowArticle.setAdapter(mArticleAdapter);
                 mHomeListViewShowArticle.setVisibility(View.VISIBLE);
-
             }
         });
     }
 
     private void loadNextPageNormalData(){
 
-        new Thread(new Runnable() {
+        HomeDao.loadNormalData(getActivity(),nextLoadingNormalPage,new HomeDao.NormalDataLoadingListener() {
             @Override
-            public void run() {
-                HttpUtil.sendHttpRequest("https://www.wanandroid.com/article/list/" + nextLoadingNormalPage + "/json", new HttpUtil.HttpCallBackListener() {
-                    @Override
-                    public void onFinish(String response) {
-
-                        if (mNormalArticleList == null){
-                            mNormalArticleList = new ArrayList<>();
-                        }
-                        List<Article> articles = parseData(response);
-                        if (articles != null){
-                            mNormalArticleList.clear();
-                            mNormalArticleList.addAll(articles);
-                        }
-                        mNormalIsLoadingFinish = true;
-                        noticeDataLoadingStatusChange();
-                        nextLoadingNormalPage++;
-                        mHomeSwipeRefreshLayoutRefreshData.setRefreshing(false);
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        e.printStackTrace();
-                    }
+            public void onFinish(List<Article> articles) {
+                if (getActivity() == null){
+                    return;
+                }
+                if (mNormalArticleList == null){
+                    mNormalArticleList = new ArrayList<>();
+                }
+                if (articles != null){
+                    mNormalArticleList.clear();
+                    mNormalArticleList.addAll(articles);
+                }
+                mNormalIsLoadingFinish = true;
+                noticeDataLoadingStatusChange();
+                nextLoadingNormalPage++;
+                mHomeSwipeRefreshLayoutRefreshData.setRefreshing(false);
+                getActivity().runOnUiThread(()->{
+                    mMainActivityRefresh.setVisibility(View.GONE);
                 });
-
             }
-        }).start();
-
-    }
-
-    private List<Article> parseData(String jsonString){
-
-        String data = JSONUtil.getValue("datas",jsonString,new String[]{"data"});
-        Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,new String[]{"author","link","title","niceDate","chapterName","id"});
-        List<String> authors = stringListMap.get("author");
-        List<String> links = stringListMap.get("link");
-        List<String> titles = stringListMap.get("title");
-        List<String> niceDates = stringListMap.get("niceDate");
-        List<String> chapterNames = stringListMap.get("chapterName");
-        List<String> ids = stringListMap.get("id");
-        ArrayList<Article> articles = new ArrayList<>();
-        if (authors == null) return null;
-        for (int i = 0; i < authors.size() ; i++) {
-            articles.add(new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i))));
-        }
-        return articles;
+            @Override
+            public void onError(Exception e) {
+                if (mNormalIsLoadingFinish){
+                    return;
+                }
+                if (getActivity() != null)
+                {
+                    getActivity().runOnUiThread(()->{
+                        mMainActivityRefresh.setVisibility(View.VISIBLE);
+                        mHomeSwipeRefreshLayoutRefreshData.setRefreshing(false);
+                    });
+                }
+            }
+        });
     }
 
 
     private void getData(){
-
         loadNextPageNormalData();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpUtil.sendHttpRequest("https://www.wanandroid.com/article/top/json", new HttpUtil.HttpCallBackListener() {
-                    @Override
-                    public void onFinish(String response) {
-                        String data = JSONUtil.getValue("data",response,new String[]{});
-                        System.out.println(data);
-                        Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,new String[]{"author","link","title","niceDate","chapterName","id"});List<String> authors = stringListMap.get("author");
-                        List<String> links = stringListMap.get("link");
-                        List<String> titles = stringListMap.get("title");
-                        List<String> niceDates = stringListMap.get("niceDate");
-                        List<String> chapterNames = stringListMap.get("chapterName");
-                        List<String> ids = stringListMap.get("id");
-                        mToppingArticleList = new ArrayList<>();
-                        if (authors == null) return;
-                        for (int i = 0; i < authors.size() ; i++) {
-                            mToppingArticleList.add(new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i))));
-                        }
-                        mToppingIsLoadingFinish = true;
-                        noticeDataLoadingStatusChange();
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-
-            }
-        }).start();
-
+        loadToppingData();
     }
+
+    private void loadToppingData(){
+        HomeDao.getToppingData(getActivity(), new HomeDao.ToppingDataLoadingListener() {
+            @Override
+            public void onFinish(List<Article> articles) {
+                if (getActivity() == null){return;}
+                getActivity().runOnUiThread(()->{
+                    mToppingArticleList = articles;
+                    mToppingIsLoadingFinish = true;
+                    noticeDataLoadingStatusChange();
+                });
+            }
+            @Override
+            public void onError(Exception e) {}
+        });
+    }
+
+    private void refreshToppingData(){
+        HomeDao.getToppingData(getActivity(), new HomeDao.ToppingDataLoadingListener() {
+            @Override
+            public void onFinish(List<Article> articles) {
+                if (getActivity() == null){return;}
+                getActivity().runOnUiThread(()->{
+                    if (mArticleAdapter == null){
+                        LogUtil.d("日志mArticleAdapter:","null");
+                        return;
+                    }
+                    mArticleAdapter.resetToppingArticle(articles);
+                });
+            }
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
 
 
     @Override
@@ -345,13 +326,14 @@ public class HomeFragment extends LazyFragment implements
                     if (currentItem <= 50){
                         currentItem = mURLs.size() * 100 -1 + currentItem;
                     }
-                    mLoopViewPager.setCurrentItem(++currentItem , true);
-                    LogUtil.d("日志", ""  +  currentItem);
+                    mLoopViewPager.setCurrentItem(++currentItem , false);
                 }
             }
             mHandler.postDelayed(this,4000);
         }
     };
+
+
 
     @Override
     public void onPagerTouch(boolean isTouch) {
@@ -360,40 +342,28 @@ public class HomeFragment extends LazyFragment implements
 
     //OnPageChangeListener的方法
     @Override
-    public void onPageScrolled(int i, float v, int i1) {
-
-    }
+    public void onPageScrolled(int i, float v, int i1) {}
 
     @Override
     public void onPageSelected(int i) {
-        LogUtil.d("日志","信息:" + mMessage.get(i % mMessage.size()) + "  位置:" + i);
         mLoopTextViewShowMessage.setText(mMessage.get(i % mMessage.size()));
         mLoopTextViewShowPosition.setText( (i % mMessage.size()+1) + "/" + mMessage.size());
     }
 
     @Override
-    public void onPageScrollStateChanged(int i) {
-
-    }
-
-
-
+    public void onPageScrollStateChanged(int i) {}
 
     //View.OnClickListener相关方法
-
     @Override
     public void onClick(View v) {
         Intent intent;
         switch (v.getId()){
-
             default:
                 break;
         }
     }
 
     //MyViewPager.OpenWeb
-
-
     @Override
     public void openWeb() {
         Intent intent = new Intent(getActivity(),WebActivity.class);
@@ -404,4 +374,81 @@ public class HomeFragment extends LazyFragment implements
         startActivity(intent);
     }
 
+    @Override
+    public void refresh() {
+        nextLoadingNormalPage = 1;
+        setLoopData();
+        loadNextPageNormalData();
+        loadToppingData();
+    }
 }
+
+
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                User user = SharedPreferencesHelper.getUserData();
+//                HttpUtil.sendHttpGetRequestWithCookie("https://www.wanandroid.com/article/list/"
+//                                + nextLoadingNormalPage + "/json",
+//                        new String[]{"loginUserName","loginUserPassword"},
+//                        new String[]{user.getUserName(),user.getUserPassword()},
+//                        new HttpUtil.HttpCallBackListener() {
+//                    @Override
+//                    public void onFinish(String response) {
+//
+//                        if (getActivity() == null){
+//                            return;
+//                        }
+//                        List<Article> articles = HomeDao.parseNormalArticleData(response);
+//                        if (mNormalArticleList == null){
+//                            mNormalArticleList = new ArrayList<>();
+//                        }
+//                        if (articles != null){
+//                            mNormalArticleList.clear();
+//                            mNormalArticleList.addAll(articles);
+//                        }
+//                        mNormalIsLoadingFinish = true;
+//                        noticeDataLoadingStatusChange();
+//                        nextLoadingNormalPage++;
+//                        mHomeSwipeRefreshLayoutRefreshData.setRefreshing(false);
+//                        getActivity().runOnUiThread(()->{
+//                            mMainActivityRefresh.setVisibility(View.GONE);
+//                        });
+//                    }
+//                    @Override
+//                    public void onError(Exception e) {
+//                        e.printStackTrace();
+//                        if (mNormalIsLoadingFinish){
+//                            return;
+//                        }
+//                        if (getActivity() != null)
+//                        {
+//                            getActivity().runOnUiThread(()->{
+//                                mMainActivityRefresh.setVisibility(View.VISIBLE);
+//                                mHomeSwipeRefreshLayoutRefreshData.setRefreshing(false);
+//                            });
+//                        }
+//                    }
+//                });
+//
+//            }
+//        }).start();
+
+//        HttpUtil.sendHttpRequest("https://www.wanandroid.com/banner/json", new HttpUtil.HttpCallBackListener() {
+//            @Override
+//            public void onFinish(String response) {
+//                String data = JSONUtil.getValue("data",response,new String[]{});
+//                String[] keys = {"desc","imagePath","title","url"};
+//                Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,keys);
+//                mURLs = stringListMap.get("imagePath");
+//                mMessage = stringListMap.get("title");
+//                mWebURLs = stringListMap.get("url");
+//                adapter.setmURLs(mURLs);
+//                adapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//                e.printStackTrace();
+//            }
+//        });

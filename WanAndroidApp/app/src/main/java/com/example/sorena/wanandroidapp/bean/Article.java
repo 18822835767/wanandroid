@@ -1,5 +1,8 @@
 package com.example.sorena.wanandroidapp.bean;
 
+/**
+ * 文章
+ */
 public class Article
 {
     private String author;
@@ -8,14 +11,16 @@ public class Article
     private String niceDate;
     private String chapterName;
     private Integer id;
+    private boolean collect;
 
-    public Article(String author, String link, String title, String niceDate, String chapterName , int id) {
+    public Article(String author, String link, String title, String niceDate, String chapterName , int id, boolean collect) {
         this.author = author;
         this.link = link;
         this.title = title;
         this.niceDate = niceDate;
         this.chapterName = chapterName;
         this.id = id;
+        this.collect = collect;
     }
 
     public String getAuthor() {
@@ -66,6 +71,14 @@ public class Article
         this.id = id;
     }
 
+    public boolean isCollect() {
+        return collect;
+    }
+
+    public void setCollect(boolean collect) {
+        this.collect = collect;
+    }
+
     @Override
     public String toString() {
         return "Article{" +
@@ -75,6 +88,7 @@ public class Article
                 ", niceDate='" + niceDate + '\'' +
                 ", chapterName='" + chapterName + '\'' +
                 ", id=" + id +
+                ", collect=" + collect +
                 '}';
     }
 }

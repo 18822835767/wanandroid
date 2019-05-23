@@ -2,6 +2,9 @@ package com.example.sorena.wanandroidapp.bean;
 
 import java.io.Serializable;
 
+/**
+ *导航的一个章节(projectFragment的viewPager的一个碎片的数据来源)
+ */
 public class ProjectChapter implements Serializable
 {
     private String name;

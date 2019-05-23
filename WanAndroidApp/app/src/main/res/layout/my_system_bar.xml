@@ -8,7 +8,7 @@
     <ImageView
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:src="@drawable/ic_back"
+        android:src="@drawable/ic_back_write"
         android:layout_centerVertical="true"
         android:id="@+id/mySystemBar_imageView_back"
         android:layout_marginLeft="13dp"/>
@@ -23,7 +23,15 @@
         android:id="@+id/mySystemBar_textView_message"
         android:layout_centerInParent="true"/>
 
-
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_share"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="13dp"
+        android:id="@+id/mySystemBar_imageView_share"
+        android:visibility="gone"/>
 
 
 </RelativeLayout>

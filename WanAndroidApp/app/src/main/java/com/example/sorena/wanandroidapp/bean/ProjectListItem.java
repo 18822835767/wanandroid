@@ -1,5 +1,8 @@
 package com.example.sorena.wanandroidapp.bean;
 
+/**
+ * 项目列表适配器
+ */
 public class ProjectListItem
 {
     private String pictureLink;
@@ -9,9 +12,10 @@ public class ProjectListItem
     private String date;
     private String author;
     private int id;
+    private boolean collect;
 
 
-    public ProjectListItem(String pictureLink, String projectLink, String title, String description, String date, String author, int id) {
+    public ProjectListItem(String pictureLink, String projectLink, String title, String description, String date, String author, int id,boolean collect) {
         this.pictureLink = pictureLink;
         this.projectLink = projectLink;
         this.title = title;
@@ -19,6 +23,7 @@ public class ProjectListItem
         this.date = date;
         this.author = author;
         this.id = id;
+        this.collect = collect;
     }
 
     public String getPictureLink() {
@@ -77,16 +82,25 @@ public class ProjectListItem
         this.id = id;
     }
 
+    public boolean isCollect() {
+        return collect;
+    }
+
+    public void setCollect(boolean collect) {
+        this.collect = collect;
+    }
+
     @Override
     public String toString() {
         return "ProjectListItem{" +
                 "pictureLink='" + pictureLink + '\'' +
                 ", projectLink='" + projectLink + '\'' +
                 ", title='" + title + '\'' +
-                ", description='" + description.substring(0,5) + '\'' +
+                ", description='" + description + '\'' +
                 ", date='" + date + '\'' +
                 ", author='" + author + '\'' +
                 ", id=" + id +
-                '}' + '\n';
+                ", collect=" + collect +
+                '}';
     }
 }

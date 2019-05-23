@@ -13,9 +13,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sorena.wanandroidapp.R;
-import com.example.sorena.wanandroidapp.adapter.SystemArticleBaseAdapter;
+import com.example.sorena.wanandroidapp.adapter.SystemArticleAdapter;
 import com.example.sorena.wanandroidapp.bean.Article;
 import com.example.sorena.wanandroidapp.bean.FlowItem;
+import com.example.sorena.wanandroidapp.bean.User;
+import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
@@ -28,6 +30,10 @@ import java.util.Map;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getMapInArray;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getValue;
 
+/**
+ * 点击systemFragment中的流布局标签后会跳转到这个活动
+ * 这个活动会展示一个chapter的数据
+ */
 public class ShowSystemItemActivity extends AppCompatActivity {
 
 
@@ -37,7 +43,7 @@ public class ShowSystemItemActivity extends AppCompatActivity {
     private Integer mMaxPage = 0;
     private Integer mNextPage = 0;
     private FlowItem mFlowItem;
-    private SystemArticleBaseAdapter mSystemArticleBaseAdapter;
+    private SystemArticleAdapter mSystemArticleBaseAdapter;
     private TextView mSystemTextViewNoMessage;
     private TextView mMySystemBarTextViewMessage;
 
@@ -60,9 +66,9 @@ public class ShowSystemItemActivity extends AppCompatActivity {
     private void initView(){
 
         mMySystemBar = findViewById(R.id.mySystemBar);
-        mSystemSwipeRefreshLayoutRefresh = findViewById(R.id.system_SwipeRefreshLayout_refresh);
-        mSystemListViewShowItem = findViewById(R.id.system_listView_showItem);
-        mSystemTextViewNoMessage = findViewById(R.id.system_textView_noMessage);
+        mSystemSwipeRefreshLayoutRefresh = findViewById(R.id.collect_SwipeRefreshLayout_refresh);
+        mSystemListViewShowItem = findViewById(R.id.collect_listView_showItem);
+        mSystemTextViewNoMessage = findViewById(R.id.collect_textView_noMessage);
         mMySystemBarTextViewMessage = findViewById(R.id.mySystemBar_textView_message);
         mMySystemBarTextViewMessage.setText(mFlowItem.getName());
         mSystemListViewShowItem.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -72,15 +78,13 @@ public class ShowSystemItemActivity extends AppCompatActivity {
                 if (firstVisibleItem == 0) {
                     View firstVisibleItemView = mSystemListViewShowItem.getChildAt(0);
                     if (firstVisibleItemView != null && firstVisibleItemView.getTop() == 0) {
-                        LogUtil.d("日志", "##### 滚动到顶部 #####");
+
                     }
                 }
                 //到底部时,自动加载下一页
                 else if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
                     View lastVisibleItemView = mSystemListViewShowItem.getChildAt(mSystemListViewShowItem.getChildCount() - 1);
-                    if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mSystemListViewShowItem.getHeight()) {
-                        LogUtil.d("日志", "##### 滚动到底部 准备加载下一页######");
-                        loadNextPageData();
+                    if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mSystemListViewShowItem.getHeight()) {                   loadNextPageData();
                     }
                 }
 
@@ -144,7 +148,11 @@ public class ShowSystemItemActivity extends AppCompatActivity {
 
         String url = "https://www.wanandroid.com/article/list/"+mNextPage+"/json?cid=" +mFlowItem.getId();
         LogUtil.d("日志:发送http",url);
-        HttpUtil.sendHttpRequest(url, new HttpUtil.HttpCallBackListener() {
+        User user = SharedPreferencesHelper.getUserData();
+        HttpUtil.sendHttpGetRequestWithCookie(url,
+                new String[]{"loginUserName", "loginUserPassword"},
+                new String[]{user.getUserName(), user.getUserPassword()},
+                new HttpUtil.HttpCallBackListener() {
             @Override
             public void onFinish(String response) {
                 //LogUtil.d("日志:返回response" , response);
@@ -162,26 +170,28 @@ public class ShowSystemItemActivity extends AppCompatActivity {
                     return;
                 }
                 String datas = getValue("datas",data,new String[]{});
-                Map<String,List<String>> stringListMap = getMapInArray(datas,new String[]{"author","id","link","niceDate","title","chapterName"});
+                Map<String,List<String>> stringListMap = getMapInArray(datas,new String[]{"author","id","link","niceDate","title","chapterName","collect"});
                 List<String> authors = stringListMap.get("author");
                 List<String> ids = stringListMap.get("id");
                 List<String> links = stringListMap.get("link");
                 List<String> niceDates = stringListMap.get("niceDate");
                 List<String> titles = stringListMap.get("title");
                 List<String> chapterNames = stringListMap.get("chapterName");
+                List<String> collects = stringListMap.get("collect");
                 final List<Article> articles = new ArrayList<>();
-                if (authors == null || ids == null || links == null || niceDates == null || titles == null || chapterNames == null){
+                if (authors == null || ids == null || links == null || niceDates == null || titles == null || chapterNames == null || collects == null){
+                    LogUtil.d("日志:","某个数据为空");
                     return;
                 }
                 for (int i = 0; i < authors.size(); i++) {
-                    Article article = new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i)));
+                    Article article = new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i)),Boolean.parseBoolean(collects.get(i)));
                     articles.add(article);
                 }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (mSystemArticleBaseAdapter == null){
-                            mSystemArticleBaseAdapter = new SystemArticleBaseAdapter(ShowSystemItemActivity.this,R.layout.article_item_layout,articles,null);
+                            mSystemArticleBaseAdapter = new SystemArticleAdapter(ShowSystemItemActivity.this,R.layout.article_item_layout,articles,null);
                             mSystemListViewShowItem.setAdapter(mSystemArticleBaseAdapter);
                         }else {
                             mSystemArticleBaseAdapter.addData(articles);
@@ -192,7 +202,6 @@ public class ShowSystemItemActivity extends AppCompatActivity {
                 mNextPage++;
 
             }
-
             @Override
             public void onError(Exception e) {
 

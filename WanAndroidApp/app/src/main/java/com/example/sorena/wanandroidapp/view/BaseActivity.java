@@ -1,4 +1,4 @@
-package com.example.sorena.wanandroidapp.util;
+package com.example.sorena.wanandroidapp.view;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

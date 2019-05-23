@@ -1,5 +1,6 @@
 package com.example.sorena.wanandroidapp.view;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -11,7 +12,9 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.util.LogUtil;
@@ -20,6 +23,9 @@ public class WebActivity extends AppCompatActivity {
 
     private ProgressBar mProgressBar;
     private String url;
+    private TextView mMySystemBarTextViewMessage;
+    private ImageView mMySystemBarImageViewShare;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,10 +122,24 @@ public class WebActivity extends AppCompatActivity {
     //初始化组件
     private void initView() {
         mProgressBar = (ProgressBar) findViewById(R.id.web_progressBar_showProgress);
+        mMySystemBarTextViewMessage = (TextView) findViewById(R.id.mySystemBar_textView_message);
+        mMySystemBarImageViewShare = (ImageView) findViewById(R.id.mySystemBar_imageView_share);
+        mMySystemBarTextViewMessage.setVisibility(View.GONE);
+        mMySystemBarImageViewShare.setVisibility(View.VISIBLE);
+        mMySystemBarImageViewShare.setOnClickListener((v)->{
+           shareText(WebActivity.this,"您的好友向你分享了干货,快来看看吧:" + url);
+        });
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
             actionBar.hide();
         }
     }
 
+    public static void shareText(Context context, String text){
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT,text);
+        sendIntent.setType("text/plain");
+        context.startActivity(Intent.createChooser(sendIntent, "发送"));
+    }
 }

@@ -11,19 +11,22 @@ import com.example.sorena.wanandroidapp.util.MyApplication;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * 对表操作的封装
+ */
 public class SearchHistoryDataBaseOperator
 {
-    private static SearchHistoryDataBaseOperator operator;
-    private static SearchHistoryDataBaseHelper helper;
+    private static SearchHistoryDataBaseOperator mOperator;
+    private static SearchHistoryDataBaseHelper mHelper;
     private SearchHistoryDataBaseOperator(){}
 
     static {
-        operator = new SearchHistoryDataBaseOperator();
-        helper = new SearchHistoryDataBaseHelper(MyApplication.getContext(),"History.db",null,1);
+        mOperator = new SearchHistoryDataBaseOperator();
+        mHelper = new SearchHistoryDataBaseHelper(MyApplication.getContext(),"History.db",null,1);
     }
 
     public void addData(String newWord){
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("word",newWord);
         db.insert("SearchHistory",null,values);
@@ -31,17 +34,17 @@ public class SearchHistoryDataBaseOperator
 
     public void delData(String word){
 
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         db.delete("SearchHistory","word = ?",new String[]{word});
     }
 
     public void delData(int id){
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         db.delete("SearchHistory","id = ?",new String[]{Integer.toString(id)});
     }
 
     public List<History> getDataList(){
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         List<History> histories = new LinkedList<>();
         Cursor cursor = db.query("SearchHistory",null,null,null,null,null,null);
         if (cursor.moveToFirst()){
@@ -59,12 +62,12 @@ public class SearchHistoryDataBaseOperator
 
 
     public static SearchHistoryDataBaseOperator getInstance(){
-        return operator;
+        return mOperator;
     }
 
 
     public void clearData() {
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         db.delete("SearchHistory","1",null);
     }
 }

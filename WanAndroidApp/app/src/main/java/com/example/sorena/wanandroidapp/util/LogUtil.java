@@ -10,7 +10,6 @@ public class LogUtil
     private static final int WARN = 4;
     private static final int ERROR = 5;
     private static final int NOTHING = 6;
-
     private static int level = VERBOSE;
 
     public static void v(String tag, String msg){
@@ -42,9 +41,6 @@ public class LogUtil
             Log.e(tag, msg);
         }
     }
-
-
-
 
 
 

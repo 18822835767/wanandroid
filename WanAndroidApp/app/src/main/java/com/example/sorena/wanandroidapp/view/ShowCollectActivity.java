@@ -12,33 +12,36 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sorena.wanandroidapp.R;
-import com.example.sorena.wanandroidapp.adapter.BaseArticleAdapter;
-import com.example.sorena.wanandroidapp.adapter.CollectionAdapter;
+import com.example.sorena.wanandroidapp.adapter.SystemArticleAdapter;
 import com.example.sorena.wanandroidapp.bean.Article;
 import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JSONUtil;
-import com.example.sorena.wanandroidapp.util.JudgeUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
 import com.example.sorena.wanandroidapp.widget.SystemBarLayout;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 展示收藏的活动
+ */
 public class ShowCollectActivity extends AppCompatActivity {
 
-    private ListView mShowCollectActivityListViewShowCollects;
-    private SwipeRefreshLayout mShowCollectActivitySwipeRefreshLayoutRefresh;
-    private SystemBarLayout mShowCollectActivitySystemBarLayoutBar;
-    private CollectionAdapter mArticleAdapter;
+    private ListView mListViewShowCollects;
+    private SwipeRefreshLayout mSwipeRefreshLayoutRefresh;
+    private SystemBarLayout mSystemBarLayoutBar;
     private TextView nMessageTextView;
+    private SystemArticleAdapter mArticleAdapter;
     private List<Article> mArticle;
-    private User user;
-    private int nextPage = 0;
-    private int maxPage = 0;
+    private User mUser;
+    private int mNextPage = 0;
+    private int mMaxPage = 0;
+
 
 
     @Override
@@ -48,43 +51,50 @@ public class ShowCollectActivity extends AppCompatActivity {
         ViewUtil.cancelActionBar(this);
         init();
         loadNextPageData();
+
     }
 
     private void init(){
-        user = SharedPreferencesHelper.getUserData();
-        mShowCollectActivityListViewShowCollects = findViewById(R.id.showCollectActivity_ListView_showCollects);
-        mShowCollectActivitySwipeRefreshLayoutRefresh = findViewById(R.id.showCollectActivity_SwipeRefreshLayout_refresh);
-        mArticleAdapter = new CollectionAdapter(this,R.layout.article_item_layout,new ArrayList<>());
-        mShowCollectActivityListViewShowCollects.setAdapter(mArticleAdapter);
         nMessageTextView = findViewById(R.id.mySystemBar_textView_message);
-        mShowCollectActivitySystemBarLayoutBar = findViewById(R.id.showCollectActivity_SystemBarLayout_bar);
+        mSwipeRefreshLayoutRefresh = findViewById(R.id.collect_SwipeRefreshLayout_refresh);
+        mSystemBarLayoutBar = findViewById(R.id.mySystemBar);
         nMessageTextView.setText("收藏");
-        mShowCollectActivityListViewShowCollects.setVisibility(View.VISIBLE);
-        mShowCollectActivityListViewShowCollects.setOnScrollListener(new AbsListView.OnScrollListener() {
+        mUser = SharedPreferencesHelper.getUserData();
+        mListViewShowCollects = findViewById(R.id.collect_listView_showItem);
+        mArticleAdapter = new SystemArticleAdapter(this,R.layout.article_item_layout,new ArrayList<>(),new HashSet<>());
+        mListViewShowCollects.setAdapter(mArticleAdapter);
+
+
+        mListViewShowCollects.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 //到顶部时，设置可以刷新
                 if (firstVisibleItem == 0) {
-                    View firstVisibleItemView = mShowCollectActivityListViewShowCollects.getChildAt(0);
+                    View firstVisibleItemView = mListViewShowCollects.getChildAt(0);
                     if (firstVisibleItemView != null && firstVisibleItemView.getTop() == 0) {
-                        mShowCollectActivityListViewShowCollects.setEnabled(true);
+                        mSwipeRefreshLayoutRefresh.setEnabled(true);
                     } else {
-                        mShowCollectActivityListViewShowCollects.setEnabled(false);
+                        mSwipeRefreshLayoutRefresh.setEnabled(false);
                     }
                 }
                 //到底部时,自动加载下一页
                 else if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
-                    View lastVisibleItemView = mShowCollectActivityListViewShowCollects.getChildAt(mShowCollectActivityListViewShowCollects.getChildCount() - 1);
-                    if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mShowCollectActivityListViewShowCollects.getHeight()) {
+                    View lastVisibleItemView = mListViewShowCollects.getChildAt(mListViewShowCollects.getChildCount() - 1);
+                    if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mListViewShowCollects.getHeight()) {
                         loadNextPageData();
+                        LogUtil.d("日志:ShowCollectActivity","加载下一页");
                     }
+                }
+                //其他时候设置不可刷新
+                else {
+                    mSwipeRefreshLayoutRefresh.setEnabled(false);
                 }
             }
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {}
         });
-        mShowCollectActivityListViewShowCollects.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListViewShowCollects.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(ShowCollectActivity.this,WebActivity.class);
@@ -93,16 +103,17 @@ public class ShowCollectActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        mShowCollectActivitySwipeRefreshLayoutRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+        mSwipeRefreshLayoutRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mArticleAdapter.clearData();
-                nextPage = 0;
+                mNextPage = 0;
                 loadNextPageData();
                 new Thread(()->{
                     try {
                         Thread.sleep(5000);
-                        if (mShowCollectActivitySwipeRefreshLayoutRefresh.isRefreshing()){
+                        if (mSwipeRefreshLayoutRefresh.isRefreshing()){
                             runOnUiThread(()->Toast.makeText(ShowCollectActivity.this,"哦豁,可能莫得网络了",Toast.LENGTH_SHORT).show());
                         }
                     }catch (Exception e){
@@ -117,22 +128,24 @@ public class ShowCollectActivity extends AppCompatActivity {
 
 
     private void loadNextPageData(){
-
-        if (nextPage > maxPage){
+        if (mNextPage > mMaxPage){
+            LogUtil.d("日志:ShowCollectActivity","mNextPage:" + mNextPage + "   mMaxPage:" + mMaxPage);
             return;
         }
-        HttpUtil.sendHttpRequestWithCookie("https://www.wanandroid.com/lg/collect/list/"+nextPage+"/json",
+        HttpUtil.sendHttpGetRequestWithCookie("https://www.wanandroid.com/lg/collect/list/"+ mNextPage +"/json",
                 new String[]{"loginUserName", "loginUserPassword"},
-                new String[]{user.getUserName(), user.getUserPassword()},
+                new String[]{mUser.getUserName(), mUser.getUserPassword()},
                 new HttpUtil.HttpCallBackListener() {
                     @Override
                     public void onFinish(String response) {
-                        nextPage++;
+                        mNextPage++;
+                        LogUtil.d("日志:response",response);
                         mArticle = parseData(response);
                         runOnUiThread(()->{
                             mArticleAdapter.addData(mArticle);
-                            if (mShowCollectActivitySwipeRefreshLayoutRefresh.isRefreshing()){
-                                mShowCollectActivitySwipeRefreshLayoutRefresh.setRefreshing(false);
+                            mArticleAdapter.notifyDataSetChanged();
+                            if (mSwipeRefreshLayoutRefresh.isRefreshing()){
+                                mSwipeRefreshLayoutRefresh.setRefreshing(false);
                             }
                         });
                     }
@@ -147,18 +160,25 @@ public class ShowCollectActivity extends AppCompatActivity {
 
     private List<Article> parseData(String jsonString){
         String data = JSONUtil.getValue("datas",jsonString,new String[]{"data"});
-        Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,new String[]{"author","link","title","niceDate","chapterName","id"});
+        String max = JSONUtil.getValue("pageCount",jsonString,new String[]{"data"});
+        mMaxPage = Integer.parseInt(max) - 1;
+        Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,new String[]{"author","link","title","niceDate","chapterName","originId"});
         List<String> authors = stringListMap.get("author");
         List<String> links = stringListMap.get("link");
         List<String> titles = stringListMap.get("title");
         List<String> niceDates = stringListMap.get("niceDate");
         List<String> chapterNames = stringListMap.get("chapterName");
-        List<String> ids = stringListMap.get("id");
+        List<String> ids = stringListMap.get("originId");
         ArrayList<Article> articles = new ArrayList<>();
         if (authors == null) return null;
         for (int i = 0; i < authors.size() ; i++) {
-            articles.add(new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i))));
+            articles.add(new Article(authors.get(i),links.get(i),titles.get(i),niceDates.get(i),chapterNames.get(i),Integer.parseInt(ids.get(i)),true));
         }
         return articles;
     }
+
+
+
+
+
 }

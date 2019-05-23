@@ -14,6 +14,8 @@ import android.widget.Toast;
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.adapter.SearchResultListAdapter;
 import com.example.sorena.wanandroidapp.bean.SearchResult;
+import com.example.sorena.wanandroidapp.bean.User;
+import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JudgeUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
@@ -28,19 +30,20 @@ import static com.example.sorena.wanandroidapp.util.JSONUtil.delHTMLTag;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getMapInArray;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getValue;
 
+/**
+ * 展示搜索结果的活动
+ */
 public class ShowResultActivity extends AppCompatActivity {
 
-    private SystemBarLayout showResultActivitySystemBarLayoutTopBar;
-    private SwipeRefreshLayout showResultActivitySwipeRefreshLayoutRefresh;
-    private ListView showResultActivityListViewShowResult;
-    private SearchResultListAdapter resultListAdapter;
+    private SystemBarLayout mSystemBarLayoutTopBar;
+    private SwipeRefreshLayout mSwipeRefreshLayoutRefresh;
+    private ListView mListViewShowResult;
+    private SearchResultListAdapter mResultListAdapter;
     private TextView mMessageTextView;
-    private List<SearchResult> results;
-    private String data;
-    private int nextPage = 0;
-    private int maxPage = 10;
-
-
+    private List<SearchResult> mResults;
+    private String mData;
+    private int mNextPage = 0;
+    private int mMaxPage = 10;
 
 
     @Override
@@ -49,8 +52,8 @@ public class ShowResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_result);
         ViewUtil.cancelActionBar(this);
         Intent intent = getIntent();
-        data = intent.getStringExtra("data");
-        LogUtil.d("日志:","搜索关键词为:" + data);
+        mData = intent.getStringExtra("mData");
+        LogUtil.d("日志:","搜索关键词为:" + mData);
         initView();
         initData();
 
@@ -60,26 +63,25 @@ public class ShowResultActivity extends AppCompatActivity {
 
 
     private void initView(){
-        showResultActivitySystemBarLayoutTopBar = (SystemBarLayout) findViewById(R.id.showResultActivity_SystemBarLayout_topBar);
-        showResultActivitySwipeRefreshLayoutRefresh = (SwipeRefreshLayout) findViewById(R.id.showResultActivity_SwipeRefreshLayout_refresh);
-        showResultActivityListViewShowResult = (ListView) findViewById(R.id.showResultActivity_listView_showResult);
+        mSystemBarLayoutTopBar = (SystemBarLayout) findViewById(R.id.showResultActivity_SystemBarLayout_topBar);
+        mSwipeRefreshLayoutRefresh = (SwipeRefreshLayout) findViewById(R.id.showResultActivity_SwipeRefreshLayout_refresh);
+        mListViewShowResult = (ListView) findViewById(R.id.showResultActivity_listView_showResult);
         mMessageTextView = findViewById(R.id.mySystemBar_textView_message);
-
-        mMessageTextView.setText(data);
-        showResultActivityListViewShowResult.setOnScrollListener(new AbsListView.OnScrollListener() {
+        mMessageTextView.setText(mData);
+        mListViewShowResult.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 //到顶部时，设置可以刷新
                 if (firstVisibleItem == 0) {
-                    View firstVisibleItemView = showResultActivityListViewShowResult.getChildAt(0);
+                    View firstVisibleItemView = mListViewShowResult.getChildAt(0);
                     if (firstVisibleItemView != null && firstVisibleItemView.getTop() == 0) {
 
                     }
                 }
                 //到底部时,自动加载下一页
                 else if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
-                    View lastVisibleItemView = showResultActivityListViewShowResult.getChildAt(showResultActivityListViewShowResult.getChildCount() - 1);
-                    if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == showResultActivityListViewShowResult.getHeight()) {
+                    View lastVisibleItemView = mListViewShowResult.getChildAt(mListViewShowResult.getChildCount() - 1);
+                    if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mListViewShowResult.getHeight()) {
                         loadMoreData();
                     }
                 }
@@ -88,24 +90,24 @@ public class ShowResultActivity extends AppCompatActivity {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {}
         });
-        showResultActivitySwipeRefreshLayoutRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mSwipeRefreshLayoutRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refreshData();
                 new Thread(()->{
                     try {Thread.sleep(5000);}
                     catch (Exception e){ LogUtil.e("日志:","异常:" + e.getMessage()); }
-                    if (showResultActivitySwipeRefreshLayoutRefresh.isRefreshing()){
-                        showResultActivitySwipeRefreshLayoutRefresh.setRefreshing(false);
+                    if (mSwipeRefreshLayoutRefresh.isRefreshing()){
+                        mSwipeRefreshLayoutRefresh.setRefreshing(false);
                         runOnUiThread(()->{Toast.makeText(ShowResultActivity.this,"哦豁,可能木有网络了哦",Toast.LENGTH_SHORT).show();});
                     }
                 }).start();
             }
         });
-        showResultActivityListViewShowResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListViewShowResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SearchResult result = (SearchResult)(resultListAdapter.getItem(position));
+                SearchResult result = (SearchResult)(mResultListAdapter.getItem(position));
                 Intent intent = new Intent(ShowResultActivity.this,WebActivity.class);
                 intent.putExtra("url",result.getLink());
                 startActivity(intent);
@@ -114,12 +116,12 @@ public class ShowResultActivity extends AppCompatActivity {
     }
 
     private void refreshData(){
-        if (resultListAdapter == null){
+        if (mResultListAdapter == null){
             initData();
             return;
         }
-        nextPage = 0;
-        resultListAdapter.clearData();
+        mNextPage = 0;
+        mResultListAdapter.clearData();
         loadMoreData();
     }
 
@@ -128,18 +130,20 @@ public class ShowResultActivity extends AppCompatActivity {
 
     private void initData(){
 
-        HttpUtil.sendPostRequest("https://www.wanandroid.com/article/query/0/json", new String[]{"k"}, new String[]{data}, new HttpUtil.HttpCallBackListener() {
+        User user = SharedPreferencesHelper.getUserData();
+        HttpUtil.sendHttpPostRequestWithCookie("https://www.wanandroid.com/article/query/0/json",  new String[]{"loginUserName", "loginUserPassword"},
+                new String[]{user.getUserName(), user.getUserPassword()},new String[]{"k"}, new String[]{mData}, new HttpUtil.HttpCallBackListener() {
             @Override
             public void onFinish(String response) {
 
                 LogUtil.d("日志","response:" + response);
-                results = parseData(response);
+                mResults = parseData(response);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        resultListAdapter = new SearchResultListAdapter(ShowResultActivity.this,R.layout.search_result_item,results);
-                        showResultActivityListViewShowResult.setAdapter(resultListAdapter);
-                        nextPage++;
+                        mResultListAdapter = new SearchResultListAdapter(ShowResultActivity.this,R.layout.search_result_item, mResults);
+                        mListViewShowResult.setAdapter(mResultListAdapter);
+                        mNextPage++;
                     }
                 });
             }
@@ -152,18 +156,20 @@ public class ShowResultActivity extends AppCompatActivity {
 
     private void loadMoreData(){
 
-        if (nextPage > maxPage){
+        if (mNextPage > mMaxPage){
             return;
         }
-        HttpUtil.sendPostRequest("https://www.wanandroid.com/article/query/"+nextPage+"/json", new String[]{"k"}, new String[]{data}, new HttpUtil.HttpCallBackListener() {
+        User user = SharedPreferencesHelper.getUserData();
+        HttpUtil.sendHttpPostRequestWithCookie("https://www.wanandroid.com/article/query/"+ mNextPage +"/json", new String[]{"loginUserName", "loginUserPassword"},
+                new String[]{user.getUserName(), user.getUserPassword()}, new String[]{"k"}, new String[]{mData}, new HttpUtil.HttpCallBackListener() {
             @Override
             public void onFinish(String response) {
                 LogUtil.d("日志","response:" + response);
-                results = parseData(response);
+                mResults = parseData(response);
                 runOnUiThread(()->{
-                    resultListAdapter.addData(results);
-                    nextPage++;
-                    showResultActivitySwipeRefreshLayoutRefresh.setRefreshing(false);
+                    mResultListAdapter.addData(mResults);
+                    mNextPage++;
+                    mSwipeRefreshLayoutRefresh.setRefreshing(false);
                 });
 
             }
@@ -177,10 +183,10 @@ public class ShowResultActivity extends AppCompatActivity {
 
     private List<SearchResult> parseData(String response){
 
-        String data = getValue("data",response,new String[]{});
+        String data = getValue("mData",response,new String[]{});
         String datas = getValue("datas",data,new String[]{});
         String pageCount = getValue("pageCount",data,new String[]{});
-        maxPage = Integer.parseInt(pageCount) - 1;
+        mMaxPage = Integer.parseInt(pageCount) - 1;
         Map<String,List<String>> dataMap = getMapInArray(datas,new String[]{"author","chapterName","link","superChapterName","title","niceDate","id","collect"});
         List<String> authors = dataMap.get("author");
         List<String> chapterNames = dataMap.get("chapterName");
@@ -191,11 +197,13 @@ public class ShowResultActivity extends AppCompatActivity {
         List<String> dates = dataMap.get("niceDate");
         List<String> collects = dataMap.get("collect");
         List<SearchResult> results = new LinkedList<>();
+        LogUtil.d("日志:collect:",collects.toString());
+        LogUtil.d("日志:response",response);
         if (JudgeUtil.dataContainsNull(authors,chapterNames,links,superChapters,titles,ids,dates,collects)){
             return results;
         }
         for (int i = 0; i < authors.size() ; i++){
-            results.add(new SearchResult(authors.get(i),chapterNames.get(i),superChapters.get(i),delHTMLTag(titles.get(i)),Integer.parseInt(ids.get(i)),links.get(i),Boolean.parseBoolean(links.get(i)),dates.get(i)));
+            results.add(new SearchResult(authors.get(i),chapterNames.get(i),superChapters.get(i),delHTMLTag(titles.get(i)),Integer.parseInt(ids.get(i)),links.get(i),Boolean.parseBoolean(collects.get(i)),dates.get(i)));
         }
         return results;
     }

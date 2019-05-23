@@ -1,4 +1,4 @@
-package com.example.sorena.wanandroidapp.util;
+package com.example.sorena.wanandroidapp.view;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.sorena.wanandroidapp.util.LogUtil;
 
 public class BaseFragment extends Fragment
 {

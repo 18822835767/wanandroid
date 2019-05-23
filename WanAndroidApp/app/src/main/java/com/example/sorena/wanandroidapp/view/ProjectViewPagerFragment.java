@@ -15,7 +15,8 @@ import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.adapter.ProjectListItemAdapter;
 import com.example.sorena.wanandroidapp.bean.ProjectChapter;
 import com.example.sorena.wanandroidapp.bean.ProjectListItem;
-import com.example.sorena.wanandroidapp.util.BaseFragment;
+import com.example.sorena.wanandroidapp.bean.User;
+import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 
 import java.util.ArrayList;
@@ -25,17 +26,19 @@ import java.util.Map;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getMapInArray;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getValue;
 
+/**
+ * project碎片的viewPager的碎片
+ */
 public class ProjectViewPagerFragment extends BaseFragment
 {
 
     private ProjectChapter mChapter;
     private SwipeRefreshLayout mProjectFragmentSwipeRefreshLayoutRefresh;
     private ListView mProjectFragmentListViewShowProjectItem;
-    private ProjectListItemAdapter itemAdapter;
+    private ProjectListItemAdapter mItemAdapter;
     private int mMaxPage = 1;
     private int mNextLoadPage = 1;
-    private List<ProjectListItem> listItems;
-    private boolean loadMChapter = false;
+    private List<ProjectListItem> mListItems;
 
 
 
@@ -92,7 +95,7 @@ public class ProjectViewPagerFragment extends BaseFragment
             @Override
             public void onRefresh() {
                 mNextLoadPage = 1;
-                itemAdapter.clearData();
+                mItemAdapter.clearData();
                 loadData();
                 new Thread(new Runnable() {
                     @Override
@@ -126,15 +129,18 @@ public class ProjectViewPagerFragment extends BaseFragment
         if (mChapter == null){
             return;
         }
-        HttpUtil.sendHttpRequest("https://www.wanandroid.com/project/list/" + 1 + "/json?cid=" + mChapter.getId(), new HttpUtil.HttpCallBackListener() {
+        User user = SharedPreferencesHelper.getUserData();
+        HttpUtil.sendHttpGetRequestWithCookie("https://www.wanandroid.com/project/list/" + 1 + "/json?cid=" + mChapter.getId(),
+                new String[]{"loginUserName","loginUserPassword"},
+                new String[]{user.getUserName(),user.getUserPassword()},new HttpUtil.HttpCallBackListener() {
             @Override
             public void onFinish(final String response) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        listItems = parseData(response);
-                        itemAdapter = new ProjectListItemAdapter(getActivity(),R.layout.project_list_item,listItems);
-                        mProjectFragmentListViewShowProjectItem.setAdapter(itemAdapter);
+                        mListItems = parseData(response);
+                        mItemAdapter = new ProjectListItemAdapter(getActivity(),R.layout.project_list_item, mListItems);
+                        mProjectFragmentListViewShowProjectItem.setAdapter(mItemAdapter);
                     }
                 });
                 mNextLoadPage++;
@@ -152,15 +158,18 @@ public class ProjectViewPagerFragment extends BaseFragment
         if (mNextLoadPage > mMaxPage){
             return;
         }else {
-
-            HttpUtil.sendHttpRequest("https://www.wanandroid.com/project/list/" + mNextLoadPage + "/json?cid=" + mChapter.getId(), new HttpUtil.HttpCallBackListener() {
+            User user = SharedPreferencesHelper.getUserData();
+            HttpUtil.sendHttpGetRequestWithCookie("https://www.wanandroid.com/project/list/" + mNextLoadPage + "/json?cid=" + mChapter.getId(),
+                    new String[]{"loginUserName","loginUserPassword"},
+                    new String[]{user.getUserName(),user.getUserPassword()},
+                    new HttpUtil.HttpCallBackListener() {
                 @Override
                 public void onFinish(final String response) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            listItems = parseData(response);
-                            itemAdapter.addData(listItems);
+                            mListItems = parseData(response);
+                            mItemAdapter.addData(mListItems);
                         }
                     });
                     mNextLoadPage++;
@@ -184,7 +193,7 @@ public class ProjectViewPagerFragment extends BaseFragment
         String maxPageIndex = getValue("pageCount",data,new String[]{});
         mMaxPage = Integer.parseInt(maxPageIndex);
         String datas =getValue("datas",data,new String[]{});
-        Map<String,List<String>> dataMap = getMapInArray(datas,new String[]{"author","desc","envelopePic","id","link","title","niceDate"});
+        Map<String,List<String>> dataMap = getMapInArray(datas,new String[]{"author","desc","envelopePic","id","link","title","niceDate","collect"});
         if (dataMap == null) return null;
         List<String> authors = dataMap.get("author");
         List<String> descriptions = dataMap.get("desc");
@@ -193,13 +202,14 @@ public class ProjectViewPagerFragment extends BaseFragment
         List<String> links = dataMap.get("link");
         List<String> titles = dataMap.get("title");
         List<String> dates = dataMap.get("niceDate");
-        if (authors == null || descriptions == null || pictures == null || ids == null || links ==  null || titles == null || dates == null){
+        List<String> collects = dataMap.get("collect");
+        if (authors == null || descriptions == null || pictures == null || ids == null || links ==  null || titles == null || dates == null || collects == null){
             return null;
         }
         List<ProjectListItem> list = new ArrayList<>();
         for (int i = 0; i < authors.size(); i++) {
             list.add(new ProjectListItem(pictures.get(i),links.get(i),titles.get(i),descriptions.get(i),dates.get(i),
-                    authors.get(i),Integer.parseInt(ids.get(i))));
+                    authors.get(i),Integer.parseInt(ids.get(i)),Boolean.parseBoolean(collects.get(i))));
         }
         return list;
     }
