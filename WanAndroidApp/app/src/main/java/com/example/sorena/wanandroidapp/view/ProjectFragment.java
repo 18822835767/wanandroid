@@ -48,8 +48,11 @@ public class ProjectFragment extends BaseFragment {
 
     private void initView(){
 
-        mViewPager = getActivity().findViewById(R.id.view_pager);
-        mTabLayout = getActivity().findViewById(R.id.tab_layout);
+        if (getView() == null){
+            return;
+        }
+        mViewPager = getView().findViewById(R.id.view_pager);
+        mTabLayout = getView().findViewById(R.id.tab_layout);
         mTabLayout.setupWithViewPager(mViewPager);
         mTabLayout.setVisibility(View.GONE);
         mViewPager.setVisibility(View.GONE);
@@ -71,6 +74,9 @@ public class ProjectFragment extends BaseFragment {
                 }
                 for (int i = 0; i < ids.size(); i++) {
                     chapters.add(new ProjectChapter(names.get(i),Integer.parseInt(ids.get(i))));
+                }
+                if (getActivity() == null){
+                    return;
                 }
                 mAdapter = new ProjectViewPagerAdapter(getActivity().getSupportFragmentManager(),chapters);
 

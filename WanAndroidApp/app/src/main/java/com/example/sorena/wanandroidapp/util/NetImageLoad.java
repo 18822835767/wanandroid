@@ -1,6 +1,6 @@
 package com.example.sorena.wanandroidapp.util;
 
-import android.app.Application;
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -13,18 +13,22 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 
 /**
  * 用于加载网络图片
  */
-public abstract class NetImageLoad
+public class NetImageLoad
 {
-    private ImageView imageView;
+    private ImageView mImageView;
+    private String mDownloadUrl;
+    private Map<String,Bitmap> mCacheMap;
+    private Activity mActivity;
 //    private Handler handler = new Handler(){
 //        @Override
 //        public void handleMessage(Message msg) {
 //            Bitmap bitmap = (Bitmap) msg.obj;
-//            loadImage(imageView, bitmap);
+//            loadImage(mImageView, bitmap);
 //        }
 //    };
 
@@ -43,7 +47,9 @@ public abstract class NetImageLoad
                 if (netImageLoad != null) {
                     LogUtil.v("日志:","加载执行");
                     Bitmap bitmap = (Bitmap) msg.obj;
-                    netImageLoad.loadImage(netImageLoad.imageView, bitmap);
+                    netImageLoad.mActivity.runOnUiThread(()->{
+                        netImageLoad.loadImage(netImageLoad.mImageView, bitmap);
+                    });
                 }else {
                     LogUtil.d("日志:","netImageLoad为null");
                 }
@@ -55,14 +61,21 @@ public abstract class NetImageLoad
 
 
 
+    private void loadImage(ImageView imageView, Bitmap bitmap){
+        if(imageView.getTag()!=null && imageView.getTag().equals(mDownloadUrl)){
+            imageView.setImageBitmap(bitmap);
+            if (mCacheMap != null){
+                mActivity.runOnUiThread(()->mCacheMap.put(imageView.getTag().toString(),bitmap));
+            }
 
+        }
+    }
 
-
-
-    public abstract void loadImage(ImageView imageView,Bitmap bitmap);
-
-    public void downloadImage(ImageView imageView,final String imgUrl){
-        this.imageView  = imageView;
+    public void downloadImage(Activity activity,ImageView imageView, final String imgUrl, final Map<String,Bitmap> cacheMap){
+        this.mImageView = imageView;
+        this.mDownloadUrl = imgUrl;
+        this.mCacheMap = cacheMap;
+        this.mActivity = activity;
         new Thread(){
             public void run() {
                 try {
@@ -85,7 +98,7 @@ public abstract class NetImageLoad
 //                    handler.sendMessage(message);
                     MyHandler myHandler = new MyHandler(NetImageLoad.this);
 //                    myHandler.post(()->{
-//                        loadImage(imageView, bitmap);
+//                        loadImage(mImageView, bitmap);
 //                    });
                     //The application may be doing too much work on its main thread
                     myHandler.handleMessage(message);

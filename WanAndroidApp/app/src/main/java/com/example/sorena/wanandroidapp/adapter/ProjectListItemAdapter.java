@@ -118,16 +118,7 @@ public class ProjectListItemAdapter extends BaseAdapter
         final String downLoadURL = item.getPictureLink();
         viewHolder.projectImageViewShowProjectPicture.setTag(downLoadURL);
         if (mBitmapMap.get(downLoadURL) == null){
-            new NetImageLoad(){
-                @Override
-                public void loadImage(ImageView imageView, Bitmap bitmap) {
-                    if(imageView.getTag()!=null && imageView.getTag().equals(downLoadURL)){
-                        ((AppCompatActivity)mContext).runOnUiThread(()->imageView.setImageBitmap(bitmap));
-                        mBitmapMap.put(imageView.getTag().toString(),bitmap);
-                    }
-
-                }
-            }.downloadImage(viewHolder.projectImageViewShowProjectPicture,downLoadURL);
+            new NetImageLoad().downloadImage((Activity)mContext, viewHolder.projectImageViewShowProjectPicture,downLoadURL,mBitmapMap);
             viewHolder.projectImageViewShowProjectPicture.setImageResource(R.drawable.pic_project_default);
         }else {
             viewHolder.projectImageViewShowProjectPicture.setImageBitmap(mBitmapMap.get(downLoadURL));
@@ -171,3 +162,16 @@ public class ProjectListItemAdapter extends BaseAdapter
 
 
 }
+
+//if (mBitmapMap.get(downLoadURL) == null){
+//        new NetImageLoad(){
+//@Override
+//public void loadImage(ImageView imageView, Bitmap bitmap) {
+//        if(imageView.getTag()!=null && imageView.getTag().equals(downLoadURL)){
+//        ((AppCompatActivity)mContext).runOnUiThread(()->imageView.setImageBitmap(bitmap));
+//        mBitmapMap.put(imageView.getTag().toString(),bitmap);
+//        }
+//
+//        }
+//        }.downloadImage(viewHolder.projectImageViewShowProjectPicture,downLoadURL);
+//        viewHolder.projectImageViewShowProjectPicture.setImageResource(R.drawable.pic_project_default);
