@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sorena.wanandroidapp.R;
-import com.example.sorena.wanandroidapp.adapter.SystemArticleBaseAdapter;
+import com.example.sorena.wanandroidapp.adapter.SystemArticleAdapter;
 import com.example.sorena.wanandroidapp.bean.Article;
 import com.example.sorena.wanandroidapp.bean.FlowItem;
 import com.example.sorena.wanandroidapp.bean.User;
@@ -30,6 +30,10 @@ import java.util.Map;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getMapInArray;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getValue;
 
+/**
+ * 点击systemFragment中的流布局标签后会跳转到这个活动
+ * 这个活动会展示一个chapter的数据
+ */
 public class ShowSystemItemActivity extends AppCompatActivity {
 
 
@@ -39,7 +43,7 @@ public class ShowSystemItemActivity extends AppCompatActivity {
     private Integer mMaxPage = 0;
     private Integer mNextPage = 0;
     private FlowItem mFlowItem;
-    private SystemArticleBaseAdapter mSystemArticleBaseAdapter;
+    private SystemArticleAdapter mSystemArticleBaseAdapter;
     private TextView mSystemTextViewNoMessage;
     private TextView mMySystemBarTextViewMessage;
 
@@ -187,7 +191,7 @@ public class ShowSystemItemActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         if (mSystemArticleBaseAdapter == null){
-                            mSystemArticleBaseAdapter = new SystemArticleBaseAdapter(ShowSystemItemActivity.this,R.layout.article_item_layout,articles,null);
+                            mSystemArticleBaseAdapter = new SystemArticleAdapter(ShowSystemItemActivity.this,R.layout.article_item_layout,articles,null);
                             mSystemListViewShowItem.setAdapter(mSystemArticleBaseAdapter);
                         }else {
                             mSystemArticleBaseAdapter.addData(articles);

@@ -28,15 +28,18 @@ import java.util.Map;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getMapInArray;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getValue;
 
+/**
+ * 搜索的活动
+ */
 public class SearchActivity extends AppCompatActivity implements View.OnClickListener ,TextView.OnEditorActionListener {
 
-    private ImageView searchActivityImageViewBack;
-    private EditText searchActivityEditTextInputText;
-    private LinearLayout activityLinearLayoutShowHot;
-    private FlowLayout searchActivityFlowLayoutShowHot;
-    private ListView searchActivityListViewShowHistorySearch;
-    private TextView searchTextViewClear;
-    private ImageView searchImageViewClear;
+    private ImageView mImageViewBack;
+    private EditText mEditTextInputText;
+    private LinearLayout mLinearLayoutShowHot;
+    private FlowLayout mFlowLayoutShowHot;
+    private ListView mListViewShowHistorySearch;
+    private TextView mTextViewClear;
+    private ImageView mImageViewClear;
 
 
     private HistoryAdapt historyAdapt;
@@ -52,23 +55,23 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     void initView(){
-        searchActivityImageViewBack = findViewById(R.id.searchActivity_imageView_back);
-        searchActivityEditTextInputText = findViewById(R.id.searchActivity_editText_inputText);
-        activityLinearLayoutShowHot = findViewById(R.id.activity_linearLayout_showHot);
-        searchActivityFlowLayoutShowHot = findViewById(R.id.searchActivity_flowLayout_showHot);
-        searchActivityListViewShowHistorySearch = findViewById(R.id.searchActivity_listView_showHistorySearch);
-        searchTextViewClear = findViewById(R.id.search_textView_clear);
-        searchImageViewClear = findViewById(R.id.search_imageView_clear);
-        searchImageViewClear.setOnClickListener(this);
-        searchTextViewClear.setOnClickListener(this);
-        searchActivityEditTextInputText.setOnEditorActionListener(this);
-        searchActivityListViewShowHistorySearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mImageViewBack = findViewById(R.id.searchActivity_imageView_back);
+        mEditTextInputText = findViewById(R.id.searchActivity_editText_inputText);
+        mLinearLayoutShowHot = findViewById(R.id.activity_linearLayout_showHot);
+        mFlowLayoutShowHot = findViewById(R.id.searchActivity_flowLayout_showHot);
+        mListViewShowHistorySearch = findViewById(R.id.searchActivity_listView_showHistorySearch);
+        mTextViewClear = findViewById(R.id.search_textView_clear);
+        mImageViewClear = findViewById(R.id.search_imageView_clear);
+        mImageViewClear.setOnClickListener(this);
+        mTextViewClear.setOnClickListener(this);
+        mEditTextInputText.setOnEditorActionListener(this);
+        mListViewShowHistorySearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 startResultActivity(historyAdapt.getmHistoryList().get(position).getWord());
             }
         });
-        searchActivityImageViewBack.setOnClickListener(this);
+        mImageViewBack.setOnClickListener(this);
     }
 
     void getHotData(){
@@ -84,7 +87,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                     strings[i] = names.get(i);
                 }
                 runOnUiThread(()->{
-                    FlowLayoutFactory.setFlowLayout(searchActivityFlowLayoutShowHot, SearchActivity.this, R.layout.search_flowlayout_tv, names, strings, (v)->{
+                    FlowLayoutFactory.setFlowLayout(mFlowLayoutShowHot, SearchActivity.this, R.layout.search_flowlayout_tv, names, strings, (v)->{
                         startResultActivity(v.getTag().toString());
                     }, true);
                 });
@@ -99,7 +102,6 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
     private void getHistoryData(){
         SearchHistoryDataBaseOperator operator = SearchHistoryDataBaseOperator.getInstance();
-        //mHistoryListBaseAdapter = new HistoryListBaseAdapter(this,R.layout.item_search_history,operator.getDataList());
         historyAdapt = new HistoryAdapt(this,R.layout.item_search_history,operator.getDataList());
 
         historyAdapt.setListener(new HistoryAdapt.OnItemDeleteListener() {
@@ -111,7 +113,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 SearchHistoryDataBaseOperator.getInstance().delData(history.getWord());
             }
         });
-        searchActivityListViewShowHistorySearch.setAdapter(historyAdapt);
+        mListViewShowHistorySearch.setAdapter(historyAdapt);
     }
 
 
@@ -141,9 +143,9 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH){
-            if (v.getId() == R.id.searchActivity_editText_inputText && !searchActivityEditTextInputText.getText().toString().equals("")){
-                historyAdapt.addData(searchActivityEditTextInputText.getText().toString());
-                startResultActivity(searchActivityEditTextInputText.getText().toString());
+            if (v.getId() == R.id.searchActivity_editText_inputText && !mEditTextInputText.getText().toString().equals("")){
+                historyAdapt.addData(mEditTextInputText.getText().toString());
+                startResultActivity(mEditTextInputText.getText().toString());
             }
         }
         return false;

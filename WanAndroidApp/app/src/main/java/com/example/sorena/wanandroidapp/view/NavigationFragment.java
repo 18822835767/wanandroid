@@ -20,6 +20,9 @@ import com.example.sorena.wanandroidapp.widget.RefreshLayout;
 
 import java.util.List;
 
+/**
+ * 导航碎片
+ */
 public class NavigationFragment extends BaseFragment implements RefreshLayout.refreshListener {
 
     private ListView mListViewShowData;

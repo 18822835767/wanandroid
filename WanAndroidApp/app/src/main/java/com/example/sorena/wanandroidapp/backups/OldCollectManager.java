@@ -1,4 +1,4 @@
-package com.example.sorena.wanandroidapp.manager;
+package com.example.sorena.wanandroidapp.backups;
 
 import android.app.Activity;
 import android.util.Log;
@@ -26,10 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author sorena
- * @date 2019/5/13
- * 这个类目前用不上,因为没有登录功能
- * 只是打算用这个类来管理收藏的功能
+ *
  *
  * @author sorena
  * @date 2019/5/16
@@ -39,7 +36,7 @@ import java.util.Set;
  *
  */
 
-
+@Deprecated
 public class OldCollectManager
 {
     private static OldCollectManager oldCollectManager;

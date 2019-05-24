@@ -1,5 +1,8 @@
 package com.example.sorena.wanandroidapp.bean;
 
+/**
+ * 文章
+ */
 public class Article
 {
     private String author;

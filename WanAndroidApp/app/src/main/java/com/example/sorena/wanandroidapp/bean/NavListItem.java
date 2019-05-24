@@ -3,6 +3,10 @@ package com.example.sorena.wanandroidapp.bean;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 导航左边列表的实体类
+ */
+
 public class NavListItem implements Serializable
 {
     private String name;

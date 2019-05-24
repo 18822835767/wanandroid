@@ -12,6 +12,11 @@ import java.net.URL;
 public class PictureUtil
 {
 
+    /**
+     *
+     * @param path:url地址
+     * @return bitmap对象
+     */
     public static Bitmap getBitmaps(final String path){
 
         Bitmap bitmap = null;

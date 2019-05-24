@@ -16,6 +16,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 导航的数据来源类
+ */
+
 public class NavigationDao
 {
     private static final String NavAddress = "https://www.wanandroid.com/navi/json";

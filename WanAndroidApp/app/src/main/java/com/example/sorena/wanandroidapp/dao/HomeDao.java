@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 用于首页的数据加载
+ * 用于首页的数据加载和数据缓存
  *
  */
 public class HomeDao
@@ -33,6 +33,7 @@ public class HomeDao
     private static final String LoopDataFileName = "loopData.txt";
     private static final String LoopPicFrontString = "https://wanandroid.com/blogimgs/";
     private static final String LoopingDataAddress = "https://www.wanandroid.com/banner/json";
+    private static boolean normalDataIsLoading = false;
     private static HomeDao homeDao;
     static {
         homeDao = new HomeDao();
@@ -41,6 +42,10 @@ public class HomeDao
 
     public static void getLoopingData(Activity activity,LoopingDataLoadingListener listener){
 
+        if (normalDataIsLoading){
+            return;
+        }
+        normalDataIsLoading = true;
         if (NetWorkUtil.isNetworkAvailable(activity)){
             loadLoopingDataByWeb(activity,listener);
         }else {
@@ -62,7 +67,6 @@ public class HomeDao
                 List<String> webUrls = stringListMap.get("url");
                 listener.onFinish(urls,messages,webUrls);
             }
-
             @Override
             public void onError(Exception e) {
                 e.printStackTrace();
@@ -178,6 +182,7 @@ public class HomeDao
                             if (listener != null){
                                 listener.onFinish(articles);
                             }
+                            normalDataIsLoading = false;
                         }
                         @Override
                         public void onError(Exception e) {
@@ -185,6 +190,7 @@ public class HomeDao
                             if (listener != null){
                                 listener.onError(e);
                             }
+                            normalDataIsLoading = false;
                         }
                     });
         }).start();

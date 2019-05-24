@@ -1,7 +1,13 @@
 package com.example.sorena.wanandroidapp.bean;
 
+/**
+ *
+ */
 public class NavFlowItem
 {
+    /**
+     * 导航的流式布局对应的实体类
+     */
     private String title;
     private String link;
 

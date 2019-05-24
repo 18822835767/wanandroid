@@ -17,30 +17,33 @@ import com.example.sorena.wanandroidapp.util.LogUtil;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * 搜索结果列表适配器
+ */
 public class SearchResultListAdapter extends BaseAdapter
 {
-    private List<SearchResult> results;
-    private Context context;
-    private int resouceId;
+    private List<SearchResult> mResults;
+    private Context mContext;
+    private int mResourceId;
 
 
     public SearchResultListAdapter(Context context, int resourceId, List<SearchResult> results) {
         super();
-        this.context = context;
-        this.resouceId = resourceId;
-        this.results = results;
+        this.mContext = context;
+        this.mResourceId = resourceId;
+        this.mResults = results;
         CollectManager.getInstance().addToCollectSetByResult(results);
     }
 
 
     @Override
     public int getCount() {
-        return results.size();
+        return mResults.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return results.get(position);
+        return mResults.get(position);
     }
 
     @Override
@@ -51,11 +54,11 @@ public class SearchResultListAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        SearchResult result = results.get(position);
+        SearchResult result = mResults.get(position);
         View view;
         ViewHolder viewHolder;
         if (convertView == null){
-            view = LayoutInflater.from(context).inflate(resouceId,parent,false);
+            view = LayoutInflater.from(mContext).inflate(mResourceId,parent,false);
             viewHolder = new ViewHolder();
             viewHolder.searchTextViewShowAuthor = view.findViewById(R.id.search_textView_showAuthor);
             viewHolder.searchResultTextViewShowChapterName = view.findViewById(R.id.searchResult_textView_showChapterName);
@@ -89,9 +92,9 @@ public class SearchResultListAdapter extends BaseAdapter
                         try {
                             ImageView imageView = (ImageView)v;
                             if (imageView.getTag().equals(R.drawable.ic_collect_normal)){
-                                CollectManager.getInstance().addCollect(result.getId(),imageView,(Activity)context);
+                                CollectManager.getInstance().addCollect(result.getId(),imageView,(Activity) mContext);
                             }else {
-                                CollectManager.getInstance().cancelCollect(result.getId(),imageView,(Activity)context);
+                                CollectManager.getInstance().cancelCollect(result.getId(),imageView,(Activity) mContext);
                             }
                         }catch (ClassCastException e){
                             e.printStackTrace();
@@ -116,14 +119,14 @@ public class SearchResultListAdapter extends BaseAdapter
         if (results == null){
             results = new LinkedList<>();
         }
-        this.results.addAll(results);
+        this.mResults.addAll(results);
         CollectManager.getInstance().addToCollectSetByResult(results);
         notifyDataSetChanged();
     }
 
     public void clearData(){
-        if (results != null){
-            results.clear();
+        if (mResults != null){
+            mResults.clear();
         }
     }
 

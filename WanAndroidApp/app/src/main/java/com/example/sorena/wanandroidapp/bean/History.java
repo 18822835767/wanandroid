@@ -2,6 +2,9 @@ package com.example.sorena.wanandroidapp.bean;
 
 import java.util.Objects;
 
+/**
+ * 搜索历史
+ */
 public class History
 {
     private int id;

@@ -1,5 +1,8 @@
 package com.example.sorena.wanandroidapp.bean;
 
+/**
+ * 用户实体类
+ */
 public class User
 {
     private String userName;

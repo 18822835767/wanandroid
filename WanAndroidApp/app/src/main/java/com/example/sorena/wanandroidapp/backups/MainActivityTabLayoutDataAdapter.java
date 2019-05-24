@@ -1,4 +1,4 @@
-package com.example.sorena.wanandroidapp.adapter;
+package com.example.sorena.wanandroidapp.backups;
 
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -11,9 +11,9 @@ import com.example.sorena.wanandroidapp.util.MyApplication;
 
 import java.util.ArrayList;
 import java.util.List;
-//这个适配器用于第一版时的tabLayout + viewpager 做总界面的时候
-//现在总界面不再使用这两个控件,但我现在不想把它删掉,所以先留着
-//@Deprecated(假装亮色)
+
+//用于第一版用viewPager和tabLayout实现的类微信布局
+@Deprecated
 public class MainActivityTabLayoutDataAdapter
 {
 

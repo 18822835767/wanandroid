@@ -8,32 +8,36 @@ import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.util.ViewSwitcher;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
 
-public class AccountActivity extends AppCompatActivity implements LoginFragment.SwitchToRegisterAble, RegisterFragment.SwitchToLoginAble{
+/**
+ * 账户管理的界面,会填充登录碎片或注册碎片
+ */
+public class AccountActivity extends AppCompatActivity
+        implements LoginFragment.SwitchToRegisterAble, RegisterFragment.SwitchToLoginAble{
 
-    private ViewSwitcher switcher;
-    private TextView textView;
+    private ViewSwitcher mSwitcher;
+    private TextView mTextView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
         ViewUtil.cancelActionBar(this);
 
-        textView = findViewById(R.id.mySystemBar_textView_message);
-        textView.setText("登录");
-        switcher = new ViewSwitcher(this,R.id.accountActivity_frameLayout_forReplace);
-        switcher.replace(new LoginFragment());
+        mTextView = findViewById(R.id.mySystemBar_textView_message);
+        mTextView.setText("登录");
+        mSwitcher = new ViewSwitcher(this,R.id.accountActivity_frameLayout_forReplace);
+        mSwitcher.replace(new LoginFragment());
     }
 
 
     @Override
     public void switchToRegister() {
-        switcher.replace(new RegisterFragment());
-        textView.setText("注册");
+        mSwitcher.replace(new RegisterFragment());
+        mTextView.setText("注册");
     }
 
     @Override
     public void switchToLogin() {
-        switcher.replace(new LoginFragment());
-        textView.setText("登录");
+        mSwitcher.replace(new LoginFragment());
+        mTextView.setText("登录");
     }
 }

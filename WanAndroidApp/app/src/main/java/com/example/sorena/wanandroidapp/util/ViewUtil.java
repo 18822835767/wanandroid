@@ -8,7 +8,7 @@ import android.view.View;
 
 public class ViewUtil
 {
-
+   //取消这个activity的bar
    public static void cancelActionBar(AppCompatActivity activity){
         ActionBar actionBar = activity.getSupportActionBar();
         if (actionBar != null){
@@ -16,8 +16,8 @@ public class ViewUtil
         }
     }
 
-    public static void fixSystemNoticeItem(AppCompatActivity activity){
 
+    public static void fixSystemNoticeItem(AppCompatActivity activity){
        if (Build.VERSION.SDK_INT >= 21){
 
            View decorView = activity.getWindow().getDecorView();

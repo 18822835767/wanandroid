@@ -9,32 +9,35 @@ import com.example.sorena.wanandroidapp.bean.Chapter;
 import com.example.sorena.wanandroidapp.bean.FlowItem;
 import com.example.sorena.wanandroidapp.view.SystemItemFragment;
 
-import java.io.FileReader;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * 当点击体系流布局的某个项时,跳转到的新活动的viewPager用的适配器
+ *
+ */
 public class SystemViewPagerAdapter extends FragmentPagerAdapter
 {
     private Chapter mChapter;
-    private List<SystemItemFragment> fragments;
+    private List<SystemItemFragment> mFragments;
     public SystemViewPagerAdapter(FragmentManager fm, Chapter chapter) {
         super(fm);
         this.mChapter = chapter;
-        fragments = new LinkedList<>();
+        mFragments = new LinkedList<>();
         List<FlowItem> flowItems  = chapter.getFlowItems();
         for (FlowItem flowItem: flowItems) {
-            fragments.add(SystemItemFragment.getInstance(flowItem));
+            mFragments.add(SystemItemFragment.getInstance(flowItem));
         }
     }
 
     @Override
     public Fragment getItem(int i) {
-        return fragments.get(i);
+        return mFragments.get(i);
     }
 
     @Override
     public int getCount() {
-        return fragments.size();
+        return mFragments.size();
     }
 
     @Nullable
@@ -42,6 +45,5 @@ public class SystemViewPagerAdapter extends FragmentPagerAdapter
     public CharSequence getPageTitle(int position) {
         return mChapter.getFlowItems().get(position).getName();
     }
-
 
 }

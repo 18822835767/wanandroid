@@ -1,5 +1,8 @@
 package com.example.sorena.wanandroidapp.bean;
 
+/**
+ * 搜索结果适配器
+ */
 public class SearchResult
 {
     private String author;

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,9 @@ import com.example.sorena.wanandroidapp.util.JSONUtil;
 import com.example.sorena.wanandroidapp.util.JudgeUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 
+/**
+ * 注册界面的碎片
+ */
 public class RegisterFragment extends Fragment implements View.OnClickListener
 {
     private EditText EditTextUserNameInput;
@@ -27,13 +29,13 @@ public class RegisterFragment extends Fragment implements View.OnClickListener
     private EditText mEditTextUserPasswordConfine;
     private Button mButtonRegister;
     private TextView mTextViewGoToLogin;
-    private Context context;
+    private Context mContext;
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.context = context;
+        this.mContext = context;
         try {
             switcher = (SwitchToLoginAble)context;
         }catch (ClassCastException e){

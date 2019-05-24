@@ -9,6 +9,9 @@ import android.view.MotionEvent;
 
 import com.example.sorena.wanandroidapp.util.LogUtil;
 
+/**
+ * 轮播图的viewPager
+ */
 public class MyViewPager extends ViewPager
 {
     public MyViewPager(@NonNull Context context) {

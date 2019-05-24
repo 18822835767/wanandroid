@@ -11,17 +11,20 @@ import com.example.sorena.wanandroidapp.view.ProjectViewPagerFragment;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * projectFragment的viewpager的碎片适配器
+ */
 public class ProjectViewPagerAdapter extends FragmentPagerAdapter
 {
-    private List<ProjectViewPagerFragment> fragmentList;
-    private List<ProjectChapter> projectChapters;
+    private List<ProjectViewPagerFragment> mFragmentList;
+    private List<ProjectChapter> mProjectChapters;
     public ProjectViewPagerAdapter(FragmentManager fm, List<ProjectChapter> chapters) {
         super(fm);
 
-        projectChapters = chapters;
-        fragmentList = new ArrayList<>();
+        mProjectChapters = chapters;
+        mFragmentList = new ArrayList<>();
         for (int i = 0; i < chapters.size(); i++) {
-            fragmentList.add(ProjectViewPagerFragment.getInstance(chapters.get(i)));
+            mFragmentList.add(ProjectViewPagerFragment.getInstance(chapters.get(i)));
         }
 
     }
@@ -29,17 +32,17 @@ public class ProjectViewPagerAdapter extends FragmentPagerAdapter
 
     @Override
     public Fragment getItem(int position) {
-        return fragmentList.get(position);
+        return mFragmentList.get(position);
     }
 
     @Override
     public int getCount() {
-        return fragmentList.size();
+        return mFragmentList.size();
     }
 
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-        return projectChapters.get(position).getName();
+        return mProjectChapters.get(position).getName();
     }
 }

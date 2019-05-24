@@ -16,7 +16,7 @@ import static com.example.sorena.wanandroidapp.util.JSONUtil.getMapInArray;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getValue;
 
 /**
- * systemFragment的数据来源类
+ * 体系的数据来源类
  */
 public class SystemDao
 {

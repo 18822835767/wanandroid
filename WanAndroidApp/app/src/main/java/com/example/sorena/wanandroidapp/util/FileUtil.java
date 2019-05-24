@@ -324,7 +324,11 @@ public class FileUtil
         return "";
     }
 
-
+    /**
+     *
+     * @param bitmap:要转化的bitmap对象
+     * @return byte数组
+     */
     public static byte[] getBitmapByteArray(Bitmap bitmap){
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);

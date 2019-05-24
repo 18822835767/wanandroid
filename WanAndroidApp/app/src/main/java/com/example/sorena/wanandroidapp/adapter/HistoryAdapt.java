@@ -15,7 +15,7 @@ import com.example.sorena.wanandroidapp.db.SearchHistoryDataBaseOperator;
 import java.util.List;
 
 /**
- * 搜索历史适配器
+ * 搜索历史数据适配器
  */
 public class HistoryAdapt extends ArrayAdapter<History>
 {

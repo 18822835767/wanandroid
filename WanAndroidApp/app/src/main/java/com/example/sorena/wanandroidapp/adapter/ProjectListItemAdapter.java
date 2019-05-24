@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,34 +23,38 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 用于展示项目的图文列表
+ *
+ */
 public class ProjectListItemAdapter extends BaseAdapter
 {
-    private List<ProjectListItem> projectListItems;
-    private Map<String,Bitmap> bitmapMap;
-    private int resourceId;
-    private Context context;
+    private List<ProjectListItem> mProjectListItems;
+    private Map<String,Bitmap> mBitmapMap;
+    private int mResourceId;
+    private Context mContext;
 
 
     public ProjectListItemAdapter(Context context, int resourceId, final List<ProjectListItem> projectListItems) {
-        this.projectListItems = projectListItems;
-        this.resourceId = resourceId;
-        this.bitmapMap = new HashMap<>();
-        this.context = context;
+        this.mProjectListItems = projectListItems;
+        this.mResourceId = resourceId;
+        this.mBitmapMap = new HashMap<>();
+        this.mContext = context;
         CollectManager.getInstance().addToCollectSetByProjectItem(projectListItems);
     }
 
     @Override
     public int getCount() {
-        if (projectListItems == null){
+        if (mProjectListItems == null){
             return 0;
         }else {
-            return projectListItems.size();
+            return mProjectListItems.size();
         }
     }
 
     @Override
     public Object getItem(int position) {
-        return projectListItems.get(position);
+        return mProjectListItems.get(position);
     }
 
     @Override
@@ -63,10 +67,10 @@ public class ProjectListItemAdapter extends BaseAdapter
 
         View view;
         ViewHolder viewHolder;
-        ProjectListItem item = projectListItems.get(position);
+        ProjectListItem item = mProjectListItems.get(position);
         if (convertView == null){
 
-            view = LayoutInflater.from(context).inflate(R.layout.project_list_item,parent,false);
+            view = LayoutInflater.from(mContext).inflate(R.layout.project_list_item,parent,false);
             viewHolder = new ViewHolder();
             viewHolder.projectImageViewShowProjectPicture = view.findViewById(R.id.project_imageView_showProjectPicture);
             viewHolder.projectTextViewShowTitle = view.findViewById(R.id.project_textView_showTitle);
@@ -81,10 +85,10 @@ public class ProjectListItemAdapter extends BaseAdapter
             view = convertView;
             viewHolder = (ViewHolder)(view.getTag());
         }
-        viewHolder.projectTextViewShowAuthor.setText(projectListItems.get(position).getAuthor());
-        viewHolder.projectTextViewShowDescription.setText(projectListItems.get(position).getDescription());
-        viewHolder.projectTextViewShowTime.setText(projectListItems.get(position).getDate());
-        viewHolder.projectTextViewShowTitle.setText(projectListItems.get(position).getTitle());
+        viewHolder.projectTextViewShowAuthor.setText(mProjectListItems.get(position).getAuthor());
+        viewHolder.projectTextViewShowDescription.setText(mProjectListItems.get(position).getDescription());
+        viewHolder.projectTextViewShowTime.setText(mProjectListItems.get(position).getDate());
+        viewHolder.projectTextViewShowTitle.setText(mProjectListItems.get(position).getTitle());
         if (CollectManager.getInstance().isCollect(item.getId())){
             viewHolder.projectImageViewShowCollect.setImageResource(R.drawable.ic_collect_selected);
             viewHolder.projectImageViewShowCollect.setTag(R.drawable.ic_collect_selected);
@@ -100,9 +104,9 @@ public class ProjectListItemAdapter extends BaseAdapter
                         try {
                             ImageView imageView = (ImageView)v;
                             if (imageView.getTag().equals(R.drawable.ic_collect_normal)){
-                                CollectManager.getInstance().addCollect(item.getId(),imageView,(Activity)context);
+                                CollectManager.getInstance().addCollect(item.getId(),imageView,(Activity) mContext);
                             }else {
-                                CollectManager.getInstance().cancelCollect(item.getId(),imageView,(Activity)context);
+                                CollectManager.getInstance().cancelCollect(item.getId(),imageView,(Activity) mContext);
                             }
                         }catch (ClassCastException e){
                             e.printStackTrace();
@@ -113,27 +117,27 @@ public class ProjectListItemAdapter extends BaseAdapter
         });
         final String downLoadURL = item.getPictureLink();
         viewHolder.projectImageViewShowProjectPicture.setTag(downLoadURL);
-        if (bitmapMap.get(downLoadURL) == null){
+        if (mBitmapMap.get(downLoadURL) == null){
             new NetImageLoad(){
                 @Override
                 public void loadImage(ImageView imageView, Bitmap bitmap) {
                     if(imageView.getTag()!=null && imageView.getTag().equals(downLoadURL)){
-                        imageView.setImageBitmap(bitmap);
-                        bitmapMap.put(imageView.getTag().toString(),bitmap);
+                        ((AppCompatActivity)mContext).runOnUiThread(()->imageView.setImageBitmap(bitmap));
+                        mBitmapMap.put(imageView.getTag().toString(),bitmap);
                     }
 
                 }
             }.downloadImage(viewHolder.projectImageViewShowProjectPicture,downLoadURL);
             viewHolder.projectImageViewShowProjectPicture.setImageResource(R.drawable.pic_project_default);
         }else {
-            viewHolder.projectImageViewShowProjectPicture.setImageBitmap(bitmapMap.get(downLoadURL));
+            viewHolder.projectImageViewShowProjectPicture.setImageBitmap(mBitmapMap.get(downLoadURL));
         }
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context,WebActivity.class);
+                Intent intent = new Intent(mContext,WebActivity.class);
                 intent.putExtra("url",item.getProjectLink());
-                context.startActivity(intent);
+                mContext.startActivity(intent);
             }
         });
 
@@ -152,14 +156,14 @@ public class ProjectListItemAdapter extends BaseAdapter
     }
 
     public void addData(List<ProjectListItem> items){
-        projectListItems.addAll(items);
-        CollectManager.getInstance().addToCollectSetByProjectItem(projectListItems);
+        mProjectListItems.addAll(items);
+        CollectManager.getInstance().addToCollectSetByProjectItem(mProjectListItems);
         notifyDataSetChanged();
     }
 
     public void clearData(){
-        if (projectListItems != null){
-            projectListItems.clear();
+        if (mProjectListItems != null){
+            mProjectListItems.clear();
         }
         notifyDataSetChanged();
     }

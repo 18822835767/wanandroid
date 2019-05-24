@@ -21,6 +21,7 @@ import java.util.List;
 
 /**
  * 首页文章适配器
+ * 用于homeFragment
  */
 public class BaseArticleAdapter extends BaseAdapter
 {
@@ -157,6 +158,7 @@ public class BaseArticleAdapter extends BaseAdapter
         notifyDataSetChanged();
     }
 
+    //替换置顶文章
     public void resetToppingArticle(List<Article> toppingArticle){
         if (toppingArticle == null) return;
         if (mAllArticle.size() != 0  && mToppingNum != mAllArticle.size()){

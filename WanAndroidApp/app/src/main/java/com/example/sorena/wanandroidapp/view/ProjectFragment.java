@@ -21,10 +21,13 @@ import java.util.Map;
 
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getMapInArray;
 
+/**
+ * 项目碎片
+ */
 public class ProjectFragment extends BaseFragment {
 
 
-    private TabLayout tabLayout;
+    private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private ProjectViewPagerAdapter mAdapter;
 
@@ -46,9 +49,9 @@ public class ProjectFragment extends BaseFragment {
     private void initView(){
 
         mViewPager = getActivity().findViewById(R.id.view_pager);
-        tabLayout = getActivity().findViewById(R.id.tab_layout);
-        tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.setVisibility(View.GONE);
+        mTabLayout = getActivity().findViewById(R.id.tab_layout);
+        mTabLayout.setupWithViewPager(mViewPager);
+        mTabLayout.setVisibility(View.GONE);
         mViewPager.setVisibility(View.GONE);
         mViewPager.setOffscreenPageLimit(3);
 
@@ -75,7 +78,7 @@ public class ProjectFragment extends BaseFragment {
                     @Override
                     public void run() {
                         mViewPager.setAdapter(mAdapter);
-                        tabLayout.setVisibility(View.VISIBLE);
+                        mTabLayout.setVisibility(View.VISIBLE);
                         mViewPager.setVisibility(View.VISIBLE);
                     }
                 });

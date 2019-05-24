@@ -19,6 +19,12 @@ import com.example.sorena.wanandroidapp.widget.FlowLayoutFactory;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * 导航文章列表适配器
+ * navFragment右边的列表适配器
+ */
+
+
 public class NavArticleListAdapter extends BaseAdapter
 {
 
@@ -27,9 +33,9 @@ public class NavArticleListAdapter extends BaseAdapter
     private int mResourceId;
 
     public NavArticleListAdapter(Context context, int resourceId, List<NavListItem> navListItems){
-        mNavListItems = navListItems;
-        mContext = context;
-        mResourceId = resourceId;
+        this.mNavListItems = navListItems;
+        this.mContext = context;
+        this.mResourceId = resourceId;
     }
 
     @Override

@@ -26,17 +26,19 @@ import java.util.Map;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getMapInArray;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getValue;
 
+/**
+ * project碎片的viewPager的碎片
+ */
 public class ProjectViewPagerFragment extends BaseFragment
 {
 
     private ProjectChapter mChapter;
     private SwipeRefreshLayout mProjectFragmentSwipeRefreshLayoutRefresh;
     private ListView mProjectFragmentListViewShowProjectItem;
-    private ProjectListItemAdapter itemAdapter;
+    private ProjectListItemAdapter mItemAdapter;
     private int mMaxPage = 1;
     private int mNextLoadPage = 1;
-    private List<ProjectListItem> listItems;
-    private boolean loadMChapter = false;
+    private List<ProjectListItem> mListItems;
 
 
 
@@ -93,7 +95,7 @@ public class ProjectViewPagerFragment extends BaseFragment
             @Override
             public void onRefresh() {
                 mNextLoadPage = 1;
-                itemAdapter.clearData();
+                mItemAdapter.clearData();
                 loadData();
                 new Thread(new Runnable() {
                     @Override
@@ -136,9 +138,9 @@ public class ProjectViewPagerFragment extends BaseFragment
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        listItems = parseData(response);
-                        itemAdapter = new ProjectListItemAdapter(getActivity(),R.layout.project_list_item,listItems);
-                        mProjectFragmentListViewShowProjectItem.setAdapter(itemAdapter);
+                        mListItems = parseData(response);
+                        mItemAdapter = new ProjectListItemAdapter(getActivity(),R.layout.project_list_item, mListItems);
+                        mProjectFragmentListViewShowProjectItem.setAdapter(mItemAdapter);
                     }
                 });
                 mNextLoadPage++;
@@ -166,8 +168,8 @@ public class ProjectViewPagerFragment extends BaseFragment
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            listItems = parseData(response);
-                            itemAdapter.addData(listItems);
+                            mListItems = parseData(response);
+                            mItemAdapter.addData(mListItems);
                         }
                     });
                     mNextLoadPage++;

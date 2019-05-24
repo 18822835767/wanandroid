@@ -10,6 +10,9 @@ import android.support.v4.content.ContextCompat;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * 权限申请的工具类
+ */
 public class PermissionUtils
 {
     private static final String TAG = PermissionUtils.class.getSimpleName();
@@ -25,9 +28,9 @@ public class PermissionUtils
 
     /**
      * 申请权限
-     * @param activity
-     * @param requestCode
-     * @param permissions
+     * @param activity 活动
+     * @param requestCode 请求码
+     * @param permissions 要申请的权限集合
      */
     public static void requestPermission(final Activity activity, final  int requestCode,String[] permissions){
 

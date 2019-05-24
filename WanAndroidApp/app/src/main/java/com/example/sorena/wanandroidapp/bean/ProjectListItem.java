@@ -1,5 +1,8 @@
 package com.example.sorena.wanandroidapp.bean;
 
+/**
+ * 项目列表适配器
+ */
 public class ProjectListItem
 {
     private String pictureLink;

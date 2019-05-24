@@ -25,7 +25,12 @@ import com.example.sorena.wanandroidapp.widget.RefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
+/**
+ * 首页碎片
+ */
 public class HomeFragment extends BaseFragment implements
         MyViewPager.OnViewPagerTouchListener, MyViewPager.OnPageChangeListener, View.OnClickListener,
         MyViewPager.OpenWeb, RefreshLayout.refreshListener {
@@ -64,7 +69,7 @@ public class HomeFragment extends BaseFragment implements
     //最外层包着的用于下拉刷新的布局
     private SwipeRefreshLayout mHomeSwipeRefreshLayoutRefreshData;
     private View mLoopView;
-    private RefreshLayout mainActivityRefresh;
+    private RefreshLayout mMainActivityRefresh;
 
 
     @Nullable
@@ -108,8 +113,8 @@ public class HomeFragment extends BaseFragment implements
 
         mHomeListViewShowArticle = getActivity().findViewById(R.id.home_listView_showArticle);
         mHomeSwipeRefreshLayoutRefreshData = getActivity().findViewById(R.id.home_swipeRefreshLayout_refreshData);
-        mainActivityRefresh =  getActivity().findViewById(R.id.mainActivity_refresh);
-        mainActivityRefresh.setRefreshListener(this);
+        mMainActivityRefresh =  getActivity().findViewById(R.id.mainActivity_refresh);
+        mMainActivityRefresh.setRefreshListener(this);
         mHomeListViewShowArticle.setVisibility(View.GONE);
         mHomeListViewShowArticle.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -174,32 +179,22 @@ public class HomeFragment extends BaseFragment implements
     }
 
     private void setLoopData(){
-//        HttpUtil.sendHttpRequest("https://www.wanandroid.com/banner/json", new HttpUtil.HttpCallBackListener() {
-//            @Override
-//            public void onFinish(String response) {
-//                String data = JSONUtil.getValue("data",response,new String[]{});
-//                String[] keys = {"desc","imagePath","title","url"};
-//                Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,keys);
-//                mURLs = stringListMap.get("imagePath");
-//                mMessage = stringListMap.get("title");
-//                mWebURLs = stringListMap.get("url");
-//                adapter.setURLs(mURLs);
-//                adapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onError(Exception e) {
-//                e.printStackTrace();
-//            }
-//        });
+
         HomeDao.getLoopingData(getActivity(), new HomeDao.LoopingDataLoadingListener() {
             @Override
             public void onFinish(List<String> urls, List<String> messages, List<String> webUrls) {
-                mURLs = urls;
-                mMessage = messages;
-                mWebURLs = webUrls;
-                adapter.setURLs(mURLs);
-                adapter.notifyDataSetChanged();
+                if (getActivity() == null){
+                    return;
+                }
+
+                getActivity().runOnUiThread(()->{
+                    mURLs = urls;
+                    mMessage = messages;
+                    mWebURLs = webUrls;
+                    adapter.setmURLs(mURLs);
+                    adapter.notifyDataSetChanged();
+                });
+
             }
 
             @Override
@@ -256,7 +251,7 @@ public class HomeFragment extends BaseFragment implements
                 nextLoadingNormalPage++;
                 mHomeSwipeRefreshLayoutRefreshData.setRefreshing(false);
                 getActivity().runOnUiThread(()->{
-                    mainActivityRefresh.setVisibility(View.GONE);
+                    mMainActivityRefresh.setVisibility(View.GONE);
                 });
             }
             @Override
@@ -267,7 +262,7 @@ public class HomeFragment extends BaseFragment implements
                 if (getActivity() != null)
                 {
                     getActivity().runOnUiThread(()->{
-                        mainActivityRefresh.setVisibility(View.VISIBLE);
+                        mMainActivityRefresh.setVisibility(View.VISIBLE);
                         mHomeSwipeRefreshLayoutRefreshData.setRefreshing(false);
                     });
                 }
@@ -293,7 +288,9 @@ public class HomeFragment extends BaseFragment implements
                 });
             }
             @Override
-            public void onError(Exception e) {}
+            public void onError(Exception e) {
+                mToppingIsLoadingFinish = false;
+            }
         });
     }
 
@@ -394,6 +391,14 @@ public class HomeFragment extends BaseFragment implements
         setLoopData();
         loadNextPageNormalData();
         loadToppingData();
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (mHomeSwipeRefreshLayoutRefreshData.isRefreshing()){
+                    mHomeSwipeRefreshLayoutRefreshData.setRefreshing(false);
+                }
+            }
+        }, 5000);
     }
 }
 
@@ -426,7 +431,7 @@ public class HomeFragment extends BaseFragment implements
 //                        nextLoadingNormalPage++;
 //                        mHomeSwipeRefreshLayoutRefreshData.setRefreshing(false);
 //                        getActivity().runOnUiThread(()->{
-//                            mainActivityRefresh.setVisibility(View.GONE);
+//                            mMainActivityRefresh.setVisibility(View.GONE);
 //                        });
 //                    }
 //                    @Override
@@ -438,7 +443,7 @@ public class HomeFragment extends BaseFragment implements
 //                        if (getActivity() != null)
 //                        {
 //                            getActivity().runOnUiThread(()->{
-//                                mainActivityRefresh.setVisibility(View.VISIBLE);
+//                                mMainActivityRefresh.setVisibility(View.VISIBLE);
 //                                mHomeSwipeRefreshLayoutRefreshData.setRefreshing(false);
 //                            });
 //                        }
@@ -447,3 +452,22 @@ public class HomeFragment extends BaseFragment implements
 //
 //            }
 //        }).start();
+
+//        HttpUtil.sendHttpRequest("https://www.wanandroid.com/banner/json", new HttpUtil.HttpCallBackListener() {
+//            @Override
+//            public void onFinish(String response) {
+//                String data = JSONUtil.getValue("data",response,new String[]{});
+//                String[] keys = {"desc","imagePath","title","url"};
+//                Map<String,List<String>> stringListMap = JSONUtil.getMapInArray(data,keys);
+//                mURLs = stringListMap.get("imagePath");
+//                mMessage = stringListMap.get("title");
+//                mWebURLs = stringListMap.get("url");
+//                adapter.setmURLs(mURLs);
+//                adapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//                e.printStackTrace();
+//            }
+//        });

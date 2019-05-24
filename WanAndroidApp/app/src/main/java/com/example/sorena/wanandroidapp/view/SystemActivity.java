@@ -13,6 +13,9 @@ import com.example.sorena.wanandroidapp.bean.Chapter;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
 import com.example.sorena.wanandroidapp.widget.SystemBarLayout;
 
+/**
+ *
+ */
 public class SystemActivity extends AppCompatActivity {
 
     private SystemBarLayout mBarLayoutBar;
@@ -21,7 +24,7 @@ public class SystemActivity extends AppCompatActivity {
     private SystemViewPagerAdapter mSystemViewPagerAdapter;
     private TextView mySystemBarTextViewMessage;
     private Chapter mChapter;
-    private int position;
+    private int mPosition;
 
 
     @Override
@@ -38,7 +41,7 @@ public class SystemActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mChapter = (Chapter)intent.getSerializableExtra("chapterData");
-        position = Integer.parseInt(intent.getStringExtra("position"));
+        mPosition = Integer.parseInt(intent.getStringExtra("position"));
     }
 
     private void initView() {
@@ -49,7 +52,7 @@ public class SystemActivity extends AppCompatActivity {
         mTabLayoutShowItemName.setupWithViewPager(mViewPagerShowItem);
         mSystemViewPagerAdapter = new SystemViewPagerAdapter(getSupportFragmentManager(),mChapter);
         mViewPagerShowItem.setAdapter(mSystemViewPagerAdapter);
-        mViewPagerShowItem.setCurrentItem(position,false);
+        mViewPagerShowItem.setCurrentItem(mPosition,false);
         mySystemBarTextViewMessage.setText(mChapter.getChapterName());
     }
 

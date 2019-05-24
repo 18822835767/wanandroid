@@ -2,6 +2,9 @@ package com.example.sorena.wanandroidapp.bean;
 
 import java.io.Serializable;
 
+/**
+ * 体系流式布局的一个小标签对应的实体类
+ */
 public class FlowItem implements Serializable
 {
     private String parentsName;

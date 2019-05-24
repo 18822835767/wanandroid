@@ -6,10 +6,13 @@ import android.content.SharedPreferences;
 import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.util.MyApplication;
 
+/**
+ * 对储存用户数据和读取用户数据的封装
+ */
 public class SharedPreferencesHelper
 {
 
-    public static void remenberUser(String userName , String userPassword)
+    public static void rememberUser(String userName , String userPassword)
     {
         SharedPreferences.Editor editor = MyApplication.getContext().getSharedPreferences("data",Context.MODE_PRIVATE).edit();
         editor.putString("loginUserName",userName);

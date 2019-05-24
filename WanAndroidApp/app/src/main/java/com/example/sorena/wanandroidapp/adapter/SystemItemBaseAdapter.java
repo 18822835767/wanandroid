@@ -20,29 +20,31 @@ import com.example.sorena.wanandroidapp.widget.FlowLayoutFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * systemFragment的listView的列表适配器
+ */
 public class SystemItemBaseAdapter extends BaseAdapter implements View.OnClickListener
 {
 
-    private List<Chapter> chapters;
-    private int resourceId;
-    private Context context;
+    private List<Chapter> mChapters;
+    private int mResourceId;
+    private Context mContext;
 
     public SystemItemBaseAdapter(Context context, int resourceId, List<Chapter> chapters) {
         super();
-
-        this.chapters = chapters;
-        this.resourceId = resourceId;
-        this.context = context;
+        this.mChapters = chapters;
+        this.mResourceId = resourceId;
+        this.mContext = context;
     }
 
     @Override
     public int getCount() {
-        return chapters.size();
+        return mChapters.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return chapters.get(position);
+        return mChapters.get(position);
     }
 
     @Override
@@ -55,23 +57,23 @@ public class SystemItemBaseAdapter extends BaseAdapter implements View.OnClickLi
 
         View view;
         ViewHolder viewHolder;
-        List<FlowItem> flowItemList = chapters.get(position).getFlowItems();
+        List<FlowItem> flowItemList = mChapters.get(position).getFlowItems();
         List<String> flowName = new ArrayList<>();
         for (int i = 0; i < flowItemList.size(); i++) {
             flowName.add(flowItemList.get(i).getName());
         }
-        //return FlowLayoutFactory.getSystemItem(context, flowName, chapters.get(position).getChapterName(), flowItemList, null);
+        //return FlowLayoutFactory.getSystemItem(mContext, flowName, mChapters.get(position).getChapterName(), flowItemList, null);
         if (convertView != null){
             view = convertView;
             viewHolder = (ViewHolder)view.getTag();
         }else {
-            view = LayoutInflater.from(context).inflate(resourceId,parent,false);
+            view = LayoutInflater.from(mContext).inflate(mResourceId,parent,false);
             viewHolder = new ViewHolder();
             viewHolder.textView = view.findViewById(R.id.systemItem_textView_character);
             viewHolder.flowLayout = view.findViewById(R.id.systemItem_flowLayout_item);
             view.setTag(viewHolder);
         }
-        viewHolder.textView.setText(chapters.get(position).getChapterName());
+        viewHolder.textView.setText(mChapters.get(position).getChapterName());
         FlowItem[] flowItems = new FlowItem[flowItemList.size()];
         int size = flowItemList.size();
         for (int i = 0 ; i < size ; i++){
@@ -81,16 +83,16 @@ public class SystemItemBaseAdapter extends BaseAdapter implements View.OnClickLi
         for (int i = 0; i < size; i++) {
             integers[i] = i;
         }
-        FlowLayoutFactory.setFlowLayout(viewHolder.flowLayout, context,
+        FlowLayoutFactory.setFlowLayout(viewHolder.flowLayout, mContext,
                 R.layout.system_flowlayout_tv, flowName, integers,
                 (v)->
                 {
-                    Chapter chapter = chapters.get(position);
-                    Intent intent = new Intent(context,SystemActivity.class);
+                    Chapter chapter = mChapters.get(position);
+                    Intent intent = new Intent(mContext,SystemActivity.class);
                     intent.putExtra("chapterData",chapter);
                     String string = v.getTag().toString();
                     intent.putExtra("position",string);
-                    context.startActivity(intent);
+                    mContext.startActivity(intent);
 
                 },true);
         return view;
@@ -110,9 +112,9 @@ public class SystemItemBaseAdapter extends BaseAdapter implements View.OnClickLi
 
         try {
             FlowItem flowItem = (FlowItem)(v.getTag());
-            Intent intent = new Intent(context,ShowSystemItemActivity.class);
+            Intent intent = new Intent(mContext,ShowSystemItemActivity.class);
             intent.putExtra("data",flowItem);
-            context.startActivity(intent);
+            mContext.startActivity(intent);
         }catch (ClassCastException e){
             LogUtil.d("日志:exception","转化失败");
             return;

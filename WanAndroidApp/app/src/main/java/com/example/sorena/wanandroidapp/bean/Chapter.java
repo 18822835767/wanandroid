@@ -3,6 +3,9 @@ package com.example.sorena.wanandroidapp.bean;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 体系章节实体类
+ */
 public class Chapter implements Serializable
 {
     private List<FlowItem> flowItems;

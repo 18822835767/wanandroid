@@ -13,6 +13,10 @@ import com.example.sorena.wanandroidapp.bean.NavListItem;
 
 import java.util.List;
 
+/**
+ * 导航列表适配器
+ * navFragment左边的列表适配器
+ */
 public class NavListItemAdapter extends BaseAdapter
 {
     private Context mContext;

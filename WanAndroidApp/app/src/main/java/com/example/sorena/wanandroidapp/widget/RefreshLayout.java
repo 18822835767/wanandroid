@@ -9,6 +9,11 @@ import android.widget.RelativeLayout;
 
 import com.example.sorena.wanandroidapp.R;
 
+/**
+ * @author sorena
+ * 用于刷新布局
+ * 使用时只需要添加到布局中
+ */
 public class RefreshLayout extends RelativeLayout
 {
 
@@ -21,6 +26,7 @@ public class RefreshLayout extends RelativeLayout
         refreshLayoutButtonRefresh.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                //按下这个按钮时回调监听器
                 if (refreshListener != null){
                     refreshListener.refresh();
                 }
@@ -29,11 +35,12 @@ public class RefreshLayout extends RelativeLayout
         this.setVisibility(GONE);
     }
 
-
+    //刷新按钮的监听器
     private refreshListener refreshListener;
     public interface refreshListener {
         void refresh();
     }
+    //设置监听器
     public void setRefreshListener(refreshListener refreshListener) {
         this.refreshListener = refreshListener;
     }

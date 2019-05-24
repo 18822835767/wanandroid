@@ -1,6 +1,5 @@
 package com.example.sorena.wanandroidapp.view;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,10 +13,9 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.sorena.wanandroidapp.R;
-import com.example.sorena.wanandroidapp.adapter.SystemArticleBaseAdapter;
+import com.example.sorena.wanandroidapp.adapter.SystemArticleAdapter;
 import com.example.sorena.wanandroidapp.bean.Article;
 import com.example.sorena.wanandroidapp.bean.FlowItem;
 import com.example.sorena.wanandroidapp.bean.User;
@@ -32,12 +30,15 @@ import java.util.Map;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getMapInArray;
 import static com.example.sorena.wanandroidapp.util.JSONUtil.getValue;
 
+/**
+ * 用于展示体系chapter的viewPager的一个碎片
+ */
 public class SystemItemFragment extends BaseFragment
 {
     private FlowItem mFlowItem;
     private Integer mMaxPage = 1;
     private Integer mNextPage = 0;
-    private SystemArticleBaseAdapter mSystemArticleBaseAdapter;
+    private SystemArticleAdapter mSystemArticleBaseAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayoutRefresh;
     private ListView mListViewShowItem;
     private AppCompatActivity mActivity;
@@ -188,7 +189,7 @@ public class SystemItemFragment extends BaseFragment
                         getActivity().runOnUiThread(()->{
                             if (mSystemArticleBaseAdapter == null)
                             {
-                                mSystemArticleBaseAdapter = new SystemArticleBaseAdapter(getActivity(),R.layout.article_item_layout,articles,null);
+                                mSystemArticleBaseAdapter = new SystemArticleAdapter(getActivity(),R.layout.article_item_layout,articles,null);
                                 mListViewShowItem.setAdapter(mSystemArticleBaseAdapter);
                                 LogUtil.d("日志:","   listView:   " + mListViewShowItem + "  adapter:  " + mSystemArticleBaseAdapter + "   fragment   " + this);
                             }else {

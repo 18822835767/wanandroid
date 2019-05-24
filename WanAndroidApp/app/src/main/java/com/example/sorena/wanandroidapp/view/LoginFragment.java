@@ -19,19 +19,22 @@ import com.example.sorena.wanandroidapp.util.JSONUtil;
 import com.example.sorena.wanandroidapp.util.JudgeUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 
+/**
+ * 登录碎片
+ */
 public class LoginFragment extends BaseFragment implements View.OnClickListener
 {
 
     private EditText mEditTextUserNameInput;
     private EditText mEditTextUserPasswordInput;
-    private Button loginFragmentButtonRegister;
-    private TextView loginFragmentTextViewGoRegister;
-    private Context context;
+    private Button mButtonRegister;
+    private TextView mTextViewGoRegister;
+    private Context mContext;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.context = context;
+        this.mContext = context;
         try {
             switcher = (SwitchToRegisterAble)context;
         }catch (ClassCastException e){
@@ -58,10 +61,10 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener
     private void initView(){
         mEditTextUserNameInput = getActivity().findViewById(R.id.loginFragment_editText_userNameInput);
         mEditTextUserPasswordInput = getActivity().findViewById(R.id.loginFragment_editText_userPasswordInput);
-        loginFragmentButtonRegister = getActivity().findViewById(R.id.loginFragment_button_login);
-        loginFragmentTextViewGoRegister = getActivity().findViewById(R.id.loginFragment_textView_goRegister);
-        loginFragmentTextViewGoRegister.setOnClickListener(this);
-        loginFragmentButtonRegister.setOnClickListener(this);
+        mButtonRegister = getActivity().findViewById(R.id.loginFragment_button_login);
+        mTextViewGoRegister = getActivity().findViewById(R.id.loginFragment_textView_goRegister);
+        mTextViewGoRegister.setOnClickListener(this);
+        mButtonRegister.setOnClickListener(this);
     }
 
     private SwitchToRegisterAble switcher;
@@ -94,7 +97,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener
                                 if (data == null){
                                     return;
                                 }else if (data.equals("")){
-                                    SharedPreferencesHelper.remenberUser(name,password);
+                                    SharedPreferencesHelper.rememberUser(name,password);
                                     getActivity().runOnUiThread(()->{
                                         Toast.makeText(getContext(),"登录成功",Toast.LENGTH_SHORT).show();
                                         getActivity().finish();
@@ -109,8 +112,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener
                             public void onError(Exception e) {}
                         });
                 break;
-
-
             default:
                 break;
         }

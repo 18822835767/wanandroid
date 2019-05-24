@@ -123,6 +123,17 @@ public class FlowLayoutFactory
     }
 
 
+    /**
+     *
+     * @param flowLayout 流式布局
+     * @param context 上下文
+     * @param resourceId 资源id
+     * @param stringList 文字列表
+     * @param tags 存储在每个item里的tag
+     * @param listener 监听器
+     * @param randomTextColor 是否设置随机颜色
+     */
+
     public static void setFlowLayout(FlowLayout flowLayout, final Context context, int resourceId, List<String> stringList, @Nullable List<Object> tags, @Nullable View.OnClickListener listener , boolean randomTextColor){
 
         flowLayout.removeAllViews();
@@ -152,5 +163,7 @@ public class FlowLayoutFactory
             flowLayout.addView(tv);
         }
     }
+
+
 
 }
