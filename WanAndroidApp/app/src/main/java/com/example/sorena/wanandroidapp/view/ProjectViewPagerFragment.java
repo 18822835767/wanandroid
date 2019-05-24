@@ -17,6 +17,7 @@ import com.example.sorena.wanandroidapp.bean.ProjectChapter;
 import com.example.sorena.wanandroidapp.bean.ProjectListItem;
 import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
+import com.example.sorena.wanandroidapp.util.ApiConstants;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 
 import java.util.ArrayList;
@@ -130,11 +131,14 @@ public class ProjectViewPagerFragment extends BaseFragment
             return;
         }
         User user = SharedPreferencesHelper.getUserData();
-        HttpUtil.sendHttpGetRequestWithCookie("https://www.wanandroid.com/project/list/" + 1 + "/json?cid=" + mChapter.getId(),
+        HttpUtil.sendHttpGetRequestWithCookie(ApiConstants.ProjectItemAddressFirst + 1 + ApiConstants.ProjectItemAddressSecond + mChapter.getId(),
                 new String[]{"loginUserName","loginUserPassword"},
                 new String[]{user.getUserName(),user.getUserPassword()},new HttpUtil.HttpCallBackListener() {
             @Override
             public void onFinish(final String response) {
+                if (getActivity() == null){
+                    return;
+                }
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -159,7 +163,7 @@ public class ProjectViewPagerFragment extends BaseFragment
             return;
         }else {
             User user = SharedPreferencesHelper.getUserData();
-            HttpUtil.sendHttpGetRequestWithCookie("https://www.wanandroid.com/project/list/" + mNextLoadPage + "/json?cid=" + mChapter.getId(),
+            HttpUtil.sendHttpGetRequestWithCookie(ApiConstants.ProjectItemAddressFirst + mNextLoadPage + ApiConstants.ProjectItemAddressSecond + mChapter.getId(),
                     new String[]{"loginUserName","loginUserPassword"},
                     new String[]{user.getUserName(),user.getUserPassword()},
                     new HttpUtil.HttpCallBackListener() {

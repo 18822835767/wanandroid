@@ -16,6 +16,7 @@ import com.example.sorena.wanandroidapp.adapter.SystemArticleAdapter;
 import com.example.sorena.wanandroidapp.bean.Article;
 import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
+import com.example.sorena.wanandroidapp.util.ApiConstants;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JSONUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
@@ -132,7 +133,7 @@ public class ShowCollectActivity extends AppCompatActivity {
             LogUtil.d("日志:ShowCollectActivity","mNextPage:" + mNextPage + "   mMaxPage:" + mMaxPage);
             return;
         }
-        HttpUtil.sendHttpGetRequestWithCookie("https://www.wanandroid.com/lg/collect/list/"+ mNextPage +"/json",
+        HttpUtil.sendHttpGetRequestWithCookie(ApiConstants.CollectListAddressFirstHalf + mNextPage + ApiConstants.CollectListAddressSecondHalf,
                 new String[]{"loginUserName", "loginUserPassword"},
                 new String[]{mUser.getUserName(), mUser.getUserPassword()},
                 new HttpUtil.HttpCallBackListener() {

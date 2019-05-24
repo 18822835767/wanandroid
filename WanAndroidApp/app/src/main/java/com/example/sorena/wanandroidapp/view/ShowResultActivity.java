@@ -16,6 +16,7 @@ import com.example.sorena.wanandroidapp.adapter.SearchResultListAdapter;
 import com.example.sorena.wanandroidapp.bean.SearchResult;
 import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
+import com.example.sorena.wanandroidapp.util.ApiConstants;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JudgeUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
@@ -44,7 +45,7 @@ public class ShowResultActivity extends AppCompatActivity {
     private String mData;
     private int mNextPage = 0;
     private int mMaxPage = 10;
-
+    private boolean mIsLoading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +83,13 @@ public class ShowResultActivity extends AppCompatActivity {
                 else if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
                     View lastVisibleItemView = mListViewShowResult.getChildAt(mListViewShowResult.getChildCount() - 1);
                     if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mListViewShowResult.getHeight()) {
+                        if (mIsLoading){
+                            LogUtil.d("日志","正在加载....");
+                            return;
+                        }else {
+                            LogUtil.d("日志","准备加载下一页");
+                            mIsLoading = true;
+                        }
                         loadMoreData();
                     }
                 }
@@ -131,7 +139,7 @@ public class ShowResultActivity extends AppCompatActivity {
     private void initData(){
 
         User user = SharedPreferencesHelper.getUserData();
-        HttpUtil.sendHttpPostRequestWithCookie("https://www.wanandroid.com/article/query/0/json",  new String[]{"loginUserName", "loginUserPassword"},
+        HttpUtil.sendHttpPostRequestWithCookie(ApiConstants.SearchAddress,  new String[]{"loginUserName", "loginUserPassword"},
                 new String[]{user.getUserName(), user.getUserPassword()},new String[]{"k"}, new String[]{mData}, new HttpUtil.HttpCallBackListener() {
             @Override
             public void onFinish(String response) {
@@ -157,10 +165,11 @@ public class ShowResultActivity extends AppCompatActivity {
     private void loadMoreData(){
 
         if (mNextPage > mMaxPage){
+            mIsLoading = false;
             return;
         }
         User user = SharedPreferencesHelper.getUserData();
-        HttpUtil.sendHttpPostRequestWithCookie("https://www.wanandroid.com/article/query/"+ mNextPage +"/json", new String[]{"loginUserName", "loginUserPassword"},
+        HttpUtil.sendHttpPostRequestWithCookie(ApiConstants.SearchAddressFirstHalf + mNextPage + ApiConstants.SearchAddressSecondHalf, new String[]{"loginUserName", "loginUserPassword"},
                 new String[]{user.getUserName(), user.getUserPassword()}, new String[]{"k"}, new String[]{mData}, new HttpUtil.HttpCallBackListener() {
             @Override
             public void onFinish(String response) {
@@ -170,15 +179,16 @@ public class ShowResultActivity extends AppCompatActivity {
                     mResultListAdapter.addData(mResults);
                     mNextPage++;
                     mSwipeRefreshLayoutRefresh.setRefreshing(false);
+                    mIsLoading  = false;
                 });
 
             }
             @Override
-            public void onError(Exception e) {}
+            public void onError(Exception e) {
+                mIsLoading  = false;
+            }
         });
     }
-
-
 
 
     private List<SearchResult> parseData(String response){

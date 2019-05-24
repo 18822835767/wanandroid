@@ -2,11 +2,9 @@ package com.example.sorena.wanandroidapp.dao;
 
 import android.app.Activity;
 
-import com.example.sorena.wanandroidapp.R;
-import com.example.sorena.wanandroidapp.adapter.NavArticleListAdapter;
-import com.example.sorena.wanandroidapp.adapter.NavListItemAdapter;
 import com.example.sorena.wanandroidapp.bean.NavFlowItem;
 import com.example.sorena.wanandroidapp.bean.NavListItem;
+import com.example.sorena.wanandroidapp.util.ApiConstants;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JSONUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
@@ -22,7 +20,7 @@ import java.util.Map;
 
 public class NavigationDao
 {
-    private static final String NavAddress = "https://www.wanandroid.com/navi/json";
+    private static final String NavAddress = ApiConstants.NavigationAddress;
     public static void loadNavigationData(Activity activity,NavigationDataLoadingListener listener){
         if (NetWorkUtil.isNetworkAvailable(activity)){
             loadNavDataByWeb(listener);

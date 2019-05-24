@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sorena.wanandroidapp.R;
+import com.example.sorena.wanandroidapp.util.ApiConstants;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JSONUtil;
 import com.example.sorena.wanandroidapp.util.JudgeUtil;
@@ -88,6 +89,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener
                         mEditTextUserPasswordConfine, mEditTextUserPasswordInput)){
                     return;
                 }else if (!mEditTextUserPasswordInput.getText().toString().equals(mEditTextUserPasswordConfine.getText().toString())){
+                    if (getActivity() == null){return;}
                     getActivity().runOnUiThread(()->Toast.makeText(getContext(),"两次输入的密码不同",Toast.LENGTH_SHORT).show());
                 }else {
                     sendRegisterMessage();
@@ -123,7 +125,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener
 
 
     void sendRegisterMessage(){
-        HttpUtil.sendPostRequest("https://www.wanandroid.com/user/register",
+        HttpUtil.sendPostRequest(ApiConstants.RegisterAddress,
                 new String[]{"username", "password", "repassword"},
                 new String[]{EditTextUserNameInput.getText().toString(),
                         mEditTextUserPasswordInput.getText().toString(),
@@ -132,6 +134,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener
             @Override
             public void onFinish(String response) {
                 LogUtil.d("日志:","注册返回数据:" + response);
+                if (getActivity() == null){
+                    return;
+                }
                 getActivity().runOnUiThread(()->{
                     parseData(response);
                 });

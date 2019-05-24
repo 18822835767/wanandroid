@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.example.sorena.wanandroidapp.bean.Chapter;
 import com.example.sorena.wanandroidapp.bean.FlowItem;
+import com.example.sorena.wanandroidapp.util.ApiConstants;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JudgeUtil;
 import com.example.sorena.wanandroidapp.util.NetWorkUtil;
@@ -20,7 +21,7 @@ import static com.example.sorena.wanandroidapp.util.JSONUtil.getValue;
  */
 public class SystemDao
 {
-    private static final String SystemDataAddress = "https://www.wanandroid.com/tree/json";
+    private static final String SystemDataAddress = ApiConstants.SystemAddress;
 
     public static void getSystemData(Activity activity,SystemDataLoadingListener loadingListener){
         if (NetWorkUtil.isNetworkAvailable(activity)){

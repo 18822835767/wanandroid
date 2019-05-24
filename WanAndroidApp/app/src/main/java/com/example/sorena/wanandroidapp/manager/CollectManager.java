@@ -10,6 +10,7 @@ import com.example.sorena.wanandroidapp.bean.ProjectListItem;
 import com.example.sorena.wanandroidapp.bean.SearchResult;
 import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
+import com.example.sorena.wanandroidapp.util.ApiConstants;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JSONUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
@@ -53,7 +54,7 @@ public class CollectManager
      */
     private void sendCollectData(int id, ImageView imageView, Activity activity){
 
-        String address = "https://www.wanandroid.com/lg/collect/" + id + "/json";
+        String address = ApiConstants.AddCollectAddressFirstHalf + id + ApiConstants.AddCollectAddressSecondHalf;
         User user = SharedPreferencesHelper.getUserData();
         if (user.dataIsNull()){
             activity.runOnUiThread(()->{
@@ -102,7 +103,7 @@ public class CollectManager
 
     private void sendCancelCollectionData(int id, ImageView imageView, Activity activity){
 
-        String address = "https://www.wanandroid.com/lg/uncollect_originId/" + id +"/json";
+        String address = ApiConstants.CancelCollectAddressFirstHalf + id + ApiConstants.CancelCollectAddressSecondHalf;
         User user = SharedPreferencesHelper.getUserData();
         if (user.dataIsNull()){
             activity.runOnUiThread(()->{

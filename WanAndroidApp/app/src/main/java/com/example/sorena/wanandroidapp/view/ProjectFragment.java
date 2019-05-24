@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.adapter.ProjectViewPagerAdapter;
 import com.example.sorena.wanandroidapp.bean.ProjectChapter;
+import com.example.sorena.wanandroidapp.util.ApiConstants;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JSONUtil;
 
@@ -61,7 +62,7 @@ public class ProjectFragment extends BaseFragment {
     }
     private void loadData(){
 
-        HttpUtil.sendHttpRequest("https://www.wanandroid.com/project/tree/json", new HttpUtil.HttpCallBackListener() {
+        HttpUtil.sendHttpRequest(ApiConstants.ProjectTreeAddress, new HttpUtil.HttpCallBackListener() {
             @Override
             public void onFinish(String response) {
                 String data = JSONUtil.getValue("data",response,new String[]{});
