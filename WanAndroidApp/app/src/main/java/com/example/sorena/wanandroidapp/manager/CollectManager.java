@@ -198,4 +198,40 @@ public class CollectManager
         }
     }
 
+    /**
+     * 设置列表项的那个小星星图标
+     * @param activity
+     * @param imageView
+     * @param id
+     */
+
+    public void setCollectImageView(Activity activity,ImageView imageView,int id){
+
+        activity.runOnUiThread(()->{
+            if (CollectManager.getInstance().isCollect(id)){
+                imageView.setImageResource(R.drawable.ic_collect_selected);
+                imageView.setTag(R.drawable.ic_collect_selected);
+            }else {
+                imageView.setImageResource(R.drawable.ic_collect_normal);
+                imageView.setTag(R.drawable.ic_collect_normal);
+            }
+            imageView.setOnClickListener((v -> {
+                try {
+                    ImageView view = (ImageView)v;
+                    if (view.getTag().equals(R.drawable.ic_collect_normal)){
+                        addCollect(id,view,activity);
+                    }else {
+                        CollectManager.getInstance().cancelCollect(id,view,activity);
+                    }
+                }catch (ClassCastException e){
+                    e.printStackTrace();
+                    LogUtil.e("日志:setCollectImageView:警告","不能强制转化");
+                }
+            }));
+        });
+    }
+
+
+
+
 }

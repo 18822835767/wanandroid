@@ -79,32 +79,8 @@ public class SystemArticleAdapter extends BaseAdapter
         viewHolder.articleTextViewChapterName.setText(article.getChapterName());
         viewHolder.articleTextViewTitle.setText(article.getTitle());
         viewHolder.articleTextViewTime.setText(article.getNiceDate());
-        if (CollectManager.getInstance().isCollect(article.getId())){
-            viewHolder.articleImageViewCollect.setImageResource(R.drawable.ic_collect_selected);
-            viewHolder.articleImageViewCollect.setTag(R.drawable.ic_collect_selected);
-        }else {
-            viewHolder.articleImageViewCollect.setImageResource(R.drawable.ic_collect_normal);
-            viewHolder.articleImageViewCollect.setTag(R.drawable.ic_collect_normal);
-        }
-        viewHolder.articleImageViewCollect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()){
-                    case R.id.article_imageView_collect:
-                        try {
-                            ImageView imageView = (ImageView)v;
-                            if (imageView.getTag().equals(R.drawable.ic_collect_normal)){
-                                CollectManager.getInstance().addCollect(article.getId(),imageView,(Activity) mContext);
-                            }else {
-                                CollectManager.getInstance().cancelCollect(article.getId(),imageView,(Activity) mContext);
-                            }
-                        }catch (ClassCastException e){
-                            e.printStackTrace();
-                            LogUtil.e("日志:警告","不能强制转化");
-                        }
-                }
-            }
-        });
+        CollectManager.getInstance().setCollectImageView((Activity)mContext,
+                viewHolder.articleImageViewCollect,article.getId());
         return view;
     }
 

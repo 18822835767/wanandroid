@@ -17,6 +17,8 @@ import com.example.sorena.wanandroidapp.bean.ProjectListItem;
 import com.example.sorena.wanandroidapp.manager.CollectManager;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.util.NetImageLoad;
+import com.example.sorena.wanandroidapp.util.ViewHolder;
+import com.example.sorena.wanandroidapp.util.WebActivityUtil;
 import com.example.sorena.wanandroidapp.view.WebActivity;
 
 import java.util.HashMap;
@@ -65,86 +67,27 @@ public class ProjectListItemAdapter extends BaseAdapter
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-        View view;
-        ViewHolder viewHolder;
+        ViewHolder viewHolder = ViewHolder.get(mContext,convertView,parent,mResourceId,position);
         ProjectListItem item = mProjectListItems.get(position);
-        if (convertView == null){
-
-            view = LayoutInflater.from(mContext).inflate(R.layout.project_list_item,parent,false);
-            viewHolder = new ViewHolder();
-            viewHolder.projectImageViewShowProjectPicture = view.findViewById(R.id.project_imageView_showProjectPicture);
-            viewHolder.projectTextViewShowTitle = view.findViewById(R.id.project_textView_showTitle);
-            viewHolder.projectTextViewShowDescription = view.findViewById(R.id.project_textView_showDescription);
-            viewHolder.projectImageViewShowCollect = view.findViewById(R.id.project_imageView_showCollect);
-            viewHolder.projectTextViewShowTime = view.findViewById(R.id.project_textView_showTime);
-            viewHolder.projectTextViewShowAuthor = view.findViewById(R.id.project_textView_showAuthor);
-            view.setTag(viewHolder);
-
-        }else {
-
-            view = convertView;
-            viewHolder = (ViewHolder)(view.getTag());
-        }
-        viewHolder.projectTextViewShowAuthor.setText(mProjectListItems.get(position).getAuthor());
-        viewHolder.projectTextViewShowDescription.setText(mProjectListItems.get(position).getDescription());
-        viewHolder.projectTextViewShowTime.setText(mProjectListItems.get(position).getDate());
-        viewHolder.projectTextViewShowTitle.setText(mProjectListItems.get(position).getTitle());
-        if (CollectManager.getInstance().isCollect(item.getId())){
-            viewHolder.projectImageViewShowCollect.setImageResource(R.drawable.ic_collect_selected);
-            viewHolder.projectImageViewShowCollect.setTag(R.drawable.ic_collect_selected);
-        }else {
-            viewHolder.projectImageViewShowCollect.setImageResource(R.drawable.ic_collect_normal);
-            viewHolder.projectImageViewShowCollect.setTag(R.drawable.ic_collect_normal);
-        }
-        viewHolder.projectImageViewShowCollect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()){
-                    case R.id.project_imageView_showCollect:
-                        try {
-                            ImageView imageView = (ImageView)v;
-                            if (imageView.getTag().equals(R.drawable.ic_collect_normal)){
-                                CollectManager.getInstance().addCollect(item.getId(),imageView,(Activity) mContext);
-                            }else {
-                                CollectManager.getInstance().cancelCollect(item.getId(),imageView,(Activity) mContext);
-                            }
-                        }catch (ClassCastException e){
-                            e.printStackTrace();
-                            LogUtil.e("日志:SearchResultListAdapter:警告","不能强制转化");
-                        }
-                }
-            }
-        });
+        ((TextView)(viewHolder.getView(R.id.project_textView_showAuthor))).setText(mProjectListItems.get(position).getAuthor());
+        ((TextView)(viewHolder.getView(R.id.project_textView_showDescription))).setText(mProjectListItems.get(position).getDescription());
+        ((TextView)(viewHolder.getView(R.id.project_textView_showTime))).setText(mProjectListItems.get(position).getDate());
+        ((TextView)(viewHolder.getView(R.id.project_textView_showTitle))).setText(mProjectListItems.get(position).getTitle());
+        CollectManager.getInstance().setCollectImageView((Activity)mContext,((viewHolder.getView(R.id.project_imageView_showCollect))),item.getId());
         final String downLoadURL = item.getPictureLink();
-        viewHolder.projectImageViewShowProjectPicture.setTag(downLoadURL);
+        ((viewHolder.getView(R.id.project_imageView_showProjectPicture))).setTag(downLoadURL);
         if (mBitmapMap.get(downLoadURL) == null){
-            new NetImageLoad().downloadImage((Activity)mContext, viewHolder.projectImageViewShowProjectPicture,downLoadURL,mBitmapMap);
-            viewHolder.projectImageViewShowProjectPicture.setImageResource(R.drawable.pic_project_default);
+            new NetImageLoad().downloadImage((Activity)mContext, ((ImageView)(viewHolder.getView(R.id.project_imageView_showProjectPicture))),downLoadURL,mBitmapMap);
+            ((ImageView)(viewHolder.getView(R.id.project_imageView_showProjectPicture))).setImageResource(R.drawable.pic_project_default);
         }else {
-            viewHolder.projectImageViewShowProjectPicture.setImageBitmap(mBitmapMap.get(downLoadURL));
+            ((ImageView)(viewHolder.getView(R.id.project_imageView_showProjectPicture))).setImageBitmap(mBitmapMap.get(downLoadURL));
         }
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext,WebActivity.class);
-                intent.putExtra("url",item.getProjectLink());
-                mContext.startActivity(intent);
-            }
+        viewHolder.getConvertView().setOnClickListener((v)->{
+            WebActivityUtil.startWebActivity(mContext,item.getProjectLink());
         });
-
-        return view;
+        return viewHolder.getConvertView();
     }
 
-
-    class ViewHolder{
-
-        ImageView projectImageViewShowProjectPicture;
-        TextView projectTextViewShowTitle;
-        TextView projectTextViewShowDescription;
-        ImageView projectImageViewShowCollect;
-        TextView projectTextViewShowTime;
-        TextView projectTextViewShowAuthor;
-    }
 
     public void addData(List<ProjectListItem> items){
         mProjectListItems.addAll(items);
@@ -175,3 +118,83 @@ public class ProjectListItemAdapter extends BaseAdapter
 //        }
 //        }.downloadImage(viewHolder.projectImageViewShowProjectPicture,downLoadURL);
 //        viewHolder.projectImageViewShowProjectPicture.setImageResource(R.drawable.pic_project_default);
+
+
+//    View view;
+//    ViewHolder viewHolder;
+//    ProjectListItem item = mProjectListItems.get(position);
+//        if (convertView == null){
+//
+//                view = LayoutInflater.from(mContext).inflate(R.layout.project_list_item,parent,false);
+//                viewHolder = new ViewHolder();
+//                viewHolder.projectImageViewShowProjectPicture = view.findViewById(R.id.project_imageView_showProjectPicture);
+//                viewHolder.projectTextViewShowTitle = view.findViewById(R.id.project_textView_showTitle);
+//                viewHolder.projectTextViewShowDescription = view.findViewById(R.id.project_textView_showDescription);
+//                viewHolder.projectImageViewShowCollect = view.findViewById(R.id.project_imageView_showCollect);
+//                viewHolder.projectTextViewShowTime = view.findViewById(R.id.project_textView_showTime);
+//                viewHolder.projectTextViewShowAuthor = view.findViewById(R.id.project_textView_showAuthor);
+//                view.setTag(viewHolder);
+//
+//                }else {
+//
+//                view = convertView;
+//                viewHolder = (ViewHolder)(view.getTag());
+//                }
+//                viewHolder.projectTextViewShowAuthor.setText(mProjectListItems.get(position).getAuthor());
+//                viewHolder.projectTextViewShowDescription.setText(mProjectListItems.get(position).getDescription());
+//                viewHolder.projectTextViewShowTime.setText(mProjectListItems.get(position).getDate());
+//                viewHolder.projectTextViewShowTitle.setText(mProjectListItems.get(position).getTitle());
+//                if (CollectManager.getInstance().isCollect(item.getId())){
+//                viewHolder.projectImageViewShowCollect.setImageResource(R.drawable.ic_collect_selected);
+//                viewHolder.projectImageViewShowCollect.setTag(R.drawable.ic_collect_selected);
+//                }else {
+//                viewHolder.projectImageViewShowCollect.setImageResource(R.drawable.ic_collect_normal);
+//                viewHolder.projectImageViewShowCollect.setTag(R.drawable.ic_collect_normal);
+//                }
+//                viewHolder.projectImageViewShowCollect.setOnClickListener(new View.OnClickListener() {
+//@Override
+//public void onClick(View v) {
+//        switch (v.getId()){
+//        case R.id.project_imageView_showCollect:
+//        try {
+//        ImageView imageView = (ImageView)v;
+//        if (imageView.getTag().equals(R.drawable.ic_collect_normal)){
+//        CollectManager.getInstance().addCollect(item.getId(),imageView,(Activity) mContext);
+//        }else {
+//        CollectManager.getInstance().cancelCollect(item.getId(),imageView,(Activity) mContext);
+//        }
+//        }catch (ClassCastException e){
+//        e.printStackTrace();
+//        LogUtil.e("日志:SearchResultListAdapter:警告","不能强制转化");
+//        }
+//        }
+//        }
+//        });
+//final String downLoadURL = item.getPictureLink();
+//        viewHolder.projectImageViewShowProjectPicture.setTag(downLoadURL);
+//        if (mBitmapMap.get(downLoadURL) == null){
+//        new NetImageLoad().downloadImage((Activity)mContext, viewHolder.projectImageViewShowProjectPicture,downLoadURL,mBitmapMap);
+//        viewHolder.projectImageViewShowProjectPicture.setImageResource(R.drawable.pic_project_default);
+//        }else {
+//        viewHolder.projectImageViewShowProjectPicture.setImageBitmap(mBitmapMap.get(downLoadURL));
+//        }
+//        view.setOnClickListener(new View.OnClickListener() {
+//@Override
+//public void onClick(View v) {
+//        Intent intent = new Intent(mContext,WebActivity.class);
+//        intent.putExtra("url",item.getProjectLink());
+//        mContext.startActivity(intent);
+//        }
+//        });
+//
+//        return view;
+
+//    class ViewHolder{
+//
+//        ImageView projectImageViewShowProjectPicture;
+//        TextView projectTextViewShowTitle;
+//        TextView projectTextViewShowDescription;
+//        ImageView projectImageViewShowCollect;
+//        TextView projectTextViewShowTime;
+//        TextView projectTextViewShowAuthor;
+//    }

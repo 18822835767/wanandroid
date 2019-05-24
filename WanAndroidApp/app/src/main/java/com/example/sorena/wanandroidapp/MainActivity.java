@@ -25,10 +25,11 @@ import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.util.PermissionUtils;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
 import com.example.sorena.wanandroidapp.view.AccountActivity;
+import com.example.sorena.wanandroidapp.view.BaseActivity;
 import com.example.sorena.wanandroidapp.view.ShowCollectActivity;
 import com.example.sorena.wanandroidapp.view.WebActivity;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements View.OnClickListener, RadioGroup.OnCheckedChangeListener, ViewPager.OnPageChangeListener
 {
 
@@ -95,8 +96,10 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         User user = SharedPreferencesHelper.getUserData();
+        LogUtil.d("日志:BaseActivity:MainActivity",user.toString());
         if (mTextViewShowUserName == null){
-            return;
+            LogUtil.d("日志:BaseActivity:MainActivity:","TextViewShowUserName" + "为空");
+            mTextViewShowUserName = findViewById(R.id.mainActivity_textView_showUserName);
         }
         if (!user.dataIsNull()){
             mTextViewShowUserName.setText("欢迎     " + user.getUserName());
