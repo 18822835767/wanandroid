@@ -13,6 +13,7 @@ import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.bean.SearchResult;
 import com.example.sorena.wanandroidapp.manager.CollectManager;
 import com.example.sorena.wanandroidapp.util.LogUtil;
+import com.example.sorena.wanandroidapp.util.ViewHolder;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -55,65 +56,25 @@ public class SearchResultListAdapter extends BaseAdapter
     public View getView(int position, View convertView, ViewGroup parent) {
 
         SearchResult result = mResults.get(position);
-        View view;
-        ViewHolder viewHolder;
-        if (convertView == null){
-            view = LayoutInflater.from(mContext).inflate(mResourceId,parent,false);
-            viewHolder = new ViewHolder();
-            viewHolder.searchTextViewShowAuthor = view.findViewById(R.id.search_textView_showAuthor);
-            viewHolder.searchResultTextViewShowChapterName = view.findViewById(R.id.searchResult_textView_showChapterName);
-            viewHolder.searchResultTextViewShowSuperChapterName = view.findViewById(R.id.searchResult_textView_showSuperChapterName);
-            viewHolder.searchResultTextViewShowTitle = view.findViewById(R.id.searchResult_textView_showTitle);
-            viewHolder.searchResultImageViewShowCollect = view.findViewById(R.id.searchResult_imageView_showCollect);
-            viewHolder.searchResultTextViewShowTime = view.findViewById(R.id.searchResult_textView_showTime);
-            view.setTag(viewHolder);
-        }else {
-            view = convertView;
-            viewHolder = (ViewHolder) (view.getTag());
-        }
-
-        viewHolder.searchTextViewShowAuthor.setText(result.getAuthor());
-        viewHolder.searchResultTextViewShowChapterName.setText(result.getChapterName());
-        viewHolder.searchResultTextViewShowSuperChapterName.setText(result.getSuperChapterName());
-        viewHolder.searchResultTextViewShowTitle.setText(result.getTitle());
-        viewHolder.searchResultTextViewShowTime.setText(result.getDate());
-        if (CollectManager.getInstance().isCollect(result.getId())){
-            viewHolder.searchResultImageViewShowCollect.setImageResource(R.drawable.ic_collect_selected);
-            viewHolder.searchResultImageViewShowCollect.setTag(R.drawable.ic_collect_selected);
-        }else {
-            viewHolder.searchResultImageViewShowCollect.setImageResource(R.drawable.ic_collect_normal);
-            viewHolder.searchResultImageViewShowCollect.setTag(R.drawable.ic_collect_normal);
-        }
-        viewHolder.searchResultImageViewShowCollect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()){
-                    case R.id.searchResult_imageView_showCollect:
-                        try {
-                            ImageView imageView = (ImageView)v;
-                            if (imageView.getTag().equals(R.drawable.ic_collect_normal)){
-                                CollectManager.getInstance().addCollect(result.getId(),imageView,(Activity) mContext);
-                            }else {
-                                CollectManager.getInstance().cancelCollect(result.getId(),imageView,(Activity) mContext);
-                            }
-                        }catch (ClassCastException e){
-                            e.printStackTrace();
-                            LogUtil.e("日志:SearchResultListAdapter:警告","不能强制转化");
-                        }
-                }
-            }
-        });
-        return view;
+        ViewHolder viewHolder = ViewHolder.get(mContext,convertView,parent,mResourceId,position);
+        ((TextView)viewHolder.getView(R.id.search_textView_showAuthor)).setText(result.getAuthor());
+        ((TextView)viewHolder.getView(R.id.searchResult_textView_showChapterName)).setText(result.getChapterName());
+        ((TextView)viewHolder.getView(R.id.searchResult_textView_showSuperChapterName)).setText(result.getSuperChapterName());
+        ((TextView)viewHolder.getView(R.id.searchResult_textView_showTitle)).setText(result.getTitle());
+        ((TextView)viewHolder.getView(R.id.searchResult_textView_showTime)).setText(result.getDate());
+        CollectManager.getInstance().setCollectImageView((Activity) mContext,
+                (viewHolder.getView(R.id.searchResult_imageView_showCollect)),result.getId());
+        return viewHolder.getConvertView();
     }
 
-    class ViewHolder{
-        TextView searchTextViewShowAuthor;
-        TextView searchResultTextViewShowChapterName;
-        TextView searchResultTextViewShowSuperChapterName;
-        TextView searchResultTextViewShowTitle;
-        ImageView searchResultImageViewShowCollect;
-        TextView searchResultTextViewShowTime;
-    }
+//    class ViewHolder{
+//        TextView searchTextViewShowAuthor;
+//        TextView searchResultTextViewShowChapterName;
+//        TextView searchResultTextViewShowSuperChapterName;
+//        TextView searchResultTextViewShowTitle;
+//        ImageView searchResultImageViewShowCollect;
+//        TextView searchResultTextViewShowTime;
+//    }
 
     public void addData(List<SearchResult> results){
         if (results == null){
@@ -131,3 +92,27 @@ public class SearchResultListAdapter extends BaseAdapter
     }
 
 }
+//    ViewHolder viewHolder;
+//        if (convertView == null){
+//                view = LayoutInflater.from(mContext).inflate(mResourceId,parent,false);
+//                viewHolder = new ViewHolder();
+//                viewHolder.searchTextViewShowAuthor = view.findViewById(R.id.search_textView_showAuthor);
+//                viewHolder.searchResultTextViewShowChapterName = view.findViewById(R.id.searchResult_textView_showChapterName);
+//                viewHolder.searchResultTextViewShowSuperChapterName = view.findViewById(R.id.searchResult_textView_showSuperChapterName);
+//                viewHolder.searchResultTextViewShowTitle = view.findViewById(R.id.searchResult_textView_showTitle);
+//                viewHolder.searchResultImageViewShowCollect = view.findViewById(R.id.searchResult_imageView_showCollect);
+//                viewHolder.searchResultTextViewShowTime = view.findViewById(R.id.searchResult_textView_showTime);
+//                view.setTag(viewHolder);
+//                }else {
+//                view = convertView;
+//                viewHolder = (ViewHolder) (view.getTag());
+//                }
+//
+//                viewHolder.searchTextViewShowAuthor.setText(result.getAuthor());
+//                viewHolder.searchResultTextViewShowChapterName.setText(result.getChapterName());
+//                viewHolder.searchResultTextViewShowSuperChapterName.setText(result.getSuperChapterName());
+//                viewHolder.searchResultTextViewShowTitle.setText(result.getTitle());
+//                viewHolder.searchResultTextViewShowTime.setText(result.getDate());
+//                CollectManager.getInstance().setCollectImageView((Activity) mContext,
+//                viewHolder.searchResultImageViewShowCollect,result.getId());
+//                return view;

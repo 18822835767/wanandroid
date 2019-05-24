@@ -200,9 +200,9 @@ public class CollectManager
 
     /**
      * 设置列表项的那个小星星图标
-     * @param activity
-     * @param imageView
-     * @param id
+     * @param activity 列表项所在的活动
+     * @param imageView 要设置的小星星imageView
+     * @param id 对应的收藏id
      */
 
     public void setCollectImageView(Activity activity,ImageView imageView,int id){
