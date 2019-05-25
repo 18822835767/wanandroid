@@ -15,6 +15,7 @@ import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.bean.Article;
 import com.example.sorena.wanandroidapp.manager.CollectManager;
 import com.example.sorena.wanandroidapp.util.LogUtil;
+import com.example.sorena.wanandroidapp.util.ViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,17 +40,14 @@ public class BaseArticleAdapter extends BaseAdapter
         mAllArticle.addAll(normalArticle);
         mToppingNum = toppingArticle.size();
         addToCollectManagerSet(mAllArticle);
+
     }
 
     private void addToCollectManagerSet(List<Article> articleList){
         if (articleList == null){
             return;
         }
-        for (Article article: articleList) {
-            if (article.isCollect()){
-                CollectManager.getInstance().addToCollectSet(article.getId());
-            }
-        }
+        CollectManager.getInstance().addToCollectSet(articleList);
     }
 
 
@@ -72,74 +70,19 @@ public class BaseArticleAdapter extends BaseAdapter
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         Article article = (Article) getItem(position);
-        View view;
-        BaseArticleAdapter.ViewHolder viewHolder;
-        if (convertView == null){
-            view = LayoutInflater.from(mContext).inflate(mResourceId,parent,false);
-            viewHolder = new BaseArticleAdapter.ViewHolder();
-            viewHolder.articleTextViewShowIsTopping = view.findViewById(R.id.article_textView_showIsTopping);
-            viewHolder.articleTextViewTitle = view.findViewById(R.id.article_textView_title);
-            viewHolder.articleTextViewAuthor = view.findViewById(R.id.article_textView_author);
-            viewHolder.articleTextViewChapterName = view.findViewById(R.id.article_textView_chapterName);
-            viewHolder.articleTextViewTime = view.findViewById(R.id.article_textView_time);
-            viewHolder.articleImageViewCollect = view.findViewById(R.id.article_imageView_collect);
-            view.setTag(viewHolder);
-        }else {
-            view = convertView;
-            viewHolder = (BaseArticleAdapter.ViewHolder)view.getTag();
-        }
-        viewHolder.articleTextViewTitle.setTextColor(Color.parseColor("#000000"));
+        ViewHolder viewHolder = ViewHolder.get(mContext,convertView,parent,mResourceId,position);
+        ((TextView)viewHolder.getView(R.id.article_textView_title)).setTextColor(Color.parseColor("#000000"));
         if (mToppingNum >= position + 1){
-            viewHolder.articleTextViewTitle.setTextColor(Color.parseColor("#1296db"));
+            ((TextView)viewHolder.getView(R.id.article_textView_title)).setTextColor(Color.parseColor("#1296db"));
         }
-        viewHolder.articleTextViewAuthor.setText(article.getAuthor());
-        viewHolder.articleTextViewChapterName.setText(article.getChapterName());
-        viewHolder.articleTextViewTitle.setText(article.getTitle());
-        viewHolder.articleTextViewTime.setText(article.getNiceDate());
-        if (CollectManager.getInstance().isCollect(article.getId())){
-            viewHolder.articleImageViewCollect.setImageResource(R.drawable.ic_collect_selected);
-            viewHolder.articleImageViewCollect.setTag(R.drawable.ic_collect_selected);
-        }else {
-            viewHolder.articleImageViewCollect.setImageResource(R.drawable.ic_collect_normal);
-            viewHolder.articleImageViewCollect.setTag(R.drawable.ic_collect_normal);
-        }
-        viewHolder.articleImageViewCollect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()){
-                    case R.id.article_imageView_collect:
-                        try {
-                            ImageView imageView = (ImageView)v;
-                            if (imageView.getTag().equals(R.drawable.ic_collect_normal)){
-                                CollectManager.getInstance().addCollect(((Article) getItem(position)).getId(),viewHolder.articleImageViewCollect,(Activity) mContext);
-                            }else {
-                                CollectManager.getInstance().cancelCollect(((Article) getItem(position)).getId(),viewHolder.articleImageViewCollect,(Activity) mContext);
-                            }
-                        }catch (ClassCastException e){
-                            e.printStackTrace();
-                            LogUtil.e("日志:警告","不能强制转化");
-                        }
-                }
-            }
-        });
-        return view;
+        ((TextView)viewHolder.getView(R.id.article_textView_author)).setText(article.getAuthor());
+        ((TextView)viewHolder.getView(R.id.article_textView_chapterName)).setText(article.getChapterName());
+        ((TextView)viewHolder.getView(R.id.article_textView_title)).setText(article.getTitle());
+        ((TextView)viewHolder.getView(R.id.article_textView_time)).setText(article.getNiceDate());
+        CollectManager.getInstance().setCollectImageView((Activity)mContext,
+                (viewHolder.getView(R.id.article_imageView_collect)),article.getId());
+        return viewHolder.getConvertView();
     }
-
-    class ViewHolder{
-
-        TextView articleTextViewShowIsTopping;
-
-        TextView articleTextViewTitle;
-
-        TextView articleTextViewAuthor;
-
-        TextView articleTextViewChapterName;
-
-        TextView articleTextViewTime;
-
-        ImageView articleImageViewCollect;
-    }
-
 
     public void addNormalArticleData(List<Article> articles){
         if (articles != null && this.mAllArticle != articles){
@@ -179,3 +122,72 @@ public class BaseArticleAdapter extends BaseAdapter
 
 
 }
+//
+//    Article article = (Article) getItem(position);
+//    View view;
+//    BaseArticleAdapter.ViewHolder viewHolder;
+//        if (convertView == null){
+//                view = LayoutInflater.from(mContext).inflate(mResourceId,parent,false);
+//                viewHolder = new BaseArticleAdapter.ViewHolder();
+//                viewHolder.articleTextViewShowIsTopping = view.findViewById(R.id.article_textView_showIsTopping);
+//                viewHolder.articleTextViewTitle = view.findViewById(R.id.article_textView_title);
+//                viewHolder.articleTextViewAuthor = view.findViewById(R.id.article_textView_author);
+//                viewHolder.articleTextViewChapterName = view.findViewById(R.id.article_textView_chapterName);
+//                viewHolder.articleTextViewTime = view.findViewById(R.id.article_textView_time);
+//                viewHolder.articleImageViewCollect = view.findViewById(R.id.article_imageView_collect);
+//                view.setTag(viewHolder);
+//                }else {
+//                view = convertView;
+//                viewHolder = (BaseArticleAdapter.ViewHolder)view.getTag();
+//                }
+//                viewHolder.articleTextViewTitle.setTextColor(Color.parseColor("#000000"));
+//                if (mToppingNum >= position + 1){
+//                viewHolder.articleTextViewTitle.setTextColor(Color.parseColor("#1296db"));
+//                }
+//                viewHolder.articleTextViewAuthor.setText(article.getAuthor());
+//                viewHolder.articleTextViewChapterName.setText(article.getChapterName());
+//                viewHolder.articleTextViewTitle.setText(article.getTitle());
+//                viewHolder.articleTextViewTime.setText(article.getNiceDate());
+//                if (CollectManager.getInstance().isCollect(article.getId())){
+//                viewHolder.articleImageViewCollect.setImageResource(R.drawable.ic_collect_selected);
+//                viewHolder.articleImageViewCollect.setTag(R.drawable.ic_collect_selected);
+//                }else {
+//                viewHolder.articleImageViewCollect.setImageResource(R.drawable.ic_collect_normal);
+//                viewHolder.articleImageViewCollect.setTag(R.drawable.ic_collect_normal);
+//                }
+//                viewHolder.articleImageViewCollect.setOnClickListener(new View.OnClickListener() {
+//@Override
+//public void onClick(View v) {
+//        switch (v.getId()){
+//        case R.id.article_imageView_collect:
+//        try {
+//        ImageView imageView = (ImageView)v;
+//        if (imageView.getTag().equals(R.drawable.ic_collect_normal)){
+//        CollectManager.getInstance().addCollect(((Article) getItem(position)).getId(),viewHolder.articleImageViewCollect,(Activity) mContext);
+//        }else {
+//        CollectManager.getInstance().cancelCollect(((Article) getItem(position)).getId(),viewHolder.articleImageViewCollect,(Activity) mContext);
+//        }
+//        }catch (ClassCastException e){
+//        e.printStackTrace();
+//        LogUtil.e("日志:警告","不能强制转化");
+//        }
+//        }
+//        }
+//        });
+//        return view;
+
+
+//    class ViewHolder{
+//
+//        TextView articleTextViewShowIsTopping;
+//
+//        TextView articleTextViewTitle;
+//
+//        TextView articleTextViewAuthor;
+//
+//        TextView articleTextViewChapterName;
+//
+//        TextView articleTextViewTime;
+//
+//        ImageView articleImageViewCollect;
+//    }

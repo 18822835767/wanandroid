@@ -35,7 +35,7 @@ public class SystemArticleAdapter extends BaseAdapter
         this.mContext = context;
         this.mResourceId = resourceId;
         this.mAllArticle = allArticle;
-        CollectManager.getInstance().addToCollectSet(allArticle);
+        CollectManager.getInstance().addToCollectSetByArticle(allArticle);
     }
 
 
@@ -73,7 +73,7 @@ public class SystemArticleAdapter extends BaseAdapter
     public void addData(List<Article> articles){
         if (articles != null && this.mAllArticle != articles){
             this.mAllArticle.addAll(articles);
-            CollectManager.getInstance().addToCollectSet(articles);
+            CollectManager.getInstance().addToCollectSetByArticle(articles);
         }
         notifyDataSetChanged();
     }

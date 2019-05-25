@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.bean.NavListItem;
+import com.example.sorena.wanandroidapp.util.ViewHolder;
 
 import java.util.List;
 
@@ -52,31 +53,15 @@ public class NavListItemAdapter extends BaseAdapter
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        View view;
-        ViewHolder viewHolder;
+        ViewHolder viewHolder = ViewHolder.get(mContext,convertView,parent,mResourceId,position);
         NavListItem navListItem = mListItems.get(position);
-        if (convertView == null){
-            view = LayoutInflater.from(mContext).inflate(mResourceId,parent,false);
-            viewHolder = new ViewHolder();
-            viewHolder.navListItemTextViewShowName = view.findViewById(R.id.navListItem_textView_showName);
-            view.setTag(viewHolder);
-        }
-        else {
-            view = convertView;
-            viewHolder = (ViewHolder) (view.getTag());
-        }
-        viewHolder.navListItemTextViewShowName.setText(navListItem.getName());
+        ((TextView)viewHolder.getView(R.id.navListItem_textView_showName)).setText(navListItem.getName());
         if (navListItem == mNavListItemSelected){
-            viewHolder.navListItemTextViewShowName.setTextColor(Color.parseColor("#e98f36"));
+            ((TextView)viewHolder.getView(R.id.navListItem_textView_showName)).setTextColor(Color.parseColor("#e98f36"));
         }else {
-            viewHolder.navListItemTextViewShowName.setTextColor(Color.parseColor("#ffffff"));
+            ((TextView)viewHolder.getView(R.id.navListItem_textView_showName)).setTextColor(Color.parseColor("#ffffff"));
         }
-        return view;
-    }
-
-    class ViewHolder{
-        TextView navListItemTextViewShowName;
+        return viewHolder.getConvertView();
     }
 
 
@@ -87,3 +72,23 @@ public class NavListItemAdapter extends BaseAdapter
 
 
 }
+
+//        if (convertView == null){
+//            view = LayoutInflater.from(mContext).inflate(mResourceId,parent,false);
+//            viewHolder = new ViewHolder();
+//            viewHolder.navListItemTextViewShowName = view.findViewById(R.id.navListItem_textView_showName);
+//            view.setTag(viewHolder);
+//        }
+//        else {
+//            view = convertView;
+//            viewHolder = (ViewHolder) (view.getTag());
+//        }
+//        viewHolder.navListItemTextViewShowName.setText(navListItem.getName());
+//        if (navListItem == mNavListItemSelected){
+//            viewHolder.navListItemTextViewShowName.setTextColor(Color.parseColor("#e98f36"));
+//        }else {
+//            viewHolder.navListItemTextViewShowName.setTextColor(Color.parseColor("#ffffff"));
+//        }
+//    class ViewHolder{
+//        TextView navListItemTextViewShowName;
+//    }

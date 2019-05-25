@@ -76,37 +76,35 @@ public class NetImageLoad
         this.mDownloadUrl = imgUrl;
         this.mCacheMap = cacheMap;
         this.mActivity = activity;
-        new Thread(){
-            public void run() {
-                try {
-                    Looper.prepare();
-                    URL url = new URL(imgUrl);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setConnectTimeout(5000);
-                    connection.setReadTimeout(5000);
-                    connection.setDoInput(true);
-                    connection.setUseCaches(false); //设置不使用缓存
-                    InputStream is = connection.getInputStream();
-                    Bitmap bitmap = BitmapFactory.decodeStream(is);
-                    if (bitmap == null){
-                        LogUtil.v("日志:",imgUrl + "加载失败");
-                    }else {
-                        LogUtil.v("日志:",imgUrl + "加载成功");
-                    }
-                    Message message = new Message();
-                    message.obj = bitmap;
+        ThreadPool.getInstance().addTask(()->{
+            try {
+                Looper.prepare();
+                URL url = new URL(imgUrl);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setConnectTimeout(5000);
+                connection.setReadTimeout(5000);
+                connection.setDoInput(true);
+                connection.setUseCaches(false); //设置不使用缓存
+                InputStream is = connection.getInputStream();
+                Bitmap bitmap = BitmapFactory.decodeStream(is);
+                if (bitmap == null){
+                    LogUtil.v("日志:",imgUrl + "加载失败");
+                }else {
+                    LogUtil.v("日志:",imgUrl + "加载成功");
+                }
+                Message message = new Message();
+                message.obj = bitmap;
 //                    handler.sendMessage(message);
-                    MyHandler myHandler = new MyHandler(NetImageLoad.this);
+                MyHandler myHandler = new MyHandler(NetImageLoad.this);
 //                    myHandler.post(()->{
 //                        loadImage(mImageView, bitmap);
 //                    });
-                    //The application may be doing too much work on its main thread
-                    myHandler.handleMessage(message);
-                } catch (Exception e) {
-                    Log.e("日志:NetImageLoad:",e.getMessage());
-                }
+                //The application may be doing too much work on its main thread
+                myHandler.handleMessage(message);
+            } catch (Exception e) {
+                Log.e("日志:NetImageLoad:",e.getMessage());
             }
-        }.start();
+        });
     }
 
 }

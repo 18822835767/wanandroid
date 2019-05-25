@@ -10,6 +10,7 @@ import com.example.sorena.wanandroidapp.bean.ProjectListItem;
 import com.example.sorena.wanandroidapp.bean.SearchResult;
 import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
+import com.example.sorena.wanandroidapp.myInterface.CollectAble;
 import com.example.sorena.wanandroidapp.util.ApiConstants;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JSONUtil;
@@ -167,36 +168,34 @@ public class CollectManager
         }
     }
 
-    public void addToCollectSet(List<Article> articleList){
+    public void addToCollectSetByArticle(List<Article> articleList){
         if (articleList != null){
-            for (Article a: articleList) {
-                if (a.isCollect()){
-                    addToCollectSet(a.getId());
-                }
-            }
+            addToCollectSet(articleList);
         }
     }
 
     public void addToCollectSetByResult(List<SearchResult> results){
         if (results != null){
-            for (SearchResult result : results) {
-                if (result.isCollect()){
-                    addToCollectSet(result.getId());
-                }
-            }
+            addToCollectSet(results);
         }
     }
 
 
     public void addToCollectSetByProjectItem(List<ProjectListItem> projectListItems){
         if (projectListItems != null){
-            for (ProjectListItem listItem : projectListItems){
-                if (listItem.isCollect()){
-                    addToCollectSet(listItem.getId());
-                }
+            addToCollectSet(projectListItems);
+        }
+    }
+
+    public <T extends CollectAble> void addToCollectSet(List<T> collectAbleList){
+        for (CollectAble collectAble : collectAbleList) {
+            if (collectAble.isCollect()){
+                addToCollectSet(collectAble.getId());
             }
         }
     }
+
+
 
     /**
      * 设置列表项的那个小星星图标

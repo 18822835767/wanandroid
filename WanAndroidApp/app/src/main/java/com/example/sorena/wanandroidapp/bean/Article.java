@@ -1,16 +1,18 @@
 package com.example.sorena.wanandroidapp.bean;
 
+import com.example.sorena.wanandroidapp.myInterface.CollectAble;
+
 /**
  * 文章
  */
-public class Article
+public class Article implements CollectAble
 {
     private String author;
     private String link;
     private String title;
     private String niceDate;
     private String chapterName;
-    private Integer id;
+    private int id;
     private boolean collect;
 
     public Article(String author, String link, String title, String niceDate, String chapterName , int id, boolean collect) {
@@ -63,11 +65,11 @@ public class Article
         this.chapterName = chapterName;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
