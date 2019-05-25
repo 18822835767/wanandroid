@@ -1,6 +1,7 @@
 package com.example.sorena.wanandroidapp;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
@@ -10,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,11 +45,20 @@ public class MainActivity extends BaseActivity
     private LinearLayout mLinearLayoutCollect;
     private LinearLayout mLinearLayoutExit;
     private String[] mPermission;
+
+    private RadioButton mHomeButtom;
+    private RadioButton mSystemButton;
+    private RadioButton mNavigationButton;
+    private RadioButton mProjectButton;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ViewUtil.cancelActionBar(this);
+        initView();
 
         mPermission = new String[]
                 {PermissionUtils.PERMISSION_READ_EXTERNAL_STORAGE,PermissionUtils.PERMISSION_WRITE_EXTERNAL_STORAGE};
@@ -75,6 +86,30 @@ public class MainActivity extends BaseActivity
         loadUIThread.start();
     }
 
+    void initView(){
+        mHomeButtom = findViewById(R.id.bottomMenu_radioButton_home);
+        mSystemButton = findViewById(R.id.bottomMenu_radioButton_system);
+        mNavigationButton = findViewById(R.id.bottomMenu_radioButton_navigation);
+        mProjectButton = findViewById(R.id.bottomMenu_radioButton_project);
+
+        Drawable hd =   getResources().getDrawable(R.drawable.selector_main_view_tab_home);
+        hd.setBounds(0,0,50,50);
+        mHomeButtom.setCompoundDrawables(null,hd,null,null);
+
+        Drawable sd =   getResources().getDrawable(R.drawable.selector_main_view_tab_system);
+        sd.setBounds(0,0,70,70);
+        mSystemButton.setCompoundDrawables(null,sd,null,null);
+
+        Drawable nd =   getResources().getDrawable(R.drawable.selector_main_view_tab_navigation);
+        nd.setBounds(0,0,70,70);
+        mNavigationButton.setCompoundDrawables(null,nd,null,null);
+
+        Drawable pd =   getResources().getDrawable(R.drawable.selector_main_view_tab_project);
+        pd.setBounds(0,0,70,70);
+        mProjectButton.setCompoundDrawables(null,pd,null,null);
+
+
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){

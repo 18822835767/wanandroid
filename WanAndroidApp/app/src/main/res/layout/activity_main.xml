@@ -32,7 +32,7 @@
 
            <RadioGroup
                android:layout_width="match_parent"
-               android:layout_height="70dp"
+               android:layout_height="60dp"
                android:orientation="horizontal"
                android:layout_alignParentBottom="true"
                android:id="@+id/main_radioGroup_bottomMenu"
@@ -41,6 +41,8 @@
                <RadioButton
                    style="@style/MainActivityTabStyle"
                    android:text="首页"
+                   android:textSize="12dp"
+                   android:paddingTop="13dp"
                    android:drawableTop="@drawable/selector_main_view_tab_home"
                    android:id="@+id/bottomMenu_radioButton_home"
                    />
@@ -48,12 +50,14 @@
                <RadioButton
                    style="@style/MainActivityTabStyle"
                    android:text="体系"
+                   android:textSize="12dp"
                    android:drawableTop="@drawable/selector_main_view_tab_system"
                    android:id="@+id/bottomMenu_radioButton_system"
                    />
 
                <RadioButton
                    style="@style/MainActivityTabStyle"
+                   android:textSize="12dp"
                    android:drawableTop="@drawable/selector_main_view_tab_navigation"
                    android:id="@+id/bottomMenu_radioButton_navigation"
                    android:text="导航"
@@ -61,11 +65,11 @@
 
                <RadioButton
                    style="@style/MainActivityTabStyle"
+                   android:textSize="12dp"
                    android:drawableTop="@drawable/selector_main_view_tab_project"
                    android:text="项目"
                    android:id="@+id/bottomMenu_radioButton_project"
                    />
-
 
            </RadioGroup>
 
