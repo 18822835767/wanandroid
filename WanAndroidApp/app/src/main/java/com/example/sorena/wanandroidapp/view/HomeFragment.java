@@ -20,6 +20,7 @@ import com.example.sorena.wanandroidapp.adapter.LooperPagerAdapter;
 import com.example.sorena.wanandroidapp.bean.Article;
 import com.example.sorena.wanandroidapp.dao.HomeDao;
 import com.example.sorena.wanandroidapp.util.LogUtil;
+import com.example.sorena.wanandroidapp.widget.FloatingButtonLayout;
 import com.example.sorena.wanandroidapp.widget.MyViewPager;
 import com.example.sorena.wanandroidapp.widget.RefreshLayout;
 
@@ -70,6 +71,10 @@ public class HomeFragment extends BaseFragment implements
     private SwipeRefreshLayout mHomeSwipeRefreshLayoutRefreshData;
     private View mLoopView;
     private RefreshLayout mMainActivityRefresh;
+    private FloatingButtonLayout mFloatButtonToTop;
+
+
+
 
 
     @Nullable
@@ -111,8 +116,12 @@ public class HomeFragment extends BaseFragment implements
 
     private void initListView(){
 
+        if (getActivity() == null){
+            return;
+        }
         mHomeListViewShowArticle = getActivity().findViewById(R.id.home_listView_showArticle);
         mHomeSwipeRefreshLayoutRefreshData = getActivity().findViewById(R.id.home_swipeRefreshLayout_refreshData);
+        mFloatButtonToTop = getActivity().findViewById(R.id.homeFragment_fb_toTop);
         mMainActivityRefresh =  getActivity().findViewById(R.id.mainActivity_refresh);
         mMainActivityRefresh.setRefreshListener(this);
         mHomeListViewShowArticle.setVisibility(View.GONE);
@@ -174,6 +183,12 @@ public class HomeFragment extends BaseFragment implements
                 mArticleAdapter.clearData();
                 refreshToppingData();
                 loadNextPageNormalData();
+            }
+        });
+
+        mFloatButtonToTop.setListener(()->{
+            if (mHomeListViewShowArticle.getVisibility() == View.VISIBLE){
+                mHomeListViewShowArticle.smoothScrollToPosition(0);
             }
         });
     }

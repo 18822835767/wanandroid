@@ -21,6 +21,7 @@ import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JSONUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
+import com.example.sorena.wanandroidapp.widget.FloatingButtonLayout;
 import com.example.sorena.wanandroidapp.widget.SystemBarLayout;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class ShowCollectActivity extends AppCompatActivity {
 
     private ListView mListViewShowCollects;
     private SwipeRefreshLayout mSwipeRefreshLayoutRefresh;
+    private FloatingButtonLayout showCollectActivityFbToTop;
     private SystemBarLayout mSystemBarLayoutBar;
     private TextView nMessageTextView;
     private SystemArticleAdapter mArticleAdapter;
@@ -58,14 +60,14 @@ public class ShowCollectActivity extends AppCompatActivity {
     private void init(){
         nMessageTextView = findViewById(R.id.mySystemBar_textView_message);
         mSwipeRefreshLayoutRefresh = findViewById(R.id.collect_SwipeRefreshLayout_refresh);
+        showCollectActivityFbToTop = findViewById(R.id.showCollectActivity_fb_toTop);
         mSystemBarLayoutBar = findViewById(R.id.mySystemBar);
         nMessageTextView.setText("收藏");
         mUser = SharedPreferencesHelper.getUserData();
         mListViewShowCollects = findViewById(R.id.collect_listView_showItem);
         mArticleAdapter = new SystemArticleAdapter(this,R.layout.article_item_layout,new ArrayList<>(),new HashSet<>());
         mListViewShowCollects.setAdapter(mArticleAdapter);
-
-
+        showCollectActivityFbToTop.setToTopListView(mListViewShowCollects);
         mListViewShowCollects.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {

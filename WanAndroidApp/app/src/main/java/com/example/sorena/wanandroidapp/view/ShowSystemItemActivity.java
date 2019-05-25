@@ -22,6 +22,7 @@ import com.example.sorena.wanandroidapp.util.ApiConstants;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
+import com.example.sorena.wanandroidapp.widget.FloatingButtonLayout;
 import com.example.sorena.wanandroidapp.widget.SystemBarLayout;
 
 import java.util.ArrayList;
@@ -47,6 +48,8 @@ public class ShowSystemItemActivity extends AppCompatActivity {
     private SystemArticleAdapter mSystemArticleBaseAdapter;
     private TextView mSystemTextViewNoMessage;
     private TextView mMySystemBarTextViewMessage;
+
+
 
 
 

@@ -21,6 +21,7 @@ import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JudgeUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
+import com.example.sorena.wanandroidapp.widget.FloatingButtonLayout;
 import com.example.sorena.wanandroidapp.widget.SystemBarLayout;
 
 import java.util.LinkedList;
@@ -40,6 +41,7 @@ public class ShowResultActivity extends AppCompatActivity {
     private SwipeRefreshLayout mSwipeRefreshLayoutRefresh;
     private ListView mListViewShowResult;
     private SearchResultListAdapter mResultListAdapter;
+    private FloatingButtonLayout mFbToTop;
     private TextView mMessageTextView;
     private List<SearchResult> mResults;
     private String mData;
@@ -68,7 +70,10 @@ public class ShowResultActivity extends AppCompatActivity {
         mSwipeRefreshLayoutRefresh = (SwipeRefreshLayout) findViewById(R.id.showResultActivity_SwipeRefreshLayout_refresh);
         mListViewShowResult = (ListView) findViewById(R.id.showResultActivity_listView_showResult);
         mMessageTextView = findViewById(R.id.mySystemBar_textView_message);
+        mFbToTop = findViewById(R.id.showResultActivity_fb_toTop);
+        mFbToTop.setToTopListView(mListViewShowResult);
         mMessageTextView.setText(mData);
+
         mListViewShowResult.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {

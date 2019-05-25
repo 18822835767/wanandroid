@@ -28,6 +28,15 @@
             android:id="@+id/mainActivity_refresh">
         </com.example.sorena.wanandroidapp.widget.RefreshLayout>
 
+        <com.example.sorena.wanandroidapp.widget.FloatingButtonLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/homeFragment_fb_toTop">
+
+        </com.example.sorena.wanandroidapp.widget.FloatingButtonLayout>
+
     </RelativeLayout>
 
 

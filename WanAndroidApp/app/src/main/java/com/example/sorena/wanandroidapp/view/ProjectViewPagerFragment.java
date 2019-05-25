@@ -19,6 +19,7 @@ import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
 import com.example.sorena.wanandroidapp.util.ApiConstants;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
+import com.example.sorena.wanandroidapp.widget.FloatingButtonLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,8 @@ public class ProjectViewPagerFragment extends BaseFragment
 
     private ProjectChapter mChapter;
     private SwipeRefreshLayout mProjectFragmentSwipeRefreshLayoutRefresh;
-    private ListView mProjectFragmentListViewShowProjectItem;
+    private ListView mShowProjectItem;
+    private FloatingButtonLayout mFbToTop;
     private ProjectListItemAdapter mItemAdapter;
     private int mMaxPage = 1;
     private int mNextLoadPage = 1;
@@ -64,24 +66,25 @@ public class ProjectViewPagerFragment extends BaseFragment
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mProjectFragmentSwipeRefreshLayoutRefresh = view.findViewById(R.id.projectFragment_SwipeRefreshLayout_refresh);
-        mProjectFragmentListViewShowProjectItem = view.findViewById(R.id.projectFragment_listView_showProjectItem);
+        mShowProjectItem = view.findViewById(R.id.projectFragment_listView_showProjectItem);
+        mFbToTop = view.findViewById(R.id.projectFragment_fb_toTop);
         Bundle bundle = getArguments();
         if (bundle != null){
             this.mChapter = (ProjectChapter) (bundle.getSerializable("chapterData"));
         }
-        mProjectFragmentListViewShowProjectItem.setOnScrollListener(new AbsListView.OnScrollListener() {
+        mShowProjectItem.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 //到顶部时，设置可以刷新
                 if (firstVisibleItem == 0) {
-                    View firstVisibleItemView = mProjectFragmentListViewShowProjectItem.getChildAt(0);
+                    View firstVisibleItemView = mShowProjectItem.getChildAt(0);
                     if (firstVisibleItemView != null && firstVisibleItemView.getTop() == 0) {
                     }
                 }
                 //到底部时,自动加载下一页
                 else if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
-                    View lastVisibleItemView = mProjectFragmentListViewShowProjectItem.getChildAt(mProjectFragmentListViewShowProjectItem.getChildCount() - 1);
-                    if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mProjectFragmentListViewShowProjectItem.getHeight()) {
+                    View lastVisibleItemView = mShowProjectItem.getChildAt(mShowProjectItem.getChildCount() - 1);
+                    if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mShowProjectItem.getHeight()) {
                         loadData();
                     }
                 }
@@ -119,8 +122,7 @@ public class ProjectViewPagerFragment extends BaseFragment
                 }).start();
             }
         });
-
-
+        mFbToTop.setToTopListView(mShowProjectItem);
 
         initData();
     }
@@ -144,7 +146,7 @@ public class ProjectViewPagerFragment extends BaseFragment
                     public void run() {
                         mListItems = parseData(response);
                         mItemAdapter = new ProjectListItemAdapter(getActivity(),R.layout.project_list_item, mListItems);
-                        mProjectFragmentListViewShowProjectItem.setAdapter(mItemAdapter);
+                        mShowProjectItem.setAdapter(mItemAdapter);
                     }
                 });
                 mNextLoadPage++;

@@ -22,6 +22,7 @@ import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
+import com.example.sorena.wanandroidapp.widget.FloatingButtonLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ public class SystemItemFragment extends BaseFragment
     private Integer mNextPage = 0;
     private SystemArticleAdapter mSystemArticleBaseAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayoutRefresh;
+    private FloatingButtonLayout systemItemFbToTop;
     private ListView mListViewShowItem;
     private AppCompatActivity mActivity;
 
@@ -83,6 +85,8 @@ public class SystemItemFragment extends BaseFragment
     private void initView() {
         mSwipeRefreshLayoutRefresh = getView().findViewById(R.id.showSystemItemFragment_SwipeRefreshLayout_refresh);
         mListViewShowItem = getView().findViewById(R.id.showSystemItemFragment_listView_showItem);
+        systemItemFbToTop = getView().findViewById(R.id.systemItem_fb_toTop);
+        systemItemFbToTop.setToTopListView(mListViewShowItem);
         mListViewShowItem.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {

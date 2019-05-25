@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.example.sorena.wanandroidapp.R;
@@ -44,4 +45,7 @@ public class RefreshLayout extends RelativeLayout
     public void setRefreshListener(refreshListener refreshListener) {
         this.refreshListener = refreshListener;
     }
+
+
+
 }
