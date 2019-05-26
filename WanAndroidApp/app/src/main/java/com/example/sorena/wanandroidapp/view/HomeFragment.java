@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -351,11 +352,17 @@ public class HomeFragment extends BaseFragment implements
                     int currentItem = mLoopViewPager.getCurrentItem();
                     if (currentItem <= 50){
                         currentItem = mURLs.size() * 100 -1 + currentItem;
+                        mLoopViewPager.setCurrentItem(++currentItem , false);
+                    }else {
+                        mLoopViewPager.setCurrentItem(++currentItem , true);
                     }
-                    mLoopViewPager.setCurrentItem(++currentItem , false);
                 }
             }
-            mHandler.postDelayed(this,4000);
+            if (mDataLoadingFinish){
+                mHandler.postDelayed(this,4000);
+            }else {
+                mHandler.postDelayed(this,500);
+            }
         }
     };
 
