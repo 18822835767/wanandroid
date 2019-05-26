@@ -78,7 +78,7 @@ public class ProjectListItemAdapter extends BaseAdapter
         final String downLoadURL = item.getPictureLink();
         ((viewHolder.getView(R.id.project_imageView_showProjectPicture))).setTag(downLoadURL);
         if (mBitmapMap.get(downLoadURL) == null){
-            new NetImageLoad().downloadImage((Activity)mContext, ((viewHolder.getView(R.id.project_imageView_showProjectPicture))),downLoadURL,mBitmapMap);
+            new NetImageLoad().downloadImage(((viewHolder.getView(R.id.project_imageView_showProjectPicture))),downLoadURL,mBitmapMap);
             ((ImageView)(viewHolder.getView(R.id.project_imageView_showProjectPicture))).setImageResource(R.drawable.pic_project_default);
         }else {
             ((ImageView)(viewHolder.getView(R.id.project_imageView_showProjectPicture))).setImageBitmap(mBitmapMap.get(downLoadURL));
