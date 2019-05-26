@@ -42,6 +42,7 @@
                    style="@style/MainActivityTabStyle"
                    android:text="首页"
                    android:textSize="12dp"
+                   android:textColor="@drawable/selector_text_color"
                    android:paddingTop="13dp"
                    android:drawableTop="@drawable/selector_main_view_tab_home"
                    android:id="@+id/bottomMenu_radioButton_home"
@@ -51,6 +52,7 @@
                    style="@style/MainActivityTabStyle"
                    android:text="体系"
                    android:textSize="12dp"
+                   android:textColor="@drawable/selector_text_color"
                    android:drawableTop="@drawable/selector_main_view_tab_system"
                    android:id="@+id/bottomMenu_radioButton_system"
                    />
@@ -58,6 +60,7 @@
                <RadioButton
                    style="@style/MainActivityTabStyle"
                    android:textSize="12dp"
+                   android:textColor="@drawable/selector_text_color"
                    android:drawableTop="@drawable/selector_main_view_tab_navigation"
                    android:id="@+id/bottomMenu_radioButton_navigation"
                    android:text="导航"
@@ -66,6 +69,7 @@
                <RadioButton
                    style="@style/MainActivityTabStyle"
                    android:textSize="12dp"
+                   android:textColor="@drawable/selector_text_color"
                    android:drawableTop="@drawable/selector_main_view_tab_project"
                    android:text="项目"
                    android:id="@+id/bottomMenu_radioButton_project"

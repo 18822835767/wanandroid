@@ -44,7 +44,6 @@ public class ProjectViewPagerFragment extends BaseFragment
     private List<ProjectListItem> mListItems;
 
 
-
     public static ProjectViewPagerFragment getInstance(ProjectChapter chapter){
         ProjectViewPagerFragment fragment = new ProjectViewPagerFragment();
         Bundle bundle = new Bundle();
@@ -110,6 +109,9 @@ public class ProjectViewPagerFragment extends BaseFragment
                             e.printStackTrace();
                         }
                         if (mProjectFragmentSwipeRefreshLayoutRefresh.isRefreshing()){
+                            if (getActivity() == null){
+                                return;
+                            }
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

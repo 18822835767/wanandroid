@@ -78,7 +78,9 @@ public class NetImageLoad
         this.mActivity = activity;
         ThreadPool.getInstance().addTask(()->{
             try {
-                Looper.prepare();
+                if (Looper.myLooper() == null){
+                    Looper.prepare();
+                }
                 URL url = new URL(imgUrl);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setConnectTimeout(5000);
@@ -102,7 +104,7 @@ public class NetImageLoad
                 //The application may be doing too much work on its main thread
                 myHandler.handleMessage(message);
             } catch (Exception e) {
-                Log.e("日志:NetImageLoad:",e.getMessage());
+                LogUtil.e("日志:NetImageLoad:",e.getMessage());
             }
         });
     }

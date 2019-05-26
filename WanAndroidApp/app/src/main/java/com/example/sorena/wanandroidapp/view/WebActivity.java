@@ -61,20 +61,23 @@ public class WebActivity extends AppCompatActivity {
         mWebSettings.setDomStorageEnabled(true);
         /* 设置为使用webview推荐的窗口 */
         mWebSettings.setUseWideViewPort(true);
-        /* 设置网页自适应屏幕大小 ---这个属性应该是跟上面一个属性一起用 */
-        mWebSettings.setLoadWithOverviewMode(true);
         /* HTML5的地理位置服务,设置为true,启用地理定位 */
         mWebSettings.setGeolocationEnabled(true);
-        /* 设置是否允许webview使用缩放的功能,我这里设为false,不允许 */
-        mWebSettings.setBuiltInZoomControls(false);
-        /* 提高网页渲染的优先级 */
-        mWebSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
-        /* 设置显示水平滚动条,就是网页右边的滚动条.我这里设置的不显示 */
+        /* 设置显示水平滚动条,就是网页右边的滚动条*/
         mWebView.setHorizontalScrollBarEnabled(false);
         /* 指定垂直滚动条是否有叠加样式 */
         mWebView.setVerticalScrollbarOverlay(true);
         /* 设置滚动条的样式 */
         mWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+        //设置可以支持缩放
+        mWebSettings.setSupportZoom(true);
+        //设置出现缩放工具
+        mWebSettings.setBuiltInZoomControls(false);
+        //扩大比例的缩放
+        mWebSettings.setUseWideViewPort(true);
+        //自适应屏幕
+        mWebSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+        mWebSettings.setLoadWithOverviewMode(true);
         /* 这个不用说了,重写WebChromeClient监听网页加载的进度,从而实现进度条 */
         mWebView.setWebChromeClient(new WebChromeClient() {
 
