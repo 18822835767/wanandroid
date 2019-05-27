@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
+import com.example.sorena.wanandroidapp.util.ApiConstants;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JSONUtil;
 import com.example.sorena.wanandroidapp.util.JudgeUtil;
@@ -48,8 +49,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login,container,false);
-        return view;
+        return inflater.inflate(R.layout.fragment_login,container,false);
     }
 
     @Override
@@ -59,10 +59,13 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener
     }
 
     private void initView(){
-        mEditTextUserNameInput = getActivity().findViewById(R.id.loginFragment_editText_userNameInput);
-        mEditTextUserPasswordInput = getActivity().findViewById(R.id.loginFragment_editText_userPasswordInput);
-        mButtonRegister = getActivity().findViewById(R.id.loginFragment_button_login);
-        mTextViewGoRegister = getActivity().findViewById(R.id.loginFragment_textView_goRegister);
+        if (getView() == null){
+            return;
+        }
+        mEditTextUserNameInput = getView().findViewById(R.id.loginFragment_editText_userNameInput);
+        mEditTextUserPasswordInput = getView().findViewById(R.id.loginFragment_editText_userPasswordInput);
+        mButtonRegister = getView().findViewById(R.id.loginFragment_button_login);
+        mTextViewGoRegister = getView().findViewById(R.id.loginFragment_textView_goRegister);
         mTextViewGoRegister.setOnClickListener(this);
         mButtonRegister.setOnClickListener(this);
     }
@@ -88,12 +91,15 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener
                 }
                 String name = mEditTextUserNameInput.getText().toString();
                 String password = mEditTextUserPasswordInput.getText().toString();
-                HttpUtil.sendPostRequest("https://www.wanandroid.com/user/login", new String[]{"username", "password"},
+                HttpUtil.sendPostRequest(ApiConstants.LoginAddress, new String[]{"username", "password"},
                         new String[]{name,password},
                         new HttpUtil.HttpCallBackListener() {
                             @Override
                             public void onFinish(String response) {
                                 String data = JSONUtil.getValue("errorMsg",response,new String[]{});
+                                if (getActivity() == null){
+                                    return;
+                                }
                                 if (data == null){
                                     return;
                                 }else if (data.equals("")){

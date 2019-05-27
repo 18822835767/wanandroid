@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,11 +21,14 @@ import com.example.sorena.wanandroidapp.adapter.LooperPagerAdapter;
 import com.example.sorena.wanandroidapp.bean.Article;
 import com.example.sorena.wanandroidapp.dao.HomeDao;
 import com.example.sorena.wanandroidapp.util.LogUtil;
+import com.example.sorena.wanandroidapp.widget.FloatingButtonLayout;
 import com.example.sorena.wanandroidapp.widget.MyViewPager;
 import com.example.sorena.wanandroidapp.widget.RefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * 首页碎片
@@ -68,6 +72,10 @@ public class HomeFragment extends BaseFragment implements
     private SwipeRefreshLayout mHomeSwipeRefreshLayoutRefreshData;
     private View mLoopView;
     private RefreshLayout mMainActivityRefresh;
+    private FloatingButtonLayout mFloatButtonToTop;
+
+
+
 
 
     @Nullable
@@ -109,8 +117,12 @@ public class HomeFragment extends BaseFragment implements
 
     private void initListView(){
 
+        if (getActivity() == null){
+            return;
+        }
         mHomeListViewShowArticle = getActivity().findViewById(R.id.home_listView_showArticle);
         mHomeSwipeRefreshLayoutRefreshData = getActivity().findViewById(R.id.home_swipeRefreshLayout_refreshData);
+        mFloatButtonToTop = getActivity().findViewById(R.id.homeFragment_fb_toTop);
         mMainActivityRefresh =  getActivity().findViewById(R.id.mainActivity_refresh);
         mMainActivityRefresh.setRefreshListener(this);
         mHomeListViewShowArticle.setVisibility(View.GONE);
@@ -155,6 +167,7 @@ public class HomeFragment extends BaseFragment implements
                     Article article = (Article)o;
                     Intent intent = new Intent(getActivity(),WebActivity.class);
                     intent.putExtra("url",article.getLink());
+                    intent.putExtra("title",article.getTitle());
                     startActivity(intent);
                 }
             }
@@ -174,6 +187,12 @@ public class HomeFragment extends BaseFragment implements
                 loadNextPageNormalData();
             }
         });
+
+        mFloatButtonToTop.setListener(()->{
+            if (mHomeListViewShowArticle.getVisibility() == View.VISIBLE){
+                mHomeListViewShowArticle.smoothScrollToPosition(0);
+            }
+        });
     }
 
     private void setLoopData(){
@@ -181,11 +200,18 @@ public class HomeFragment extends BaseFragment implements
         HomeDao.getLoopingData(getActivity(), new HomeDao.LoopingDataLoadingListener() {
             @Override
             public void onFinish(List<String> urls, List<String> messages, List<String> webUrls) {
-                mURLs = urls;
-                mMessage = messages;
-                mWebURLs = webUrls;
-                adapter.setmURLs(mURLs);
-                adapter.notifyDataSetChanged();
+                if (getActivity() == null){
+                    return;
+                }
+
+                getActivity().runOnUiThread(()->{
+                    mURLs = urls;
+                    mMessage = messages;
+                    mWebURLs = webUrls;
+                    adapter.setmURLs(mURLs);
+                    adapter.notifyDataSetChanged();
+                });
+
             }
 
             @Override
@@ -279,7 +305,9 @@ public class HomeFragment extends BaseFragment implements
                 });
             }
             @Override
-            public void onError(Exception e) {}
+            public void onError(Exception e) {
+                mToppingIsLoadingFinish = false;
+            }
         });
     }
 
@@ -325,11 +353,17 @@ public class HomeFragment extends BaseFragment implements
                     int currentItem = mLoopViewPager.getCurrentItem();
                     if (currentItem <= 50){
                         currentItem = mURLs.size() * 100 -1 + currentItem;
+                        mLoopViewPager.setCurrentItem(++currentItem , false);
+                    }else {
+                        mLoopViewPager.setCurrentItem(++currentItem , true);
                     }
-                    mLoopViewPager.setCurrentItem(++currentItem , false);
                 }
             }
-            mHandler.postDelayed(this,4000);
+            if (mDataLoadingFinish){
+                mHandler.postDelayed(this,4000);
+            }else {
+                mHandler.postDelayed(this,500);
+            }
         }
     };
 
@@ -371,6 +405,7 @@ public class HomeFragment extends BaseFragment implements
             return;
         }
         intent.putExtra("url",mWebURLs.get(mLoopViewPager.getCurrentItem() % mWebURLs.size()));
+        intent.putExtra("title",mMessage.get(mLoopViewPager.getCurrentItem() % mMessage.size()));
         startActivity(intent);
     }
 
@@ -380,6 +415,14 @@ public class HomeFragment extends BaseFragment implements
         setLoopData();
         loadNextPageNormalData();
         loadToppingData();
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (mHomeSwipeRefreshLayoutRefreshData.isRefreshing()){
+                    mHomeSwipeRefreshLayoutRefreshData.setRefreshing(false);
+                }
+            }
+        }, 5000);
     }
 }
 

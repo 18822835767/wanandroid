@@ -58,14 +58,6 @@ public class HistoryAdapt extends ArrayAdapter<History>
         }
     }
 
-    class ViewHolder{
-
-        ImageView delImage;
-        TextView wordTextView;
-    }
-
-
-
     public void addData(String word){
         History history  = new History(0,word);
         if (mHistoryList.contains(history)){

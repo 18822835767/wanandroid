@@ -38,6 +38,7 @@
         android:orientation="horizontal"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_marginRight="5dp"
         >
         
         <TextView

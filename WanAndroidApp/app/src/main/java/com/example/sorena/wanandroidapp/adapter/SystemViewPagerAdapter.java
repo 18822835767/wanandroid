@@ -46,5 +46,4 @@ public class SystemViewPagerAdapter extends FragmentPagerAdapter
         return mChapter.getFlowItems().get(position).getName();
     }
 
-
 }

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import com.example.sorena.wanandroidapp.bean.Article;
 import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
+import com.example.sorena.wanandroidapp.util.ApiConstants;
 import com.example.sorena.wanandroidapp.util.FileUtil;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JSONUtil;
@@ -32,7 +33,9 @@ public class HomeDao
     private static final String NormalDataFileName = "normalData.txt";
     private static final String LoopDataFileName = "loopData.txt";
     private static final String LoopPicFrontString = "https://wanandroid.com/blogimgs/";
-    private static final String LoopingDataAddress = "https://www.wanandroid.com/banner/json";
+    private static final String LoopingDataAddress = ApiConstants.LoopingPicAddress;
+    private static final String ToppingDataAddress = ApiConstants.ToppingArticleAddress;
+    private static boolean normalDataIsLoading = false;
     private static HomeDao homeDao;
     static {
         homeDao = new HomeDao();
@@ -41,6 +44,10 @@ public class HomeDao
 
     public static void getLoopingData(Activity activity,LoopingDataLoadingListener listener){
 
+        if (normalDataIsLoading){
+            return;
+        }
+        normalDataIsLoading = true;
         if (NetWorkUtil.isNetworkAvailable(activity)){
             loadLoopingDataByWeb(activity,listener);
         }else {
@@ -62,7 +69,6 @@ public class HomeDao
                 List<String> webUrls = stringListMap.get("url");
                 listener.onFinish(urls,messages,webUrls);
             }
-
             @Override
             public void onError(Exception e) {
                 e.printStackTrace();
@@ -114,7 +120,7 @@ public class HomeDao
     private static void loadToppingDataByWeb(Activity activity,ToppingDataLoadingListener loadingListener){
         new Thread(()->{
             User user = SharedPreferencesHelper.getUserData();
-            HttpUtil.sendHttpGetRequestWithCookie("https://www.wanandroid.com/article/top/json",
+            HttpUtil.sendHttpGetRequestWithCookie(ToppingDataAddress,
                     new String[]{"loginUserName","loginUserPassword"},
                     new String[]{user.getUserName(),user.getUserPassword()},
                     new HttpUtil.HttpCallBackListener() {
@@ -164,8 +170,8 @@ public class HomeDao
     private static void loadNormalDataByWeb(Activity activity,int loadPage,NormalDataLoadingListener listener){
         new Thread(()->{
             User user = SharedPreferencesHelper.getUserData();
-            HttpUtil.sendHttpGetRequestWithCookie("https://www.wanandroid.com/article/list/"
-                            + loadPage + "/json",
+            HttpUtil.sendHttpGetRequestWithCookie(ApiConstants.NormalArticleAddressFirstHalf
+                            + loadPage + ApiConstants.NormalArticleAddressSecondHalf,
                     new String[]{"loginUserName","loginUserPassword"},
                     new String[]{user.getUserName(),user.getUserPassword()},
                     new HttpUtil.HttpCallBackListener() {
@@ -178,6 +184,7 @@ public class HomeDao
                             if (listener != null){
                                 listener.onFinish(articles);
                             }
+                            normalDataIsLoading = false;
                         }
                         @Override
                         public void onError(Exception e) {
@@ -185,6 +192,7 @@ public class HomeDao
                             if (listener != null){
                                 listener.onError(e);
                             }
+                            normalDataIsLoading = false;
                         }
                     });
         }).start();

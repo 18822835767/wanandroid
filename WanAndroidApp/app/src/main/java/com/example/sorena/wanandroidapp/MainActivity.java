@@ -1,16 +1,17 @@
 package com.example.sorena.wanandroidapp;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,29 +26,39 @@ import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.util.PermissionUtils;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
 import com.example.sorena.wanandroidapp.view.AccountActivity;
+import com.example.sorena.wanandroidapp.view.BaseActivity;
 import com.example.sorena.wanandroidapp.view.ShowCollectActivity;
 import com.example.sorena.wanandroidapp.view.WebActivity;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements View.OnClickListener, RadioGroup.OnCheckedChangeListener, ViewPager.OnPageChangeListener
 {
 
     private ImageView myBarImageViewMenu;
     private TextView myBarTextViewMessage;
     private DrawerLayout mDrawerLayoutRoot;
-    private ViewPager mMainViewPagerRoot;
-    private RadioGroup mMainRadioGroupBottomMenu;
-    private ImageView mMainActivityImageViewAccount;
-    private TextView mTextViewShowUserName;
-    private LinearLayout mMainActivityLinearLayoutChtholly;
-    private LinearLayout mMainActivityLinearLayoutCollect;
-    private LinearLayout mMainActivityLinearLayoutExit;
+    private ViewPager mViewPagerRoot;
+    private RadioGroup mRadioGroupBottomMenu;
+    private ImageView mImageViewAccount;
+    private TextView mShowUserName;
+    private LinearLayout mLinearLayoutChtholly;
+    private LinearLayout mLinearLayoutCollect;
+    private LinearLayout mLinearLayoutExit;
     private String[] mPermission;
+
+    private RadioButton mHomeButtom;
+    private RadioButton mSystemButton;
+    private RadioButton mNavigationButton;
+    private RadioButton mProjectButton;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ViewUtil.cancelActionBar(this);
+        initView();
 
         mPermission = new String[]
                 {PermissionUtils.PERMISSION_READ_EXTERNAL_STORAGE,PermissionUtils.PERMISSION_WRITE_EXTERNAL_STORAGE};
@@ -75,6 +86,31 @@ public class MainActivity extends AppCompatActivity
         loadUIThread.start();
     }
 
+
+    void initView(){
+        mHomeButtom = findViewById(R.id.bottomMenu_radioButton_home);
+        mSystemButton = findViewById(R.id.bottomMenu_radioButton_system);
+        mNavigationButton = findViewById(R.id.bottomMenu_radioButton_navigation);
+        mProjectButton = findViewById(R.id.bottomMenu_radioButton_project);
+
+        Drawable hd =   getResources().getDrawable(R.drawable.selector_main_view_tab_home);
+        hd.setBounds(0,0,50,50);
+        mHomeButtom.setCompoundDrawables(null,hd,null,null);
+
+        Drawable sd =   getResources().getDrawable(R.drawable.selector_main_view_tab_system);
+        sd.setBounds(0,0,70,70);
+        mSystemButton.setCompoundDrawables(null,sd,null,null);
+
+        Drawable nd =   getResources().getDrawable(R.drawable.selector_main_view_tab_navigation);
+        nd.setBounds(0,0,70,70);
+        mNavigationButton.setCompoundDrawables(null,nd,null,null);
+
+        Drawable pd =   getResources().getDrawable(R.drawable.selector_main_view_tab_project);
+        pd.setBounds(0,0,70,70);
+        mProjectButton.setCompoundDrawables(null,pd,null,null);
+
+
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
@@ -95,14 +131,16 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         User user = SharedPreferencesHelper.getUserData();
-        if (mTextViewShowUserName == null){
-            return;
+        LogUtil.d("日志:BaseActivity:MainActivity",user.toString());
+        if (mShowUserName == null){
+            LogUtil.d("日志:BaseActivity:MainActivity:","TextViewShowUserName" + "为空");
+            mShowUserName = findViewById(R.id.mainActivity_textView_showUserName);
         }
         if (!user.dataIsNull()){
-            mTextViewShowUserName.setText("欢迎     " + user.getUserName());
-            mTextViewShowUserName.setVisibility(View.VISIBLE);
+            mShowUserName.setText("欢迎     " + user.getUserName());
+            mShowUserName.setVisibility(View.VISIBLE);
         }else {
-            mTextViewShowUserName.setVisibility(View.GONE);
+            mShowUserName.setVisibility(View.GONE);
         }
     }
 
@@ -111,23 +149,23 @@ public class MainActivity extends AppCompatActivity
         myBarImageViewMenu = findViewById(R.id.myBar_imageView_menu);
         myBarTextViewMessage = findViewById(R.id.myBar_textView_message);
         mDrawerLayoutRoot = findViewById(R.id.layout_drawerLayout_root);
-        mMainViewPagerRoot = findViewById(R.id.main_viewPager_root);
-        mMainRadioGroupBottomMenu = findViewById(R.id.main_radioGroup_bottomMenu);
-        mTextViewShowUserName = findViewById(R.id.mainActivity_textView_showUserName);
-        mMainActivityLinearLayoutChtholly = findViewById(R.id.mainActivity_LinearLayout_chtholly);
-        mMainActivityLinearLayoutCollect = findViewById(R.id.mainActivity_LinearLayout_collect);
-        mMainActivityLinearLayoutExit = findViewById(R.id.mainActivity_LinearLayout_exit);
-        mMainRadioGroupBottomMenu.setOnCheckedChangeListener(this);
+        mViewPagerRoot = findViewById(R.id.main_viewPager_root);
+        mRadioGroupBottomMenu = findViewById(R.id.main_radioGroup_bottomMenu);
+        mShowUserName = findViewById(R.id.mainActivity_textView_showUserName);
+        mLinearLayoutChtholly = findViewById(R.id.mainActivity_LinearLayout_chtholly);
+        mLinearLayoutCollect = findViewById(R.id.mainActivity_LinearLayout_collect);
+        mLinearLayoutExit = findViewById(R.id.mainActivity_LinearLayout_exit);
+        mRadioGroupBottomMenu.setOnCheckedChangeListener(this);
         myBarImageViewMenu.setOnClickListener(this);
         myBarTextViewMessage.setOnClickListener(this);
-        mMainViewPagerRoot.addOnPageChangeListener(this);
-        mMainActivityLinearLayoutChtholly.setOnClickListener(this);
-        mMainActivityLinearLayoutCollect.setOnClickListener(this);
-        mMainActivityLinearLayoutExit.setOnClickListener(this);
-        mMainRadioGroupBottomMenu.check(R.id.bottomMenu_radioButton_home);
-        mMainViewPagerRoot.setOffscreenPageLimit(3);
-        mMainActivityImageViewAccount = findViewById(R.id.mainActivity_imageView_account);
-        mMainActivityImageViewAccount.setOnClickListener(this);
+        mViewPagerRoot.addOnPageChangeListener(this);
+        mLinearLayoutChtholly.setOnClickListener(this);
+        mLinearLayoutCollect.setOnClickListener(this);
+        mLinearLayoutExit.setOnClickListener(this);
+        mRadioGroupBottomMenu.check(R.id.bottomMenu_radioButton_home);
+        mViewPagerRoot.setOffscreenPageLimit(3);
+        mImageViewAccount = findViewById(R.id.mainActivity_imageView_account);
+        mImageViewAccount.setOnClickListener(this);
     }
 
     void initDataBase(){
@@ -141,7 +179,7 @@ public class MainActivity extends AppCompatActivity
     //设置ViewPager和TabLayout相关的内容
     private void setView(){
         MainActivityViewPagerAdapter pagerAdapter = new MainActivityViewPagerAdapter(getSupportFragmentManager());
-        mMainViewPagerRoot.setAdapter(pagerAdapter);
+        mViewPagerRoot.setAdapter(pagerAdapter);
     }
 
 
@@ -164,7 +202,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.mainActivity_LinearLayout_exit:
                 SharedPreferencesHelper.delData();
                 CollectManager.getInstance().clearCollectSet();
-                mTextViewShowUserName.setVisibility(View.GONE);
+                mShowUserName.setVisibility(View.GONE);
                 break;
             case R.id.mainActivity_LinearLayout_collect:
                 User user = SharedPreferencesHelper.getUserData();
@@ -186,16 +224,16 @@ public class MainActivity extends AppCompatActivity
         switch (checkedId){
 
             case R.id.bottomMenu_radioButton_home:
-                mMainViewPagerRoot.setCurrentItem(0);
+                mViewPagerRoot.setCurrentItem(0);
                 break;
             case R.id.bottomMenu_radioButton_system:
-                mMainViewPagerRoot.setCurrentItem(1);
+                mViewPagerRoot.setCurrentItem(1);
                 break;
             case R.id.bottomMenu_radioButton_navigation:
-                mMainViewPagerRoot.setCurrentItem(2);
+                mViewPagerRoot.setCurrentItem(2);
                 break;
             case R.id.bottomMenu_radioButton_project:
-                mMainViewPagerRoot.setCurrentItem(3);
+                mViewPagerRoot.setCurrentItem(3);
                 break;
         }
     }
@@ -213,19 +251,19 @@ public class MainActivity extends AppCompatActivity
     public void onPageSelected(int i) {
         switch (i){
             case 0:
-                mMainRadioGroupBottomMenu.check(R.id.bottomMenu_radioButton_home);
+                mRadioGroupBottomMenu.check(R.id.bottomMenu_radioButton_home);
                 myBarTextViewMessage.setText("首页");
                 break;
             case 1:
-                mMainRadioGroupBottomMenu.check(R.id.bottomMenu_radioButton_system);
+                mRadioGroupBottomMenu.check(R.id.bottomMenu_radioButton_system);
                 myBarTextViewMessage.setText("体系");
                 break;
             case 2:
-                mMainRadioGroupBottomMenu.check(R.id.bottomMenu_radioButton_navigation);
+                mRadioGroupBottomMenu.check(R.id.bottomMenu_radioButton_navigation);
                 myBarTextViewMessage.setText("导航");
                 break;
             case 3:
-                mMainRadioGroupBottomMenu.check(R.id.bottomMenu_radioButton_project);
+                mRadioGroupBottomMenu.check(R.id.bottomMenu_radioButton_project);
                 myBarTextViewMessage.setText("项目");
                 break;
         }

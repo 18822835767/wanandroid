@@ -60,6 +60,7 @@ public class NavigationFragment extends BaseFragment implements RefreshLayout.re
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 if (mNavListItemAdapter != null){
+                    LogUtil.d("日志:项目:list",position + "");
                     mNavListItemAdapter.setSelected(position);
                     mListViewShowFlowData.setSelection(position);
                 }
@@ -71,7 +72,7 @@ public class NavigationFragment extends BaseFragment implements RefreshLayout.re
 
             @Override
             public void onScroll(AbsListView view, final int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                //右边滑动时设置左边的选中样式
+                //右边滑动时设置左边的选中样式,只不过如果设置了这个点击左边列表时会选中错位,除非设个延时任务弄回来
 //                if (firstVisibleItem != mPrevPoition){
 //                    if (!isSelecting){
 //                        if (firstVisibleItem < mNavListItemAdapter.getCount()){

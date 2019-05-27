@@ -18,9 +18,11 @@ import com.example.sorena.wanandroidapp.bean.Article;
 import com.example.sorena.wanandroidapp.bean.FlowItem;
 import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
+import com.example.sorena.wanandroidapp.util.ApiConstants;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
+import com.example.sorena.wanandroidapp.widget.FloatingButtonLayout;
 import com.example.sorena.wanandroidapp.widget.SystemBarLayout;
 
 import java.util.ArrayList;
@@ -46,6 +48,8 @@ public class ShowSystemItemActivity extends AppCompatActivity {
     private SystemArticleAdapter mSystemArticleBaseAdapter;
     private TextView mSystemTextViewNoMessage;
     private TextView mMySystemBarTextViewMessage;
+
+
 
 
 
@@ -130,6 +134,7 @@ public class ShowSystemItemActivity extends AppCompatActivity {
                     Article article = (Article)o;
                     Intent intent = new Intent(ShowSystemItemActivity.this,WebActivity.class);
                     intent.putExtra("url",article.getLink());
+                    intent.putExtra("title",article.getTitle());
                     startActivity(intent);
                 }
             }
@@ -146,7 +151,7 @@ public class ShowSystemItemActivity extends AppCompatActivity {
     private void loadNextPageData(){
 
 
-        String url = "https://www.wanandroid.com/article/list/"+mNextPage+"/json?cid=" +mFlowItem.getId();
+        String url = ApiConstants.SystemItemAddressFirstHalf + mNextPage + ApiConstants.SystemItemAddressSecondHalf + mFlowItem.getId();
         LogUtil.d("日志:发送http",url);
         User user = SharedPreferencesHelper.getUserData();
         HttpUtil.sendHttpGetRequestWithCookie(url,

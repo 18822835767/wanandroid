@@ -12,24 +12,20 @@ import android.view.ViewGroup;
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.adapter.ProjectViewPagerAdapter;
 import com.example.sorena.wanandroidapp.bean.ProjectChapter;
-import com.example.sorena.wanandroidapp.util.HttpUtil;
-import com.example.sorena.wanandroidapp.util.JSONUtil;
+import com.example.sorena.wanandroidapp.dao.ProjectDao;
+import com.example.sorena.wanandroidapp.widget.RefreshLayout;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import static com.example.sorena.wanandroidapp.util.JSONUtil.getMapInArray;
 
 /**
  * 项目碎片
  */
 public class ProjectFragment extends BaseFragment {
 
-
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private ProjectViewPagerAdapter mAdapter;
+    private RefreshLayout mRefreshLayout;
 
 
     @Nullable
@@ -48,52 +44,66 @@ public class ProjectFragment extends BaseFragment {
 
     private void initView(){
 
-        mViewPager = getActivity().findViewById(R.id.view_pager);
-        mTabLayout = getActivity().findViewById(R.id.tab_layout);
+        if (getView() == null){
+            return;
+        }
+        mViewPager = getView().findViewById(R.id.view_pager);
+        mTabLayout = getView().findViewById(R.id.tab_layout);
+        mRefreshLayout = getView().findViewById(R.id.projectFragment_refreshLayout_refresh);
         mTabLayout.setupWithViewPager(mViewPager);
-        mTabLayout.setVisibility(View.GONE);
-        mViewPager.setVisibility(View.GONE);
         mViewPager.setOffscreenPageLimit(3);
+        mRefreshLayout.setRefreshListener(()->{
+            loadData();
+        });
 
     }
     private void loadData(){
 
-        HttpUtil.sendHttpRequest("https://www.wanandroid.com/project/tree/json", new HttpUtil.HttpCallBackListener() {
+        ProjectDao.loadProjectData(getActivity(), new ProjectDao.ProjectDataLoadListener() {
             @Override
-            public void onFinish(String response) {
-                String data = JSONUtil.getValue("data",response,new String[]{});
-                Map<String,List<String>> dataMap = getMapInArray(data,new String[]{"id","name"});
-                List<String> ids = dataMap.get("id");
-                List<String> names = dataMap.get("name");
-                List<ProjectChapter> chapters = new ArrayList<>();
-                if (ids == null || names == null){
+            public void onFinish(List<ProjectChapter> chapters) {
+                if (getActivity() == null){
                     return;
                 }
-                for (int i = 0; i < ids.size(); i++) {
-                    chapters.add(new ProjectChapter(names.get(i),Integer.parseInt(ids.get(i))));
-                }
                 mAdapter = new ProjectViewPagerAdapter(getActivity().getSupportFragmentManager(),chapters);
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mViewPager.setAdapter(mAdapter);
-                        mTabLayout.setVisibility(View.VISIBLE);
-                        mViewPager.setVisibility(View.VISIBLE);
-                    }
+                getActivity().runOnUiThread(()->{
+                    mViewPager.setAdapter(mAdapter);
+                    mTabLayout.setVisibility(View.VISIBLE);
+                    mViewPager.setVisibility(View.VISIBLE);
+                    mRefreshLayout.setVisibility(View.GONE);
                 });
             }
-
             @Override
             public void onError(Exception e) {
-
+                mTabLayout.setVisibility(View.GONE);
+                mViewPager.setVisibility(View.GONE);
+                mRefreshLayout.setVisibility(View.VISIBLE);
             }
         });
-
-
-
 
     }
 
 
 }
+//HttpUtil.sendHttpRequest(ApiConstants.ProjectTreeAddress, new HttpUtil.HttpCallBackListener() {
+//@Override
+//public void onFinish(String response) {
+//        String data = JSONUtil.getValue("data",response,new String[]{});
+//        Map<String,List<String>> dataMap = getMapInArray(data,new String[]{"id","name"});
+//        List<String> ids = dataMap.get("id");
+//        List<String> names = dataMap.get("name");
+//        List<ProjectChapter> chapters = new ArrayList<>();
+//        if (ids == null || names == null){
+//        return;
+//        }
+//        for (int i = 0; i < ids.size(); i++) {
+//        chapters.add(new ProjectChapter(names.get(i),Integer.parseInt(ids.get(i))));
+//        }
+//
+//        }
+//
+//@Override
+//public void onError(Exception e) {
+//
+//        }
+//        });

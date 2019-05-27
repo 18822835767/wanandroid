@@ -16,10 +16,12 @@ import com.example.sorena.wanandroidapp.adapter.SearchResultListAdapter;
 import com.example.sorena.wanandroidapp.bean.SearchResult;
 import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
+import com.example.sorena.wanandroidapp.util.ApiConstants;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JudgeUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
 import com.example.sorena.wanandroidapp.util.ViewUtil;
+import com.example.sorena.wanandroidapp.widget.FloatingButtonLayout;
 import com.example.sorena.wanandroidapp.widget.SystemBarLayout;
 
 import java.util.LinkedList;
@@ -39,12 +41,13 @@ public class ShowResultActivity extends AppCompatActivity {
     private SwipeRefreshLayout mSwipeRefreshLayoutRefresh;
     private ListView mListViewShowResult;
     private SearchResultListAdapter mResultListAdapter;
+    private FloatingButtonLayout mFbToTop;
     private TextView mMessageTextView;
     private List<SearchResult> mResults;
     private String mData;
     private int mNextPage = 0;
     private int mMaxPage = 10;
-
+    private boolean mIsLoading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +55,7 @@ public class ShowResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_result);
         ViewUtil.cancelActionBar(this);
         Intent intent = getIntent();
-        mData = intent.getStringExtra("mData");
+        mData = intent.getStringExtra("data");
         LogUtil.d("日志:","搜索关键词为:" + mData);
         initView();
         initData();
@@ -67,7 +70,10 @@ public class ShowResultActivity extends AppCompatActivity {
         mSwipeRefreshLayoutRefresh = (SwipeRefreshLayout) findViewById(R.id.showResultActivity_SwipeRefreshLayout_refresh);
         mListViewShowResult = (ListView) findViewById(R.id.showResultActivity_listView_showResult);
         mMessageTextView = findViewById(R.id.mySystemBar_textView_message);
+        mFbToTop = findViewById(R.id.showResultActivity_fb_toTop);
+        mFbToTop.setToTopListView(mListViewShowResult);
         mMessageTextView.setText(mData);
+
         mListViewShowResult.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -82,6 +88,13 @@ public class ShowResultActivity extends AppCompatActivity {
                 else if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
                     View lastVisibleItemView = mListViewShowResult.getChildAt(mListViewShowResult.getChildCount() - 1);
                     if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mListViewShowResult.getHeight()) {
+                        if (mIsLoading){
+                            LogUtil.d("日志","正在加载....");
+                            return;
+                        }else {
+                            LogUtil.d("日志","准备加载下一页");
+                            mIsLoading = true;
+                        }
                         loadMoreData();
                     }
                 }
@@ -110,6 +123,7 @@ public class ShowResultActivity extends AppCompatActivity {
                 SearchResult result = (SearchResult)(mResultListAdapter.getItem(position));
                 Intent intent = new Intent(ShowResultActivity.this,WebActivity.class);
                 intent.putExtra("url",result.getLink());
+                intent.putExtra("title",result.getTitle());
                 startActivity(intent);
             }
         });
@@ -131,7 +145,7 @@ public class ShowResultActivity extends AppCompatActivity {
     private void initData(){
 
         User user = SharedPreferencesHelper.getUserData();
-        HttpUtil.sendHttpPostRequestWithCookie("https://www.wanandroid.com/article/query/0/json",  new String[]{"loginUserName", "loginUserPassword"},
+        HttpUtil.sendHttpPostRequestWithCookie(ApiConstants.SearchAddress,  new String[]{"loginUserName", "loginUserPassword"},
                 new String[]{user.getUserName(), user.getUserPassword()},new String[]{"k"}, new String[]{mData}, new HttpUtil.HttpCallBackListener() {
             @Override
             public void onFinish(String response) {
@@ -157,10 +171,11 @@ public class ShowResultActivity extends AppCompatActivity {
     private void loadMoreData(){
 
         if (mNextPage > mMaxPage){
+            mIsLoading = false;
             return;
         }
         User user = SharedPreferencesHelper.getUserData();
-        HttpUtil.sendHttpPostRequestWithCookie("https://www.wanandroid.com/article/query/"+ mNextPage +"/json", new String[]{"loginUserName", "loginUserPassword"},
+        HttpUtil.sendHttpPostRequestWithCookie(ApiConstants.SearchAddressFirstHalf + mNextPage + ApiConstants.SearchAddressSecondHalf, new String[]{"loginUserName", "loginUserPassword"},
                 new String[]{user.getUserName(), user.getUserPassword()}, new String[]{"k"}, new String[]{mData}, new HttpUtil.HttpCallBackListener() {
             @Override
             public void onFinish(String response) {
@@ -170,20 +185,21 @@ public class ShowResultActivity extends AppCompatActivity {
                     mResultListAdapter.addData(mResults);
                     mNextPage++;
                     mSwipeRefreshLayoutRefresh.setRefreshing(false);
+                    mIsLoading  = false;
                 });
 
             }
             @Override
-            public void onError(Exception e) {}
+            public void onError(Exception e) {
+                mIsLoading  = false;
+            }
         });
     }
 
 
-
-
     private List<SearchResult> parseData(String response){
 
-        String data = getValue("mData",response,new String[]{});
+        String data = getValue("data",response,new String[]{});
         String datas = getValue("datas",data,new String[]{});
         String pageCount = getValue("pageCount",data,new String[]{});
         mMaxPage = Integer.parseInt(pageCount) - 1;

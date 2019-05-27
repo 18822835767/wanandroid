@@ -10,6 +10,8 @@ import com.example.sorena.wanandroidapp.bean.ProjectListItem;
 import com.example.sorena.wanandroidapp.bean.SearchResult;
 import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
+import com.example.sorena.wanandroidapp.myInterface.CollectAble;
+import com.example.sorena.wanandroidapp.util.ApiConstants;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.JSONUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
@@ -53,7 +55,7 @@ public class CollectManager
      */
     private void sendCollectData(int id, ImageView imageView, Activity activity){
 
-        String address = "https://www.wanandroid.com/lg/collect/" + id + "/json";
+        String address = ApiConstants.AddCollectAddressFirstHalf + id + ApiConstants.AddCollectAddressSecondHalf;
         User user = SharedPreferencesHelper.getUserData();
         if (user.dataIsNull()){
             activity.runOnUiThread(()->{
@@ -102,7 +104,7 @@ public class CollectManager
 
     private void sendCancelCollectionData(int id, ImageView imageView, Activity activity){
 
-        String address = "https://www.wanandroid.com/lg/uncollect_originId/" + id +"/json";
+        String address = ApiConstants.CancelCollectAddressFirstHalf + id + ApiConstants.CancelCollectAddressSecondHalf;
         User user = SharedPreferencesHelper.getUserData();
         if (user.dataIsNull()){
             activity.runOnUiThread(()->{
@@ -166,35 +168,69 @@ public class CollectManager
         }
     }
 
-    public void addToCollectSet(List<Article> articleList){
+    public void addToCollectSetByArticle(List<Article> articleList){
         if (articleList != null){
-            for (Article a: articleList) {
-                if (a.isCollect()){
-                    addToCollectSet(a.getId());
-                }
-            }
+            addToCollectSet(articleList);
         }
     }
 
     public void addToCollectSetByResult(List<SearchResult> results){
         if (results != null){
-            for (SearchResult result : results) {
-                if (result.isCollect()){
-                    addToCollectSet(result.getId());
-                }
-            }
+            addToCollectSet(results);
         }
     }
 
 
     public void addToCollectSetByProjectItem(List<ProjectListItem> projectListItems){
         if (projectListItems != null){
-            for (ProjectListItem listItem : projectListItems){
-                if (listItem.isCollect()){
-                    addToCollectSet(listItem.getId());
-                }
+            addToCollectSet(projectListItems);
+        }
+    }
+
+    public <T extends CollectAble> void addToCollectSet(List<T> collectAbleList){
+        for (CollectAble collectAble : collectAbleList) {
+            if (collectAble.isCollect()){
+                addToCollectSet(collectAble.getId());
             }
         }
     }
+
+
+
+    /**
+     * 设置列表项的那个小星星图标
+     * @param activity 列表项所在的活动
+     * @param imageView 要设置的小星星imageView
+     * @param id 对应的收藏id
+     */
+
+    public void setCollectImageView(Activity activity,ImageView imageView,int id){
+
+        activity.runOnUiThread(()->{
+            if (CollectManager.getInstance().isCollect(id)){
+                imageView.setImageResource(R.drawable.ic_collect_selected);
+                imageView.setTag(R.drawable.ic_collect_selected);
+            }else {
+                imageView.setImageResource(R.drawable.ic_collect_normal);
+                imageView.setTag(R.drawable.ic_collect_normal);
+            }
+            imageView.setOnClickListener((v -> {
+                try {
+                    ImageView view = (ImageView)v;
+                    if (view.getTag().equals(R.drawable.ic_collect_normal)){
+                        addCollect(id,view,activity);
+                    }else {
+                        CollectManager.getInstance().cancelCollect(id,view,activity);
+                    }
+                }catch (ClassCastException e){
+                    e.printStackTrace();
+                    LogUtil.e("日志:setCollectImageView:警告","不能强制转化");
+                }
+            }));
+        });
+    }
+
+
+
 
 }

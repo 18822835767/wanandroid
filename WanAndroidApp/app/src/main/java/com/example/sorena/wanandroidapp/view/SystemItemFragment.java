@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TableRow;
 
 import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.adapter.SystemArticleAdapter;
@@ -22,6 +24,7 @@ import com.example.sorena.wanandroidapp.bean.User;
 import com.example.sorena.wanandroidapp.db.SharedPreferencesHelper;
 import com.example.sorena.wanandroidapp.util.HttpUtil;
 import com.example.sorena.wanandroidapp.util.LogUtil;
+import com.example.sorena.wanandroidapp.widget.FloatingButtonLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +43,10 @@ public class SystemItemFragment extends BaseFragment
     private Integer mNextPage = 0;
     private SystemArticleAdapter mSystemArticleBaseAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayoutRefresh;
+    private FloatingButtonLayout systemItemFbToTop;
     private ListView mListViewShowItem;
     private AppCompatActivity mActivity;
+    private boolean mIsLoading = false;
 
 
     @Override
@@ -83,6 +88,8 @@ public class SystemItemFragment extends BaseFragment
     private void initView() {
         mSwipeRefreshLayoutRefresh = getView().findViewById(R.id.showSystemItemFragment_SwipeRefreshLayout_refresh);
         mListViewShowItem = getView().findViewById(R.id.showSystemItemFragment_listView_showItem);
+        systemItemFbToTop = getView().findViewById(R.id.systemItem_fb_toTop);
+        systemItemFbToTop.setToTopListView(mListViewShowItem);
         mListViewShowItem.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -143,6 +150,7 @@ public class SystemItemFragment extends BaseFragment
                     Article article = (Article)o;
                     Intent intent = new Intent(getActivity(),WebActivity.class);
                     intent.putExtra("url",article.getLink());
+                    intent.putExtra("title",article.getTitle());
                     startActivity(intent);
                 }
             }
@@ -155,6 +163,10 @@ public class SystemItemFragment extends BaseFragment
         if (mNextPage > mMaxPage){
             return;
         }
+        if (mIsLoading){
+            return;
+        }
+        mIsLoading  = true;
         String url = "https://www.wanandroid.com/article/list/" + mNextPage+  "/json?cid=" + mFlowItem.getId();
         LogUtil.d("日志:发送http",url);
         User user = SharedPreferencesHelper.getUserData();
@@ -197,9 +209,12 @@ public class SystemItemFragment extends BaseFragment
                             }
                         });
                         mNextPage++;
+                        mIsLoading = false;
                     }
                     @Override
-                    public void onError(Exception e) {}
+                    public void onError(Exception e) {
+                        mIsLoading = false;
+                    }
                 });
     }
 }

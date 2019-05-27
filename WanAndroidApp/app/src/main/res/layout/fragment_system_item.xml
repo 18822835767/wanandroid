@@ -21,4 +21,13 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <com.example.sorena.wanandroidapp.widget.FloatingButtonLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/systemItem_fb_toTop">
+
+    </com.example.sorena.wanandroidapp.widget.FloatingButtonLayout>
+
 </RelativeLayout>

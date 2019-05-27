@@ -1,9 +1,11 @@
 package com.example.sorena.wanandroidapp.bean;
 
+import com.example.sorena.wanandroidapp.myInterface.CollectAble;
+
 /**
  * 搜索结果适配器
  */
-public class SearchResult
+public class SearchResult implements CollectAble
 {
     private String author;
     private String chapterName;

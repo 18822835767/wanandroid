@@ -12,6 +12,7 @@ import com.example.sorena.wanandroidapp.R;
 import com.example.sorena.wanandroidapp.adapter.SystemItemBaseAdapter;
 import com.example.sorena.wanandroidapp.bean.Chapter;
 import com.example.sorena.wanandroidapp.dao.SystemDao;
+import com.example.sorena.wanandroidapp.widget.FloatingButtonLayout;
 import com.example.sorena.wanandroidapp.widget.RefreshLayout;
 
 import java.util.List;
@@ -20,8 +21,10 @@ public class SystemFragment extends BaseFragment {
 
     private ListView mSystemListViewShowItem;
     private RefreshLayout mRefreshLayoutRefresh;
-
     private SystemItemBaseAdapter mAdapter;
+    private FloatingButtonLayout mFbToTop;
+
+
 
     @Nullable
     @Override
@@ -42,9 +45,15 @@ public class SystemFragment extends BaseFragment {
         }
         mSystemListViewShowItem = getView().findViewById(R.id.system_listView_showCharacterItem);
         mRefreshLayoutRefresh = getView().findViewById(R.id.systemFragment_refreshLayout_refresh);
+        mFbToTop = getView().findViewById(R.id.systemFragment_fb_toTop);
         mSystemListViewShowItem.setVisibility(View.GONE);
         mRefreshLayoutRefresh.setRefreshListener(()->{
             getListData();
+        });
+        mFbToTop.setListener(()->{
+            if (mSystemListViewShowItem.getAdapter() != null){
+                mSystemListViewShowItem.smoothScrollToPosition(0);
+            }
         });
         getListData();
     }

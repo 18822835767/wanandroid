@@ -23,9 +23,16 @@
         android:id="@+id/system_listView_showCharacterItem"
         android:dividerHeight="10dp"
         android:divider="@drawable/list_view_driver">
-
     </ListView>
 
+    <com.example.sorena.wanandroidapp.widget.FloatingButtonLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/systemFragment_fb_toTop">
+
+    </com.example.sorena.wanandroidapp.widget.FloatingButtonLayout>
 
 
 </RelativeLayout>

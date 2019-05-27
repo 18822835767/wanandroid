@@ -1,9 +1,11 @@
 package com.example.sorena.wanandroidapp.bean;
 
+import com.example.sorena.wanandroidapp.myInterface.CollectAble;
+
 /**
  * 项目列表适配器
  */
-public class ProjectListItem
+public class ProjectListItem implements CollectAble
 {
     private String pictureLink;
     private String projectLink;

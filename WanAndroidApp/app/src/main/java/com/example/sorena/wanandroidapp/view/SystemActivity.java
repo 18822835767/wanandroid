@@ -41,7 +41,7 @@ public class SystemActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mChapter = (Chapter)intent.getSerializableExtra("chapterData");
-        mPosition = Integer.parseInt(intent.getStringExtra("mPosition"));
+        mPosition = Integer.parseInt(intent.getStringExtra("position"));
     }
 
     private void initView() {

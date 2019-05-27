@@ -14,9 +14,8 @@ import com.example.sorena.wanandroidapp.util.LogUtil;
  */
 public class MyViewPager extends ViewPager
 {
-    public MyViewPager(@NonNull Context context) {
-        super(context);
-    }
+    private long mPreMoveTime = 0;
+
 
     public MyViewPager(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -78,5 +77,15 @@ public class MyViewPager extends ViewPager
 
     public void setOpenWeb(OpenWeb openWeb) {
         this.openWeb = openWeb;
+    }
+
+    @Override
+    public void setCurrentItem(int item, boolean smoothScroll) {
+        super.setCurrentItem(item, smoothScroll);
+        mPreMoveTime = System.currentTimeMillis();
+    }
+
+    public long getmPreMoveTime() {
+        return mPreMoveTime;
     }
 }
